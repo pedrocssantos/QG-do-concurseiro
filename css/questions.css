@@ -29,17 +29,18 @@
 .filter-select, .search-input {
   background-color: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   color: var(--text-main);
   padding: 7px 10px;
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   outline: none;
   min-width: 150px;
   transition: var(--transition-fast);
 }
 
 .filter-select:focus, .search-input:focus {
-  border-color: var(--color-warning);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-glow);
 }
 
 .search-input {
@@ -48,13 +49,13 @@
 }
 
 /* ==========================================================================
-   CARD DA QUESTÃO (FORMATO DOSSIÊ DE PROVA)
+   CARD DA QUESTÃO
    ========================================================================== */
 .question-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-hud);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   margin-bottom: 22px;
   position: relative;
@@ -80,7 +81,7 @@
 
 .q-tag {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   padding: 2px 7px;
   border-radius: var(--radius-xs);
@@ -90,14 +91,14 @@
 }
 
 .q-tag-primary {
-  background: rgba(56, 189, 248, 0.08);
-  border-color: rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: var(--color-primary-tint);
+  border-color: rgba(77, 126, 168, 0.3);
+  color: var(--color-primary);
 }
 
 #q-counter-text {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--text-dimmed);
 }
@@ -107,7 +108,7 @@
 }
 
 .question-enunciado {
-  font-size: 1rem;
+  font-size: var(--text-base);
   line-height: 1.7;
   color: var(--text-main);
   margin-bottom: 22px;
@@ -132,7 +133,7 @@
   gap: 12px;
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   padding: 11px 14px;
   text-align: left;
   color: var(--text-main);
@@ -147,19 +148,19 @@
 }
 
 .option-item.selected {
-  background-color: rgba(56, 189, 248, 0.08);
+  background-color: var(--color-primary-tint);
   border-color: var(--color-primary);
   box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .option-item.correct {
-  background-color: rgba(16, 185, 129, 0.12) !important;
+  background-color: var(--color-accent-tint) !important;
   border-color: var(--color-accent) !important;
   box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
 .option-item.incorrect {
-  background-color: rgba(239, 68, 68, 0.12) !important;
+  background-color: var(--color-danger-tint) !important;
   border-color: var(--color-danger) !important;
   box-shadow: inset 0 0 0 1px var(--color-danger);
 }
@@ -175,19 +176,19 @@
   justify-content: center;
   font-family: var(--font-mono);
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   flex-shrink: 0;
 }
 
 .option-item.selected .option-badge {
   background-color: var(--color-primary);
-  color: #041322;
+  color: #ffffff;
   border-color: var(--color-primary);
 }
 
 .option-item.correct .option-badge {
   background-color: var(--color-accent);
-  color: #022013;
+  color: #051014;
   border-color: var(--color-accent);
 }
 
@@ -198,19 +199,19 @@
 }
 
 .option-text {
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   line-height: 1.5;
   flex: 1;
 }
 
 /* ==========================================================================
-   FEEDBACK & GABARITO COMENTADO (BRIEFING)
+   FEEDBACK & GABARITO COMENTADO
    ========================================================================== */
 .feedback-box {
   background: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  border-left: 3px solid var(--color-warning);
-  border-radius: var(--radius-xs);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-sm);
   padding: 16px;
   margin-top: 18px;
   animation: feedbackSlide 0.2s ease-out;
@@ -220,7 +221,7 @@
   font-family: var(--font-mono);
   color: var(--color-accent);
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -232,7 +233,7 @@
   font-family: var(--font-mono);
   color: var(--color-danger);
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -241,7 +242,7 @@
 }
 
 .feedback-text {
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--text-main);
   line-height: 1.6;
   border-top: 1px solid var(--border-color);
@@ -251,7 +252,7 @@
 }
 
 .feedback-text strong {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .question-footer {
@@ -274,12 +275,12 @@
 }
 
 /* ==========================================================================
-   BARRA DO SIMULADO ATIVO (HUD CRONOMETRADO)
+   BARRA DO SIMULADO ATIVO
    ========================================================================== */
 .simulado-bar {
   background: var(--bg-surface);
-  border: 1px solid var(--color-warning);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
   padding: 12px 18px;
   display: flex;
   align-items: center;
@@ -287,7 +288,7 @@
   margin-bottom: 20px;
   gap: 14px;
   flex-wrap: wrap;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 12px var(--color-primary-glow);
 }
 
 .simulado-timer-box {
@@ -295,10 +296,10 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
 }
 
 .simulado-grid {
@@ -315,7 +316,7 @@
   border: 1px solid var(--border-color);
   color: var(--text-main);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -325,20 +326,20 @@
 }
 
 .simulado-grid-btn.current {
-  border-color: var(--color-warning);
-  background-color: var(--color-warning);
-  color: #000000;
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: #ffffff;
   font-weight: 800;
 }
 
 .simulado-grid-btn.answered {
   border-color: var(--color-accent);
-  background-color: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background-color: var(--color-accent-tint);
+  color: var(--color-accent);
 }
 
 /* ==========================================================================
-   CADERNO DE ERROS (DOSSIÊ DE BLINDAGEM)
+   CADERNO DE ERROS
    ========================================================================== */
 .caderno-list {
   display: flex;
@@ -350,7 +351,7 @@
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-left: 3px solid var(--color-danger);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 16px 18px;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-fast);
@@ -379,18 +380,18 @@
 
 .badge-disc {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   padding: 2px 7px;
   border-radius: var(--radius-xs);
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  color: #38bdf8;
+  background: var(--color-primary-tint);
+  border: 1px solid rgba(77, 126, 168, 0.25);
+  color: var(--color-primary);
 }
 
 .badge-assunto {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   padding: 2px 7px;
   border-radius: var(--radius-xs);
@@ -401,24 +402,24 @@
 
 .badge-reason {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   padding: 2px 7px;
   border-radius: var(--radius-xs);
 }
 
-.badge-reason-pegadinha { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-.badge-reason-conteudo { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-.badge-reason-atencao { background: rgba(6, 182, 212, 0.1); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); }
+.badge-reason-pegadinha { background: var(--color-warning-tint); color: var(--color-warning); border: 1px solid rgba(217, 155, 38, 0.3); }
+.badge-reason-conteudo { background: var(--color-danger-tint); color: var(--color-danger); border: 1px solid rgba(217, 83, 79, 0.3); }
+.badge-reason-atencao { background: var(--color-primary-tint); color: var(--color-primary); border: 1px solid rgba(77, 126, 168, 0.3); }
 
 .caderno-date {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   color: var(--text-dimmed);
 }
 
 .caderno-enunciado {
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
   margin-bottom: 12px;
   color: var(--text-main);
@@ -429,15 +430,15 @@
 .caderno-gabarito-snippet {
   background: var(--bg-surface-inset);
   padding: 10px 14px;
-  border-radius: var(--radius-xs);
-  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
   margin-bottom: 12px;
   border: 1px solid var(--border-color);
 }
 
 .gabarito-tag {
   background: var(--color-accent);
-  color: #022013;
+  color: #051014;
   padding: 1px 6px;
   border-radius: var(--radius-xs);
   font-family: var(--font-mono);
@@ -452,7 +453,7 @@
 
 .caderno-notes-section label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -470,16 +471,17 @@
   width: 100%;
   background: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   padding: 8px 10px;
   color: var(--text-main);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   outline: none;
   min-height: 50px;
 }
 
 .caderno-textarea:focus {
-  border-color: var(--color-warning);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-glow);
 }
 
 @media (max-width: 600px) {

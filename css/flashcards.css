@@ -42,14 +42,14 @@
 }
 
 .deck-chip.active {
-  background-color: rgba(245, 158, 11, 0.08);
-  border-color: var(--color-warning);
-  color: #fbbf24;
+  background-color: var(--color-primary-tint);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .deck-badge {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--text-2xs);
   padding: 1px 6px;
   border-radius: var(--radius-xs);
   background: var(--bg-surface-inset);
@@ -58,14 +58,14 @@
 }
 
 .deck-badge.badge-due {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #f87171;
+  background: var(--color-danger-tint);
+  border-color: rgba(217, 83, 79, 0.35);
+  color: var(--color-danger);
   font-weight: 800;
 }
 
 /* ==========================================================================
-   PALCO 3D DO FLASHCARD (CARTÃO DE MEMÓRIA OPERACIONAL)
+   PALCO 3D DO FLASHCARD
    ========================================================================== */
 .flashcard-stage {
   perspective: 1200px;
@@ -105,7 +105,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: var(--shadow-hud);
+  box-shadow: var(--shadow-sm);
 }
 
 .flashcard-front {
@@ -116,7 +116,7 @@
 
 .flashcard-back {
   background: var(--bg-surface-elevated);
-  border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-primary);
   transform: rotateY(180deg);
 }
 
@@ -128,11 +128,11 @@
 
 .fc-tag {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
+  border: 1px solid rgba(77, 126, 168, 0.25);
   padding: 3px 8px;
   border-radius: var(--radius-xs);
   text-transform: uppercase;
@@ -140,7 +140,7 @@
 
 .fc-counter {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--text-dimmed);
   font-weight: 700;
 }
@@ -151,7 +151,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   line-height: 1.6;
   color: var(--text-main);
@@ -173,7 +173,7 @@
 
 .flashcard-back .fc-card-content {
   display: block;
-  font-size: 0.98rem;
+  font-size: var(--text-base);
   font-weight: 400;
   text-align: left;
   line-height: 1.65;
@@ -181,7 +181,7 @@
 }
 
 .flashcard-back .fc-card-content strong {
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -196,7 +196,7 @@
 
 .fc-card-footer {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: var(--text-2xs);
   color: var(--text-dimmed);
   display: flex;
   align-items: center;
@@ -207,7 +207,7 @@
 }
 
 /* ==========================================================================
-   AÇÕES DE CLASSIFICAÇÃO SRS (SUPERMEMO SM-2)
+   AÇÕES DE CLASSIFICAÇÃO SRS
    ========================================================================== */
 .flashcard-actions-wrapper {
   max-width: 640px;
@@ -229,7 +229,7 @@
 
 .fc-grade-btn {
   padding: 10px 8px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
   display: flex;
@@ -242,42 +242,42 @@
 .fc-grade-btn span:first-child {
   font-family: var(--font-body);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .fc-grade-btn span:last-child {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: var(--text-2xs);
   opacity: 0.85;
 }
 
 .btn-grade-0 {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #f87171;
+  background: var(--color-danger-tint);
+  border-color: rgba(217, 83, 79, 0.35);
+  color: var(--color-danger);
 }
-.btn-grade-0:hover { background: #dc2626; color: #fff; border-color: #ef4444; }
+.btn-grade-0:hover { background: var(--color-danger); color: #fff; border-color: var(--color-danger); }
 
 .btn-grade-3 {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.35);
-  color: #fbbf24;
+  background: var(--color-warning-tint);
+  border-color: rgba(217, 155, 38, 0.35);
+  color: var(--color-warning);
 }
-.btn-grade-3:hover { background: #d97706; color: #000; border-color: #f59e0b; font-weight: 900; }
+.btn-grade-3:hover { background: var(--color-warning); color: #051014; border-color: var(--color-warning); font-weight: 800; }
 
 .btn-grade-4 {
-  background: rgba(56, 189, 248, 0.1);
-  border-color: rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
+  background: var(--color-primary-tint);
+  border-color: rgba(77, 126, 168, 0.35);
+  color: var(--color-primary);
 }
-.btn-grade-4:hover { background: #0284c7; color: #fff; border-color: #38bdf8; }
+.btn-grade-4:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
 
 .btn-grade-5 {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #34d399;
+  background: var(--color-accent-tint);
+  border-color: rgba(126, 161, 114, 0.35);
+  color: var(--color-accent);
 }
-.btn-grade-5:hover { background: #059669; color: #000; border-color: #10b981; font-weight: 900; }
+.btn-grade-5:hover { background: var(--color-accent); color: #051014; border-color: var(--color-accent); font-weight: 800; }
 
 @keyframes gradeFade {
   from { opacity: 0; transform: translateY(6px); }

@@ -12,17 +12,17 @@
 }
 
 /* ==========================================================================
-   HERO SECTION DE ALTO IMPACTO
+   HERO SECTION
    ========================================================================== */
 .landing-hero {
-  background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.15) 0%, rgba(10, 14, 23, 0.95) 70%), var(--bg-surface);
+  background: radial-gradient(circle at 50% 0%, var(--color-primary-tint) 0%, var(--bg-surface) 70%);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg, 16px);
+  border-radius: var(--radius-lg);
   padding: 48px 36px;
   text-align: center;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-hud);
+  box-shadow: var(--shadow-sm);
 }
 
 .landing-hero::before {
@@ -32,45 +32,45 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #f59e0b, #10b981);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
 }
 
 .landing-tag-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #fbbf24;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
   font-weight: 700;
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   margin-bottom: 20px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .landing-hero h1 {
-  font-family: var(--font-display, "Inter", sans-serif);
+  font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 900;
   line-height: 1.15;
-  color: var(--text-main, #ffffff);
+  color: var(--text-main);
   margin-bottom: 18px;
   letter-spacing: -0.02em;
 }
 
 .landing-hero h1 span.gradient-text {
-  background: linear-gradient(135deg, #60a5fa 0%, #fbbf24 100%);
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .landing-hero p.landing-hero-subtitle {
   font-size: clamp(1rem, 2vw, 1.15rem);
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted);
   max-width: 780px;
   margin: 0 auto 32px;
   line-height: 1.6;
@@ -87,9 +87,9 @@
 
 .landing-hero-actions .btn-lg {
   padding: 14px 28px;
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 800;
-  border-radius: var(--radius-sm, 8px);
+  border-radius: var(--radius-sm);
 }
 
 .landing-stats-row {
@@ -107,14 +107,14 @@
 }
 
 .landing-stat-num {
-  font-family: var(--font-display, sans-serif);
-  font-size: 1.8rem;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
   font-weight: 900;
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-primary);
 }
 
 .landing-stat-label {
-  font-size: 0.82rem;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -131,22 +131,21 @@
 }
 
 .landing-section-header h2 {
-  font-family: var(--font-display, sans-serif);
-  font-size: 1.8rem;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
   font-weight: 800;
   color: var(--text-main);
   margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
 }
 
 .landing-section-header p {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: var(--text-sm);
 }
 
 /* ==========================================================================
-   GRID DO ARSENAL TÁTICO (RECURSOS)
+   GRID DO ARSENAL (RECURSOS)
    ========================================================================== */
 .landing-features-grid {
   display: grid;
@@ -157,7 +156,7 @@
 .landing-feature-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 12px);
+  border-radius: var(--radius-md);
   padding: 26px;
   display: flex;
   flex-direction: column;
@@ -168,13 +167,13 @@
 .landing-feature-card:hover {
   transform: translateY(-3px);
   border-color: var(--color-primary);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .feature-card-icon {
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-sm, 8px);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,22 +181,22 @@
   margin-bottom: 16px;
 }
 
-.feature-card-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.feature-card-icon.gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.feature-card-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.feature-card-icon.blue { background: var(--color-primary-tint); color: var(--color-primary); }
+.feature-card-icon.gold { background: var(--color-warning-tint); color: var(--color-warning); }
+.feature-card-icon.green { background: var(--color-accent-tint); color: var(--color-accent); }
 .feature-card-icon.purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-.feature-card-icon.red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-.feature-card-icon.cyan { background: rgba(6, 182, 212, 0.15); color: #38bdf8; }
+.feature-card-icon.red { background: var(--color-danger-tint); color: var(--color-danger); }
+.feature-card-icon.cyan { background: var(--color-primary-tint); color: var(--color-primary-light); }
 
 .landing-feature-card h3 {
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 8px;
 }
 
 .landing-feature-card p {
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   line-height: 1.55;
 }
@@ -214,34 +213,34 @@
 .pricing-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg, 16px);
+  border-radius: var(--radius-lg);
   padding: 36px 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  box-shadow: var(--shadow-hud);
+  box-shadow: var(--shadow-sm);
 }
 
 .pricing-card.featured {
-  border: 2px solid #f59e0b;
-  background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, var(--bg-surface) 80%);
+  border: 2px solid var(--color-primary);
+  background: radial-gradient(circle at 50% 0%, var(--color-primary-tint) 0%, var(--bg-surface) 80%);
 }
 
 .pricing-ribbon {
   position: absolute;
   top: -12px;
   right: 20px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #000000;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
   font-weight: 800;
   padding: 3px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 4px 12px var(--color-primary-glow);
 }
 
 .pricing-header {
@@ -249,19 +248,18 @@
 }
 
 .pricing-plan-name {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 800;
   color: var(--text-main);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.01em;
 }
 
 .pricing-card.featured .pricing-plan-name {
-  color: #fbbf24;
+  color: var(--color-primary);
 }
 
 .pricing-price-display {
-  font-size: 2.6rem;
+  font-size: clamp(2rem, 3vw, 2.6rem);
   font-weight: 900;
   color: var(--text-main);
   margin: 12px 0 6px;
@@ -269,7 +267,7 @@
 }
 
 .pricing-price-display span {
-  font-size: 1rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -285,7 +283,7 @@
 }
 
 .pricing-features-list li {
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--text-main);
   display: flex;
   align-items: center;
@@ -293,11 +291,11 @@
 }
 
 .pricing-features-list li i.fa-check {
-  color: var(--color-success, #10b981);
+  color: var(--color-accent);
 }
 
 .pricing-features-list li i.fa-xmark {
-  color: var(--text-dimmed, #64748b);
+  color: var(--text-dimmed);
 }
 
 /* ==========================================================================
@@ -312,7 +310,7 @@
 .testimonial-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 12px);
+  border-radius: var(--radius-md);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -321,7 +319,7 @@
 }
 
 .testimonial-text {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--text-main);
   line-height: 1.6;
   font-style: italic;
@@ -336,25 +334,25 @@
 .testimonial-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 0.85rem;
-  color: var(--color-warning);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
 }
 
 .testimonial-meta strong {
   display: block;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--text-main);
 }
 
 .testimonial-meta span {
-  font-size: 0.75rem;
+  font-size: var(--text-2xs);
   color: var(--text-muted);
 }
 
@@ -370,12 +368,12 @@
 .faq-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   padding: 20px;
 }
 
 .faq-card h4 {
-  font-size: 0.98rem;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 8px;
@@ -390,7 +388,7 @@
 }
 
 .faq-card p {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   line-height: 1.55;
 }
@@ -399,26 +397,27 @@
    BANNER FINAL CTA
    ========================================================================== */
 .landing-final-banner {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(245, 158, 11, 0.12) 100%), var(--bg-surface);
+  background: linear-gradient(135deg, var(--color-primary-tint) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg, 16px);
+  border-radius: var(--radius-lg);
   padding: 44px 30px;
   text-align: center;
 }
 
 .landing-final-banner h2 {
-  font-family: var(--font-display, sans-serif);
+  font-family: var(--font-display);
   font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   font-weight: 900;
   color: #ffffff;
   margin-bottom: 12px;
+  letter-spacing: -0.01em;
 }
 
 .landing-final-banner p {
   color: var(--text-muted);
   max-width: 600px;
   margin: 0 auto 28px;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 @media (max-width: 640px) {

@@ -7,13 +7,13 @@ class PapiroCharts {
     const isLight = document.documentElement.getAttribute("data-theme") === "light";
     return {
       isLight,
-      gridLine: isLight ? "rgba(100, 116, 139, 0.18)" : "rgba(255, 255, 255, 0.07)",
-      textMain: isLight ? "#0f172a" : "#ffffff",
-      textMuted: isLight ? "#475569" : "rgba(255, 255, 255, 0.7)",
-      textDimmed: isLight ? "#64748b" : "rgba(255, 255, 255, 0.4)",
+      gridLine: isLight ? "rgba(5, 16, 20, 0.08)" : "rgba(249, 249, 251, 0.08)",
+      textMain: isLight ? "#051014" : "#F9F9FB",
+      textMuted: isLight ? "#525866" : "#b0b4ba",
+      textDimmed: isLight ? "#7e8695" : "#7d828a",
       textContrast: "#ffffff",
-      emptyDonut: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.1)",
-      radarGrid: isLight ? "rgba(100, 116, 139, 0.22)" : "rgba(255, 255, 255, 0.1)",
+      emptyDonut: isLight ? "rgba(5, 16, 20, 0.06)" : "rgba(249, 249, 251, 0.08)",
+      radarGrid: isLight ? "rgba(5, 16, 20, 0.12)" : "rgba(249, 249, 251, 0.1)",
       pointBorder: "#ffffff"
     };
   }
@@ -70,8 +70,8 @@ class PapiroCharts {
 
     // Área com Gradiente
     const grad = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
-    grad.addColorStop(0, "rgba(59, 130, 246, 0.4)");
-    grad.addColorStop(1, "rgba(59, 130, 246, 0.01)");
+    grad.addColorStop(0, "rgba(77, 126, 168, 0.4)");
+    grad.addColorStop(1, "rgba(77, 126, 168, 0.01)");
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -96,7 +96,7 @@ class PapiroCharts {
       ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
     ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
-    ctx.strokeStyle = "#3b82f6";
+    ctx.strokeStyle = "#4D7EA8";
     ctx.lineWidth = 3;
     ctx.stroke();
 
@@ -105,7 +105,7 @@ class PapiroCharts {
       // Ponto externo
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = "#3b82f6";
+      ctx.fillStyle = "#4D7EA8";
       ctx.fill();
       ctx.strokeStyle = theme.pointBorder;
       ctx.lineWidth = 2;
@@ -160,7 +160,7 @@ class PapiroCharts {
       const y = padding.top + chartH - barH;
 
       // Barra com cantos arredondados
-      ctx.fillStyle = it.color || "#10b981";
+      ctx.fillStyle = it.color || "#4D7EA8";
       this.drawRoundedRect(ctx, x, y, barWidth, Math.max(barH, 4), 6);
       ctx.fill();
 
@@ -212,7 +212,7 @@ class PapiroCharts {
         ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
         ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
         ctx.closePath();
-        ctx.fillStyle = it.color || "#3b82f6";
+        ctx.fillStyle = it.color || "#4D7EA8";
         ctx.fill();
 
         startAngle = endAngle;
@@ -307,9 +307,9 @@ class PapiroCharts {
     });
     ctx.closePath();
 
-    ctx.fillStyle = "rgba(16, 185, 129, 0.25)";
+    ctx.fillStyle = "rgba(77, 126, 168, 0.25)";
     ctx.fill();
-    ctx.strokeStyle = "#10b981";
+    ctx.strokeStyle = "#4D7EA8";
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
@@ -322,7 +322,7 @@ class PapiroCharts {
 
       ctx.beginPath();
       ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = "#10b981";
+      ctx.fillStyle = "#4D7EA8";
       ctx.fill();
       ctx.strokeStyle = theme.pointBorder;
       ctx.lineWidth = 1.5;
