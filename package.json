@@ -20,11 +20,13 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^26.3.0",
+    "@vitejs/plugin-vue": "^6.0.8",
     "typescript": "^7.0.2",
     "vite": "^5.4.2"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
-    "dexie": "^4.4.5"
+    "dexie": "^4.4.5",
+    "vue": "^3.5.41"
   }
 }

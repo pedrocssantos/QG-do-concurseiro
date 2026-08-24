@@ -494,97 +494,9 @@
         </div>
       </div>
 
-      <!-- VIEW 5: FLASHCARDS SRS -->
+      <!-- VIEW 5: FLASHCARDS SRS (VUE 3 PILOT COMPONENT) -->
       <div class="view-content-wrapper view-section hidden" id="view-flashcards">
-        <div class="view-header">
-          <div class="view-title-group">
-            <h1>Flashcards com Repetição Espaçada (SRS)</h1>
-            <p>Fixe conceitos com o algoritmo SuperMemo SM-2. Quanto melhor a lembrança, mais longe o próximo intervalo.</p>
-          </div>
-          <button class="btn btn-primary btn-sm" id="fc-btn-new">
-            <i class="fa-solid fa-plus"></i> Novo Flashcard
-          </button>
-        </div>
-
-        <div class="flashcards-layout">
-          <!-- Lista de Decks -->
-          <div class="deck-chips-container" id="flashcards-deck-list">
-            <!-- Decks gerados dinamicamente -->
-          </div>
-
-          <!-- Palco do Card 3D -->
-          <div id="flashcard-main-container">
-            <div class="flashcard-stage">
-              <div class="flashcard-3d-box" id="flashcard-3d-box">
-                <div class="flashcard-inner" id="flashcard-inner">
-                  <!-- Frente -->
-                  <div class="flashcard-front">
-                    <div class="fc-card-header">
-                      <span class="fc-tag" id="fc-tag-deck">Português</span>
-                      <span class="fc-counter" id="fc-counter-text">Card 1 de 6</span>
-                    </div>
-                    <div class="fc-card-content" id="fc-front-text">
-                      Pergunta do Flashcard...
-                    </div>
-                    <div class="fc-card-footer">
-                      <i class="fa-solid fa-hand-pointer"></i> Clique para revelar a resposta
-                    </div>
-                  </div>
-
-                  <!-- Verso -->
-                  <div class="flashcard-back">
-                    <div class="fc-card-header">
-                      <span class="fc-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Resposta & Fundamento</span>
-                    </div>
-                    <div class="fc-card-content" id="fc-back-text">
-                      Explicação detalhada da resposta...
-                    </div>
-                    <div class="fc-card-footer">
-                      Classifique sua lembrança abaixo:
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Ações do Card -->
-            <div class="flashcard-actions-wrapper" style="margin-top: 20px;">
-              <div class="fc-flip-btn-row" style="margin-bottom: 14px; display: flex; justify-content: center; gap: 8px;">
-                <button class="btn btn-secondary" id="fc-btn-flip">
-                  <i class="fa-solid fa-arrows-rotate"></i> Virar Cartão (Espaço)
-                </button>
-                <button class="btn btn-outline-danger btn-sm" id="fc-btn-delete" title="Excluir este Flashcard">
-                  <i class="fa-solid fa-trash-can"></i> Excluir
-                </button>
-              </div>
-
-              <div class="fc-grade-grid hidden" id="flashcard-grade-actions">
-                <button class="fc-grade-btn btn-grade-0" data-grade="0">
-                  <span>🔴 Errei</span>
-                  <span>Revisar em 1 min</span>
-                </button>
-                <button class="fc-grade-btn btn-grade-3" data-grade="3">
-                  <span>🟠 Difícil</span>
-                  <span>Revisar em 1 dia</span>
-                </button>
-                <button class="fc-grade-btn btn-grade-4" data-grade="4">
-                  <span>🟢 Bom</span>
-                  <span>Revisar em 3-6 dias</span>
-                </button>
-                <button class="fc-grade-btn btn-grade-5" data-grade="5">
-                  <span>🔵 Fácil</span>
-                  <span>Revisar em 7+ dias</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="empty-state-box hidden" id="flashcard-empty-state">
-            <i class="fa-solid fa-circle-check empty-state-icon text-success"></i>
-            <h3>Todos os cards deste deck foram revisados!</h3>
-            <p>Excelente disciplina! Retorne amanhã para a próxima rodada de repetição espaçada.</p>
-          </div>
-        </div>
+        <div id="flashcards-vue-root"></div>
       </div>
 
       <!-- VIEW 6: CADERNO DE ERROS -->
