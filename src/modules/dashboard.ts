@@ -1,12 +1,12 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - DASHBOARD MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { PapiroCharts } from "./analytics.js";
-import { pomodoro } from "./pomodoro.js";
-import { questionsManager } from "./questions.js";
-import { flashcardsManager } from "./flashcards.js";
-import { MOTIVATIONAL_QUOTES } from "../data/data.js";
+import { store } from "../services/store";
+import { PapiroCharts } from "./analytics";
+import { pomodoro } from "./pomodoro";
+import { questionsManager } from "./questions";
+import { flashcardsManager } from "./flashcards";
+import { MOTIVATIONAL_QUOTES } from "../data/data";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - CONTROLLER DO DASHBOARD PRINCIPAL

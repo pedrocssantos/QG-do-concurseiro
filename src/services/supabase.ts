@@ -1,8 +1,8 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - SUPABASE SERVICE & OFFLINE-FIRST SYNC ENGINE (ESM)
 // ==========================================================================
-import { store } from "./store.js";
-import { showToast, openUpgradeModal, openAuthModal } from "../app.js";
+import { store } from "./store";
+import { showToast, openUpgradeModal, openAuthModal } from "../app";
 
 const SUPABASE_URL = "https://enkdykbbayloriedogzj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0yq01ZlZNTS-NOYar9cZjQ_TarnMj2t";

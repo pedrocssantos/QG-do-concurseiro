@@ -1,11 +1,11 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - POMODORO CONTROLLER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { audio } from "../services/audio.js";
-import { questionsManager } from "./questions.js";
-import { flashcardsManager } from "./flashcards.js";
-import { showToast } from "../app.js";
+import { store } from "../services/store";
+import { audio } from "../services/audio";
+import { questionsManager } from "./questions";
+import { flashcardsManager } from "./flashcards";
+import { showToast } from "../app";
 
 class PomodoroController {
   constructor() {

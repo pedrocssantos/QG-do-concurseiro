@@ -19,6 +19,8 @@
   "author": "QG do Concurseiro Team",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^26.3.0",
+    "typescript": "^7.0.2",
     "vite": "^5.4.2"
   },
   "dependencies": {

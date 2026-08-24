@@ -13,21 +13,21 @@ import "../css/pomodoro.css";
 import "../css/landing.css";
 
 // Importação dos serviços e dados
-import { store } from "./services/store.js";
-import { db } from "./services/supabase.js";
-import { audio } from "./services/audio.js";
+import { store } from "./services/store";
+import { db } from "./services/supabase";
+import { audio } from "./services/audio";
 
 // Importação dos módulos da aplicação
-import { dashboardManager } from "./modules/dashboard.js";
-import { editalManager } from "./modules/edital.js";
-import { cicloManager } from "./modules/ciclo.js";
-import { questionsManager } from "./modules/questions.js";
-import { flashcardsManager } from "./modules/flashcards.js";
-import { cadernoManager } from "./modules/errors.js";
-import { gamificationManager } from "./modules/gamification.js";
-import { pomodoro, pomodoroManager } from "./modules/pomodoro.js";
-import { PapiroCharts } from "./modules/analytics.js";
-import { localDB } from "./services/dexie.js";
+import { dashboardManager } from "./modules/dashboard";
+import { editalManager } from "./modules/edital";
+import { cicloManager } from "./modules/ciclo";
+import { questionsManager } from "./modules/questions";
+import { flashcardsManager } from "./modules/flashcards";
+import { cadernoManager } from "./modules/errors";
+import { gamificationManager } from "./modules/gamification";
+import { pomodoro, pomodoroManager } from "./modules/pomodoro";
+import { PapiroCharts } from "./modules/analytics";
+import { localDB } from "./services/dexie";
 
 // Inicialização da aplicação
 document.addEventListener("DOMContentLoaded", async () => {

@@ -1,9 +1,9 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - QUESTIONS MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { audio } from "../services/audio.js";
-import { showToast, openUpgradeModal } from "../app.js";
+import { store } from "../services/store";
+import { audio } from "../services/audio";
+import { showToast, openUpgradeModal } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS

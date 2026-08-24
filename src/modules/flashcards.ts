@@ -1,8 +1,8 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - FLASHCARDS MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { showToast, openUpgradeModal } from "../app.js";
+import { store } from "../services/store";
+import { showToast, openUpgradeModal } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - FLASHCARDS SRS (SM-2)

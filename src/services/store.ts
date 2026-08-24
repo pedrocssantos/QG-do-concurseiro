@@ -1,9 +1,9 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - STORE STATE (ESM)
 // ==========================================================================
-import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGES, DEFAULT_LEADERBOARD } from "../data/data.js";
-import { db } from "./supabase.js";
-import { localDB } from "./dexie.js";
+import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGES, DEFAULT_LEADERBOARD } from "../data/data";
+import { db } from "./supabase";
+import { localDB } from "./dexie";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)

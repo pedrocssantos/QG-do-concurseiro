@@ -1,9 +1,9 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - CICLO MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { pomodoro } from "./pomodoro.js";
-import { showToast } from "../app.js";
+import { store } from "../services/store";
+import { pomodoro } from "./pomodoro";
+import { showToast } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - CICLO DE ESTUDOS E PLANEJAMENTO SEMANAL

@@ -1,8 +1,8 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - EDITAL MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { showToast } from "../app.js";
+import { store } from "../services/store";
+import { showToast } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - EDITAL VERTICALIZADO E GESTÃO DE CONTEÚDO PROGRAMÁTICO

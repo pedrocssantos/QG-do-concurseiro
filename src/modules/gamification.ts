@@ -1,8 +1,8 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - GAMIFICATION MANAGER (ESM)
 // ==========================================================================
-import { store } from "../services/store.js";
-import { DEFAULT_LEADERBOARD } from "../data/data.js";
+import { store } from "../services/store";
+import { DEFAULT_LEADERBOARD } from "../data/data";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - GAMIFICAÇÃO, RANKING SEMANAL E CONQUISTAS

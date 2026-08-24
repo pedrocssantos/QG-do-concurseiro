@@ -1,17 +1,17 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - APP CONTROLLER (ESM)
 // ==========================================================================
-import { store } from "./services/store.js";
-import { db } from "./services/supabase.js";
-import { dashboardManager } from "./modules/dashboard.js";
-import { editalManager } from "./modules/edital.js";
-import { cicloManager } from "./modules/ciclo.js";
-import { questionsManager } from "./modules/questions.js";
-import { flashcardsManager } from "./modules/flashcards.js";
-import { cadernoManager } from "./modules/errors.js";
-import { gamificationManager } from "./modules/gamification.js";
-import { pomodoro } from "./modules/pomodoro.js";
-import { PapiroCharts } from "./modules/analytics.js";
+import { store } from "./services/store";
+import { db } from "./services/supabase";
+import { dashboardManager } from "./modules/dashboard";
+import { editalManager } from "./modules/edital";
+import { cicloManager } from "./modules/ciclo";
+import { questionsManager } from "./modules/questions";
+import { flashcardsManager } from "./modules/flashcards";
+import { cadernoManager } from "./modules/errors";
+import { gamificationManager } from "./modules/gamification";
+import { pomodoro } from "./modules/pomodoro";
+import { PapiroCharts } from "./modules/analytics";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL
