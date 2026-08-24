@@ -740,73 +740,158 @@ function openAuthModal(tab = "login") {
   }
 }
 
-function switchAuthTab(tab) {
+function switchAuthTab(tab: "login" | "signup") {
   currentAuthTab = tab;
   const tabLogin = document.getElementById("tab-login");
   const tabSignup = document.getElementById("tab-signup");
   const groupName = document.getElementById("group-auth-name");
+  const groupConfirm = document.getElementById("group-auth-confirm-password");
+  const groupTerms = document.getElementById("group-auth-terms");
   const btnSubmit = document.getElementById("btn-auth-submit");
   const title = document.getElementById("auth-modal-title");
+  const errorBox = document.getElementById("auth-error-box");
+
+  if (errorBox) errorBox.classList.add("hidden");
 
   if (tab === "login") {
     tabLogin?.classList.add("active");
     tabSignup?.classList.remove("active");
     groupName?.classList.add("hidden");
+    groupConfirm?.classList.add("hidden");
+    groupTerms?.classList.add("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
     if (title) title.innerHTML = `QG do Concurseiro`;
   } else {
     tabSignup?.classList.add("active");
     tabLogin?.classList.remove("active");
     groupName?.classList.remove("hidden");
+    groupConfirm?.classList.remove("hidden");
+    groupTerms?.classList.remove("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
     if (title) title.innerHTML = `Criar Conta no QG`;
   }
 }
 
-async function handleAuthSubmit(e) {
-  e.preventDefault();
-  const email = document.getElementById("auth-email").value.trim();
-  const password = document.getElementById("auth-password").value;
-  const name = document.getElementById("auth-name")?.value.trim() || "Concurseiro";
-  const btnSubmit = document.getElementById("btn-auth-submit");
+function showAuthError(msg: string) {
+  const errorBox = document.getElementById("auth-error-box");
+  const errorText = document.getElementById("auth-error-text");
+  if (errorBox && errorText) {
+    errorText.textContent = msg;
+    errorBox.classList.remove("hidden");
+  } else {
+    showToast(msg, "warning");
+  }
+}
 
-  if (!email || !password) {
-    showToast("Preencha todos os campos obrigatórios!", "warning");
+function translateAuthError(errMsg: string): string {
+  const lower = (errMsg || "").toLowerCase();
+  if (lower.includes("invalid login credentials") || lower.includes("invalid credentials")) {
+    return "E-mail ou senha incorretos. Verifique os dados digitados.";
+  }
+  if (lower.includes("user already registered") || lower.includes("already registered")) {
+    return "Este e-mail já possui cadastro. Clique na aba 'Entrar' para fazer login.";
+  }
+  if (lower.includes("password should be at least")) {
+    return "A senha de segurança deve conter no mínimo 6 caracteres.";
+  }
+  if (lower.includes("email not confirmed")) {
+    return "E-mail não confirmado. Verifique sua caixa de entrada e clique no link de ativação.";
+  }
+  if (lower.includes("invalid email") || lower.includes("invalid format")) {
+    return "Formato de e-mail inválido. Digite um e-mail real (ex: aluno@gmail.com).";
+  }
+  if (lower.includes("rate limit") || lower.includes("too many requests")) {
+    return "Muitas tentativas em sequência. Aguarde 1 minuto e tente novamente.";
+  }
+  return errMsg || "Erro ao processar autenticação.";
+}
+
+async function handleAuthSubmit(e: Event) {
+  e.preventDefault();
+  const errorBox = document.getElementById("auth-error-box");
+  if (errorBox) errorBox.classList.add("hidden");
+
+  const emailInput = document.getElementById("auth-email") as HTMLInputElement | null;
+  const passInput = document.getElementById("auth-password") as HTMLInputElement | null;
+  const nameInput = document.getElementById("auth-name") as HTMLInputElement | null;
+  const confirmPassInput = document.getElementById("auth-password-confirm") as HTMLInputElement | null;
+  const termsCheckbox = document.getElementById("auth-terms") as HTMLInputElement | null;
+  const btnSubmit = document.getElementById("btn-auth-submit") as HTMLButtonElement | null;
+
+  const email = emailInput?.value.trim() || "";
+  const password = passInput?.value || "";
+  const name = nameInput?.value.trim() || "";
+
+  // 1. Validação de formato de E-mail
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    showAuthError("Por favor, informe um endereço de e-mail válido (ex: seu.nome@email.com).");
+    emailInput?.focus();
     return;
+  }
+
+  // 2. Validação de Senha
+  if (!password || password.length < 6) {
+    showAuthError("A senha precisa ter no mínimo 6 caracteres.");
+    passInput?.focus();
+    return;
+  }
+
+  // 3. Validações Específicas da Aba de Cadastro
+  if (currentAuthTab === "signup") {
+    if (!name || name.length < 3) {
+      showAuthError("Por favor, preencha seu nome completo (mínimo de 3 letras).");
+      nameInput?.focus();
+      return;
+    }
+
+    const confirmPassword = confirmPassInput?.value || "";
+    if (password !== confirmPassword) {
+      showAuthError("As senhas digitadas não coincidem. Digite a mesma senha em ambos os campos.");
+      confirmPassInput?.focus();
+      return;
+    }
+
+    if (termsCheckbox && !termsCheckbox.checked) {
+      showAuthError("Você precisa concordar com os Termos de Uso para criar sua conta.");
+      termsCheckbox.focus();
+      return;
+    }
   }
 
   try {
     if (btnSubmit) {
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${currentAuthTab === "signup" ? "Criando e validando conta..." : "Autenticando..."}`;
     }
 
     if (currentAuthTab === "signup") {
-      try {
-        if (typeof db !== "undefined" && db.client) {
-          await db.signUp(name, email, password);
+      if (typeof db !== "undefined" && db.client) {
+        const result = await db.signUp(name, email, password);
+
+        // Se o Supabase exigiu confirmação por e-mail
+        if (result?.user && !result?.session) {
+          showToast("📧 Cadastro realizado! Enviamos um link de confirmação para seu e-mail.", "info");
+          document.getElementById("modal-auth")?.classList.add("hidden");
+          return;
         }
-      } catch (cloudErr) {
-        console.warn("Supabase signup warning:", cloudErr);
       }
-      
+
+      // Atualiza o estado local e sincroniza
       store.data.profile.isLoggedIn = true;
       store.data.profile.email = email;
       store.data.profile.name = name;
       store.data.profile.avatar = name.substring(0, 2).toUpperCase();
       store.save();
 
-      showToast("🎉 Conta criada com sucesso! Bem-vindo(a) ao QG do Concurseiro!", "success");
+      showToast(`🎉 Conta criada com sucesso! Bem-vindo(a), ${name.split(" ")[0]}!`, "success");
       document.getElementById("modal-auth")?.classList.add("hidden");
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
+      if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
     } else {
-      try {
-        if (typeof db !== "undefined" && db.client) {
-          await db.signIn(email, password);
-        }
-      } catch (cloudErr) {
-        console.warn("Supabase signin warning:", cloudErr);
+      if (typeof db !== "undefined" && db.client) {
+        await db.signIn(email, password);
       }
 
       store.data.profile.isLoggedIn = true;
@@ -816,13 +901,16 @@ async function handleAuthSubmit(e) {
       }
       store.save();
 
-      showToast("🚀 Login realizado com sucesso! Bons estudos!", "success");
+      showToast("🚀 Login realizado com sucesso! Seus dados foram sincronizados.", "success");
       document.getElementById("modal-auth")?.classList.add("hidden");
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
+      if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
     }
-  } catch (err) {
-    showToast(err.message || "Erro na autenticação. Verifique os dados.", "error");
+  } catch (err: any) {
+    console.error("Erro na autenticação:", err);
+    const friendlyMsg = translateAuthError(err.message || "Erro ao processar autenticação.");
+    showAuthError(friendlyMsg);
   } finally {
     if (btnSubmit) {
       btnSubmit.disabled = false;

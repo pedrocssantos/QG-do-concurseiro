@@ -1568,22 +1568,37 @@
       <div class="modal-body" style="padding: 10px 20px 24px;">
         <!-- Abas Login / Cadastro -->
         <div class="auth-tabs-row" style="display: flex; gap: 8px; margin-bottom: 18px;">
-          <button class="btn btn-secondary btn-sm active" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1;">Entrar</button>
-          <button class="btn btn-secondary btn-sm" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1;">Criar Conta</button>
+          <button type="button" class="btn btn-secondary btn-sm active" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1;">Entrar</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1;">Criar Conta</button>
+        </div>
+
+        <!-- Caixa de Alerta de Erro de Validação -->
+        <div class="feedback-box hidden" id="auth-error-box" style="margin-bottom: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.82rem;">
+          <i class="fa-solid fa-circle-exclamation"></i> <span id="auth-error-text"></span>
         </div>
 
         <form id="auth-form" onsubmit="handleAuthSubmit(event)">
           <div class="form-group hidden" id="group-auth-name">
-            <label for="auth-name">Seu Nome Completo:</label>
-            <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Santos">
+            <label for="auth-name">Nome Completo:</label>
+            <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Santos" autocomplete="name">
           </div>
           <div class="form-group">
-            <label for="auth-email">E-mail:</label>
-            <input type="email" class="form-input" id="auth-email" placeholder="seuemail@exemplo.com" required>
+            <label for="auth-email">E-mail Institucional ou Pessoal:</label>
+            <input type="email" class="form-input" id="auth-email" placeholder="seuemail@exemplo.com" required autocomplete="email">
           </div>
           <div class="form-group">
             <label for="auth-password">Senha:</label>
-            <input type="password" class="form-input" id="auth-password" placeholder="Sua senha secreta (min. 6 dígitos)" minlength="6" required>
+            <input type="password" class="form-input" id="auth-password" placeholder="Mínimo de 6 caracteres" minlength="6" required autocomplete="current-password">
+          </div>
+          <div class="form-group hidden" id="group-auth-confirm-password">
+            <label for="auth-password-confirm">Confirmar Senha:</label>
+            <input type="password" class="form-input" id="auth-password-confirm" placeholder="Repita a senha digitada" minlength="6" autocomplete="new-password">
+          </div>
+          <div class="form-group hidden" id="group-auth-terms" style="margin-top: 10px; margin-bottom: 8px;">
+            <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.78rem; color: var(--text-muted); cursor: pointer;">
+              <input type="checkbox" id="auth-terms" style="margin-top: 3px;">
+              <span>Concordo com os Termos de Uso e Política de Privacidade do QG do Concurseiro.</span>
+            </label>
           </div>
           <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 14px;">
             <i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma
