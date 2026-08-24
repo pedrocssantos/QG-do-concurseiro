@@ -8,6 +8,7 @@ class Store {
   constructor() {
     this.listeners = [];
     this.data = this.loadInitialData();
+    this.checkStreakLiveness();
     this.ensureDailyMissions();
   }
 
@@ -304,22 +305,42 @@ class Store {
     return newSession;
   }
 
+  checkStreakLiveness() {
+    if (!this.data.profile || !this.data.profile.lastStudyDate) return;
+    const today = new Date().toISOString().split("T")[0];
+    const last = this.data.profile.lastStudyDate;
+    if (last === today) return;
+
+    const [y1, m1, d1] = today.split("-").map(Number);
+    const [y2, m2, d2] = last.split("-").map(Number);
+    const diffDays = Math.round((Date.UTC(y1, m1 - 1, d1) - Date.UTC(y2, m2 - 1, d2)) / 86400000);
+
+    if (diffDays > 1) {
+      this.data.profile.streak = 0;
+      this.save();
+    }
+  }
+
   updateStreak() {
     const today = new Date().toISOString().split("T")[0];
     const last = this.data.profile.lastStudyDate;
-    
-    if (last !== today) {
-      const todayDate = new Date(today);
-      const lastDate = new Date(last);
-      const diffTime = Math.abs(todayDate - lastDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays === 1) {
-        this.data.profile.streak += 1;
-      } else if (diffDays > 1) {
+    if (last !== today) {
+      if (!last) {
         this.data.profile.streak = 1;
+      } else {
+        const [y1, m1, d1] = today.split("-").map(Number);
+        const [y2, m2, d2] = last.split("-").map(Number);
+        const diffDays = Math.round((Date.UTC(y1, m1 - 1, d1) - Date.UTC(y2, m2 - 1, d2)) / 86400000);
+
+        if (diffDays === 1) {
+          this.data.profile.streak = (this.data.profile.streak || 0) + 1;
+        } else {
+          this.data.profile.streak = 1;
+        }
       }
       this.data.profile.lastStudyDate = today;
+      this.save();
     }
   }
 
@@ -481,22 +502,29 @@ class Store {
       } else if (card.repetitions === 1) {
         card.interval = 6;
       } else {
-        card.interval = Math.round(card.interval * card.easeFactor);
+        card.interval = Math.max(1, Math.round(card.interval * (card.easeFactor || 2.5)));
       }
       card.repetitions += 1;
     }
 
     // Calcula novo Ease Factor (Fórmula SuperMemo SM-2)
-    card.easeFactor = Math.max(1.3, card.easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+    const currentEf = card.easeFactor || 2.5;
+    const newEf = currentEf + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    card.easeFactor = Number(Math.max(1.3, newEf).toFixed(2));
 
     // Define nova data de revisão
     const nextDate = new Date();
-    nextDate.setDate(nextDate.getDate() + card.interval);
+    nextDate.setDate(nextDate.getDate() + (quality < 3 ? 0 : card.interval));
     card.dueDate = nextDate.toISOString().split("T")[0];
 
     this.addXP(10, "Flashcard Revisado");
     this.checkBadges();
     this.notify("flashcard_reviewed", card);
+
+    if (typeof db !== "undefined" && db.saveFlashcardToCloud) {
+      db.saveFlashcardToCloud(card);
+    }
+
     return card;
   }
 
@@ -758,6 +786,9 @@ class Store {
   importBackup(jsonString) {
     try {
       const parsed = JSON.parse(jsonString);
+      if (!parsed || typeof parsed !== "object" || !parsed.profile || !Array.isArray(parsed.concursos)) {
+        throw new Error("Formato de arquivo JSON incompatível com o sistema.");
+      }
       this.data = this.sanitizeState(parsed);
       this.save();
       this.notify("data_imported");

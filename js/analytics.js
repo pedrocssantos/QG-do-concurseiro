@@ -202,11 +202,12 @@ class PapiroCharts {
     }
 
     // Texto no Centro
+    const totalHours = (total / 60).toFixed(1);
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 16px Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(centerText || `${Math.round(total / 60)}h Total`, centerX, centerY - 6);
+    ctx.fillText(centerText || `${totalHours}h Total`, centerX, centerY - 6);
 
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
     ctx.font = "11px Inter, sans-serif";
@@ -220,7 +221,14 @@ class PapiroCharts {
     const { ctx, width, height } = this.setupCanvas(canvas);
 
     ctx.clearRect(0, 0, width, height);
-    if (!items || items.length < 3) return;
+    if (!items || items.length < 3) {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.font = "12px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Cadastre ao menos 3 matérias para o radar", width / 2, height / 2);
+      return;
+    }
 
     const centerX = width / 2;
     const centerY = height / 2;

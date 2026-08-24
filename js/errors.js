@@ -6,11 +6,15 @@ class CadernoErrosManager {
   constructor() {
     this.filterReason = "all";
     this.filterStatus = "all"; // all, pending, resolved
+    this.eventsBound = false;
   }
 
   init() {
     this.renderErrorsList();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   renderErrorsList() {

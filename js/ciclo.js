@@ -3,12 +3,17 @@
 // ==========================================================================
 
 class CicloManager {
-  constructor() {}
+  constructor() {
+    this.eventsBound = false;
+  }
 
   init() {
     this.renderCicloVisual();
     this.renderWeeklyPlanner();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   renderCicloVisual() {

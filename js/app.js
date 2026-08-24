@@ -299,7 +299,8 @@ class App {
     const m = document.getElementById("modal-new-concurso");
     if (m) m.classList.add("hidden");
 
-    dashboardManager.init();
+    dashboardManager.renderHeaderInfo();
+    this.activateViewModule(this.currentRoute);
     showToast(`Concurso "${shortTitle}" criado e ativado!`, "success");
   }
 
@@ -315,14 +316,21 @@ class App {
       return;
     }
 
+    const activeConcurso = store.getActiveConcurso();
+    const matchedDisc = (activeConcurso.disciplinas || []).find(d => 
+      d.name.toLowerCase().includes(disciplinaName.toLowerCase()) || 
+      disciplinaName.toLowerCase().includes(d.name.toLowerCase())
+    );
+    const discId = matchedDisc ? matchedDisc.id : (activeConcurso.disciplinas?.[0]?.id || `disc-custom-${Date.now()}`);
+
     store.addQuestion({
-      disciplinaId: "pf-port",
+      disciplinaId: discId,
       disciplinaName,
       assunto,
-      banca: "Cebraspe",
-      orgao: "Simulado",
-      cargo: "Concurso",
-      ano: 2026,
+      banca: activeConcurso.banca || "Cebraspe",
+      orgao: activeConcurso.shortTitle || "Concurso",
+      cargo: "Policial",
+      ano: new Date().getFullYear(),
       tipo: "certo_errado",
       enunciado,
       alternativas: [

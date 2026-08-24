@@ -177,12 +177,16 @@ class PomodoroController {
     this.selectedTopicoId = null;
     this.sessionType = "teoria"; // teoria, questoes, revisao
     this.isZenMode = false;
+    this.eventsBound = false;
   }
 
   init() {
     this.updateSubjectDropdown();
     this.render();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   updateSubjectDropdown() {
@@ -246,7 +250,7 @@ class PomodoroController {
   }
 
   setMode(mode) {
-    if (this.state === "running") {
+    if (this.state === "running" || this.state === "break") {
       if (!confirm("O cronômetro está rodando. Deseja reiniciar no novo modo?")) return;
     }
     this.reset();
@@ -262,22 +266,23 @@ class PomodoroController {
     this.render();
   }
 
-  start() {
-    if (this.state === "running") return;
+  start(isBreak = false) {
+    if (this.state === "running" && !isBreak) return;
     audio.initContext();
 
     const soundSelect = document.getElementById("pomo-sound-select");
-    if (soundSelect && soundSelect.value !== "none") {
+    if (soundSelect && soundSelect.value !== "none" && !isBreak) {
       audio.startAmbientNoise(soundSelect.value);
     }
 
-    this.state = "running";
+    this.state = isBreak ? "break" : "running";
+    if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = setInterval(() => this.tick(), 1000);
     this.renderControls();
   }
 
   pause() {
-    if (this.state !== "running") return;
+    if (this.state !== "running" && this.state !== "break") return;
     clearInterval(this.timerInterval);
     this.state = "paused";
     audio.stopAmbientNoise();
@@ -291,7 +296,9 @@ class PomodoroController {
     } else {
       if (this.secondsRemaining > 0) {
         this.secondsRemaining--;
-        this.totalSessionSeconds++;
+        if (this.state !== "break") {
+          this.totalSessionSeconds++;
+        }
       } else {
         this.completeInterval();
       }
@@ -314,16 +321,17 @@ class PomodoroController {
         this.secondsRemaining = this.mode === "pomodoro_25" ? 5 * 60 : 10 * 60;
         this.totalSessionSeconds = 0;
         showToast("Intervalo merecido! Descanse a mente por alguns minutos.", "info");
-        this.start(); // Inicia o intervalo automaticamente
+        this.start(true); // Inicia o intervalo de descanso
       } else {
         this.reset();
       }
     } else if (this.state === "break") {
       this.state = "idle";
-      this.reset();
+      this.totalSessionSeconds = 0;
+      this.secondsRemaining = this.mode === "pomodoro_25" ? 25 * 60 : 50 * 60;
       showToast("Pausa concluída! Pronto para o próximo bloco de papiro?", "success");
+      this.render();
     }
-    this.render();
   }
 
   reset() {

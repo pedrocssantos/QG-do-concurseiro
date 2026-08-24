@@ -5,12 +5,16 @@
 class EditalManager {
   constructor() {
     this.selectedDisciplinaId = null;
+    this.eventsBound = false;
   }
 
   init() {
     this.renderHeader();
     this.renderDisciplinasList();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   renderHeader() {
@@ -255,6 +259,9 @@ class EditalManager {
 
     this.renderDisciplinasList();
     this.renderHeader();
+    if (this.selectedDisciplinaId) {
+      this.toggleAccordion(this.selectedDisciplinaId);
+    }
     showToast("Novo tópico adicionado ao seu edital!", "success");
   }
 

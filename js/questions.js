@@ -18,12 +18,16 @@ class QuestionsManager {
       status: "all", // all, nao_feitas, erradas
       search: ""
     };
+    this.eventsBound = false;
   }
 
   init() {
     this.populateFilterDropdowns();
     this.applyFilters();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   populateFilterDropdowns() {
@@ -387,6 +391,9 @@ class QuestionsManager {
       netScore,
       accuracy
     });
+
+    // Restaura o banco de questões completo
+    this.applyFilters();
   }
 
   showSimuladoResultModal(stats) {

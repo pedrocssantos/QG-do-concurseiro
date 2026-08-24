@@ -3,7 +3,9 @@
 // ==========================================================================
 
 class DashboardManager {
-  constructor() {}
+  constructor() {
+    this.eventsBound = false;
+  }
 
   init() {
     this.renderHeaderInfo();
@@ -11,7 +13,10 @@ class DashboardManager {
     this.renderDailyMissions();
     this.renderCharts();
     this.renderMotivationalQuote();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   renderHeaderInfo() {

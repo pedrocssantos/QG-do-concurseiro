@@ -8,12 +8,16 @@ class FlashcardsManager {
     this.dueCards = [];
     this.currentIndex = 0;
     this.isFlipped = false;
+    this.eventsBound = false;
   }
 
   init() {
     this.renderDeckSelector();
     this.loadCards();
-    this.bindEvents();
+    if (!this.eventsBound) {
+      this.bindEvents();
+      this.eventsBound = true;
+    }
   }
 
   renderDeckSelector() {
