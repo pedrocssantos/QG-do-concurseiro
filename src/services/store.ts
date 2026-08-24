@@ -670,6 +670,10 @@ class Store {
     return card;
   }
 
+  updateFlashcardSM2(cardId, quality) {
+    return this.reviewFlashcard(cardId, quality);
+  }
+
   deleteFlashcard(cardId) {
     this.data.flashcards = this.data.flashcards.filter(c => c.id !== cardId);
     this.notify("flashcard_deleted", cardId);

@@ -132,26 +132,54 @@ const selectedDeckId = ref<string>('all');
 const currentIndex = ref<number>(0);
 const isFlipped = ref<boolean>(false);
 const showAllCardsMode = ref<boolean>(false);
+const storeVersion = ref<number>(0);
 
 // Concurso ativo e disciplinas
-const activeConcurso = computed(() => store.getActiveConcurso());
-
-const decks = computed(() => {
-  const disciplinas = activeConcurso.value?.disciplinas || [];
-  const cards = store.data?.flashcards || [];
-
-  return disciplinas.map(d => ({
-    id: d.id,
-    name: d.name,
-    icon: d.icon,
-    count: cards.filter(c => c.disciplinaId === d.id).length
-  }));
+const activeConcurso = computed(() => {
+  storeVersion.value;
+  return store.getActiveConcurso();
 });
 
-const totalCardsCount = computed(() => (store.data?.flashcards || []).length);
+const decks = computed(() => {
+  storeVersion.value;
+  const cards: any[] = store.data?.flashcards || [];
+  const activeDisc = activeConcurso.value?.disciplinas || [];
+
+  const deckMap = new Map<string, { id: string; name: string; icon: string; count: number }>();
+
+  // 1. Adiciona as matérias do concurso ativo
+  activeDisc.forEach(d => {
+    deckMap.set(d.id, {
+      id: d.id,
+      name: d.name,
+      icon: d.icon || 'fa-book',
+      count: cards.filter(c => c.disciplinaId === d.id).length
+    });
+  });
+
+  // 2. Adiciona outros decks com cards cadastrados
+  cards.forEach(c => {
+    if (!deckMap.has(c.disciplinaId)) {
+      deckMap.set(c.disciplinaId, {
+        id: c.disciplinaId,
+        name: c.disciplinaName || c.disciplinaId,
+        icon: 'fa-book',
+        count: 1
+      });
+    }
+  });
+
+  return Array.from(deckMap.values());
+});
+
+const totalCardsCount = computed(() => {
+  storeVersion.value;
+  return (store.data?.flashcards || []).length;
+});
 
 // Cards filtrados por deck e agendamento
 const activeDeckCards = computed(() => {
+  storeVersion.value;
   const cards: Flashcard[] = store.data?.flashcards || [];
   const today = store.getLocalDateString();
 
@@ -177,7 +205,7 @@ const currentCard = computed<Flashcard | null>(() => {
 const currentDeckName = computed(() => {
   if (!currentCard.value) return 'Geral';
   const d = (activeConcurso.value?.disciplinas || []).find(disc => disc.id === currentCard.value?.disciplinaId);
-  return d ? d.name : 'Geral';
+  return d ? d.name : (currentCard.value?.disciplinaId || 'Geral');
 });
 
 function selectDeck(deckId: string) {
@@ -201,11 +229,7 @@ function rateCard(quality: number) {
   if (!currentCard.value) return;
 
   const cardId = currentCard.value.id;
-  store.updateFlashcardSM2(cardId, quality);
-
-  // Recompensa XP
-  const xp = quality >= 3 ? 15 : 5;
-  store.addXP(xp, `Flashcard revisado (+${xp} XP)`);
+  store.reviewFlashcard(cardId, quality);
 
   isFlipped.value = false;
 
@@ -253,12 +277,18 @@ function handleKeydown(e: KeyboardEvent) {
   }
 }
 
+let unsubscribeStore: (() => void) | null = null;
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
+  unsubscribeStore = store.subscribe(() => {
+    storeVersion.value++;
+  });
 });
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
+  if (unsubscribeStore) unsubscribeStore();
 });
 </script>
 
