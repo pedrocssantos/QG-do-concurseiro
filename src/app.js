@@ -45,14 +45,12 @@ class App {
     this.handleRoute();
     this.listenToStore();
 
-    // Se não autenticado, bloqueia a interface exigindo login
-    setTimeout(() => {
-      if (typeof db !== "undefined" && !db.isAuthenticated()) {
-        openAuthModal("login", true);
-      } else if (!store.data.profile.onboardingCompleted) {
+    // Exibe onboarding se for a primeira vez do usuário (login opcional)
+    if (!store.data.profile.onboardingCompleted) {
+      setTimeout(() => {
         this.openOnboardingModal();
-      }
-    }, 200);
+      }, 300);
+    }
 
     window.addEventListener("hashchange", () => this.handleRoute());
     window.addEventListener("resize", () => {
@@ -127,13 +125,7 @@ class App {
 
   handleRoute() {
     const rawHash = window.location.hash.replace("#", "").trim();
-    const isAuth = typeof db !== "undefined" ? db.isAuthenticated() : true;
-    let route = this.routes.includes(rawHash) ? rawHash : "dashboard";
-    
-    if (!isAuth && route !== "landing") {
-      openAuthModal("login", true);
-    }
-
+    const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
     this.currentRoute = route;
 
     // Atualiza links da barra de navegação
@@ -319,9 +311,6 @@ class App {
     document.querySelectorAll(".modal-overlay").forEach(overlay => {
       overlay.addEventListener("click", (e) => {
         if (e.target === overlay) {
-          if (overlay.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) {
-            return; // Bloqueia fechamento ao clicar fora se não autenticado
-          }
           overlay.classList.add("hidden");
         }
       });
@@ -330,23 +319,14 @@ class App {
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const modal = btn.closest(".modal-overlay");
-        if (modal) {
-          if (modal.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) {
-            showToast("Faça login ou crie sua conta para acessar o QG do Concurseiro.", "warning");
-            return;
-          }
-          modal.classList.add("hidden");
-        }
+        if (modal) modal.classList.add("hidden");
       });
     });
 
     // Fechamento de qualquer modal ou tela zen com a tecla Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => {
-          if (m.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) return;
-          m.classList.add("hidden");
-        });
+        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => m.classList.add("hidden"));
         const zenOverlay = document.getElementById("zen-mode-overlay");
         if (zenOverlay && !zenOverlay.classList.contains("hidden")) {
           if (typeof pomodoroManager !== "undefined" && pomodoroManager.toggleZenMode) {
@@ -751,15 +731,10 @@ function showToast(message, type = "info") {
 // Auth Modal & Upgrade Modal Helpers
 let currentAuthTab = "login";
 
-function openAuthModal(tab = "login", isForced = false) {
+function openAuthModal(tab = "login") {
   const modal = document.getElementById("modal-auth");
   if (modal) {
     switchAuthTab(tab);
-    const closeBtn = modal.querySelector(".modal-close-btn");
-    const isAuth = typeof db !== "undefined" && db.isAuthenticated();
-    if (closeBtn) {
-      closeBtn.style.display = (!isAuth || isForced) ? "none" : "flex";
-    }
     modal.classList.remove("hidden");
   }
 }

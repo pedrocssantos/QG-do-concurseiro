@@ -318,19 +318,23 @@ class SupabaseService {
       const modal = document.getElementById("modal-auth");
       if (modal) modal.classList.add("hidden");
     } else {
+      const localName = (typeof store !== "undefined" && store.data?.profile?.name) || "Concurseiro(a)";
       if (authBtn) {
         authBtn.innerHTML = `<i class="fa-solid fa-user"></i> Entrar`;
         authBtn.className = "btn btn-primary btn-sm";
         authBtn.onclick = () => {
-          if (typeof openAuthModal === "function") openAuthModal("login", true);
+          if (typeof openAuthModal === "function") openAuthModal("login");
         };
       }
-      if (planBadge) {
-        planBadge.innerHTML = `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
+      if (userAvatar) {
+        userAvatar.textContent = localName.substring(0, 2).toUpperCase();
       }
-      // Força o bloqueio de tela exigindo autenticação
-      if (typeof openAuthModal === "function") {
-        openAuthModal("login", true);
+      if (userNameEl) userNameEl.textContent = localName;
+      if (userRankEl) userRankEl.textContent = isPro ? "⭐ Assinante PRO" : (typeof store !== "undefined" ? store.getRankTitle(store.data?.profile?.level || 1) : "Recruta");
+      if (planBadge) {
+        planBadge.innerHTML = isPro
+          ? `<span class="badge-plan-pro"><i class="fa-solid fa-crown"></i> PRO</span>`
+          : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
       }
     }
   }
