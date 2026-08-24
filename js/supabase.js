@@ -277,6 +277,10 @@ class SupabaseService {
     return this.profile && (this.profile.plan_tier === "pro" || this.profile.plan_tier === "vip");
   }
 
+  isAuthenticated() {
+    return !!(this.currentUser || (typeof store !== "undefined" && store.data && store.data.profile && store.data.profile.isLoggedIn));
+  }
+
   updateAuthUI() {
     const authBtn = document.getElementById("header-auth-btn");
     const userAvatar = document.getElementById("user-avatar-text");
@@ -284,9 +288,10 @@ class SupabaseService {
     const userRankEl = document.getElementById("dash-user-rank");
     const planBadge = document.getElementById("header-plan-badge");
     const isPro = this.isProUser();
+    const isAuth = this.isAuthenticated();
 
-    if (this.currentUser) {
-      const name = this.profile?.name || this.currentUser.user_metadata?.name || "Guerreiro";
+    if (isAuth) {
+      const name = this.profile?.name || this.currentUser?.user_metadata?.name || store.data.profile?.name || "Concurseiro";
 
       if (authBtn) {
         authBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Sair`;
@@ -298,25 +303,49 @@ class SupabaseService {
         userAvatar.textContent = name.substring(0, 2).toUpperCase();
       }
       if (userNameEl) userNameEl.textContent = name;
-      if (userRankEl) userRankEl.textContent = isPro ? "⭐ Assinante PRO" : "Plano Gratuito";
+      if (userRankEl) userRankEl.textContent = isPro ? "⭐ Assinante PRO" : (typeof store !== "undefined" ? store.getRankTitle(store.data.profile?.level || 1) : "Recruta");
 
       if (planBadge) {
         planBadge.innerHTML = isPro 
           ? `<span class="badge-plan-pro"><i class="fa-solid fa-crown"></i> PRO</span>`
           : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
       }
+
+      // Desbloqueia e fecha o modal de login
+      const modal = document.getElementById("modal-auth");
+      if (modal) modal.classList.add("hidden");
     } else {
       if (authBtn) {
         authBtn.innerHTML = `<i class="fa-solid fa-user"></i> Entrar`;
         authBtn.className = "btn btn-primary btn-sm";
-        authBtn.onclick = () => openAuthModal();
+        authBtn.onclick = () => {
+          if (typeof openAuthModal === "function") openAuthModal("login", true);
+        };
       }
       if (planBadge) {
-        planBadge.innerHTML = isPro
-          ? `<span class="badge-plan-pro"><i class="fa-solid fa-crown"></i> PRO</span>`
-          : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
+        planBadge.innerHTML = `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
+      }
+      // Força o bloqueio de tela exigindo autenticação
+      if (typeof openAuthModal === "function") {
+        openAuthModal("login", true);
       }
     }
+  }
+
+  async signOut() {
+    if (this.client) {
+      try {
+        await this.client.auth.signOut();
+      } catch (e) {}
+    }
+    this.currentUser = null;
+    this.profile = null;
+    if (typeof store !== "undefined" && store.data && store.data.profile) {
+      store.data.profile.isLoggedIn = false;
+      store.save();
+    }
+    this.updateAuthUI();
+    showToast("Você saiu da sua conta. Faça login novamente para acessar.", "info");
   }
 }
 

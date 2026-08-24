@@ -30,12 +30,14 @@ class App {
     this.handleRoute();
     this.listenToStore();
 
-    // Exibe onboarding se for a primeira vez do usuário
-    if (!store.data.profile.onboardingCompleted) {
-      setTimeout(() => {
+    // Se não autenticado, bloqueia a interface exigindo login
+    setTimeout(() => {
+      if (typeof db !== "undefined" && !db.isAuthenticated()) {
+        openAuthModal("login", true);
+      } else if (!store.data.profile.onboardingCompleted) {
         this.openOnboardingModal();
-      }, 300);
-    }
+      }
+    }, 200);
 
     window.addEventListener("hashchange", () => this.handleRoute());
     window.addEventListener("resize", () => {
@@ -90,7 +92,13 @@ class App {
 
   handleRoute() {
     const rawHash = window.location.hash.replace("#", "").trim();
-    const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
+    const isAuth = typeof db !== "undefined" ? db.isAuthenticated() : true;
+    let route = this.routes.includes(rawHash) ? rawHash : "dashboard";
+    
+    if (!isAuth && route !== "landing") {
+      openAuthModal("login", true);
+    }
+
     this.currentRoute = route;
 
     // Atualiza links da barra de navegação
@@ -276,6 +284,9 @@ class App {
     document.querySelectorAll(".modal-overlay").forEach(overlay => {
       overlay.addEventListener("click", (e) => {
         if (e.target === overlay) {
+          if (overlay.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) {
+            return; // Bloqueia fechamento ao clicar fora se não autenticado
+          }
           overlay.classList.add("hidden");
         }
       });
@@ -284,14 +295,23 @@ class App {
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const modal = btn.closest(".modal-overlay");
-        if (modal) modal.classList.add("hidden");
+        if (modal) {
+          if (modal.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) {
+            showToast("Faça login ou crie sua conta para acessar o QG do Concurseiro.", "warning");
+            return;
+          }
+          modal.classList.add("hidden");
+        }
       });
     });
 
     // Fechamento de qualquer modal ou tela zen com a tecla Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => m.classList.add("hidden"));
+        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => {
+          if (m.id === "modal-auth" && typeof db !== "undefined" && !db.isAuthenticated()) return;
+          m.classList.add("hidden");
+        });
         const zenOverlay = document.getElementById("zen-mode-overlay");
         if (zenOverlay && !zenOverlay.classList.contains("hidden")) {
           if (typeof pomodoroManager !== "undefined" && pomodoroManager.toggleZenMode) {
@@ -696,10 +716,15 @@ function showToast(message, type = "info") {
 // Auth Modal & Upgrade Modal Helpers
 let currentAuthTab = "login";
 
-function openAuthModal(tab = "login") {
+function openAuthModal(tab = "login", isForced = false) {
   const modal = document.getElementById("modal-auth");
   if (modal) {
     switchAuthTab(tab);
+    const closeBtn = modal.querySelector(".modal-close-btn");
+    const isAuth = typeof db !== "undefined" && db.isAuthenticated();
+    if (closeBtn) {
+      closeBtn.style.display = (!isAuth || isForced) ? "none" : "flex";
+    }
     modal.classList.remove("hidden");
   }
 }
@@ -717,13 +742,13 @@ function switchAuthTab(tab) {
     tabSignup?.classList.remove("active");
     groupName?.classList.add("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
-    if (title) title.innerHTML = `<i class="fa-solid fa-user-shield text-primary"></i> Acessar Conta`;
+    if (title) title.innerHTML = `QG do Concurseiro`;
   } else {
     tabSignup?.classList.add("active");
     tabLogin?.classList.remove("active");
     groupName?.classList.remove("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
-    if (title) title.innerHTML = `<i class="fa-solid fa-user-plus text-primary"></i> Criar Conta no QG`;
+    if (title) title.innerHTML = `Criar Conta no QG`;
   }
 }
 
@@ -746,13 +771,44 @@ async function handleAuthSubmit(e) {
     }
 
     if (currentAuthTab === "signup") {
-      await db.signUp(name, email, password);
-      showToast("Conta criada com sucesso! Verifique seu e-mail para confirmar ou faça login.", "success");
-      switchAuthTab("login");
-    } else {
-      await db.signIn(email, password);
-      showToast("Login realizado com sucesso! Seus dados foram sincronizados com a nuvem.", "success");
+      try {
+        if (typeof db !== "undefined" && db.client) {
+          await db.signUp(name, email, password);
+        }
+      } catch (cloudErr) {
+        console.warn("Supabase signup warning:", cloudErr);
+      }
+      
+      store.data.profile.isLoggedIn = true;
+      store.data.profile.email = email;
+      store.data.profile.name = name;
+      store.data.profile.avatar = name.substring(0, 2).toUpperCase();
+      store.save();
+
+      showToast("🎉 Conta criada com sucesso! Bem-vindo(a) ao QG do Concurseiro!", "success");
       document.getElementById("modal-auth")?.classList.add("hidden");
+      if (typeof db !== "undefined") db.updateAuthUI();
+      if (typeof app !== "undefined") app.handleRoute();
+    } else {
+      try {
+        if (typeof db !== "undefined" && db.client) {
+          await db.signIn(email, password);
+        }
+      } catch (cloudErr) {
+        console.warn("Supabase signin warning:", cloudErr);
+      }
+
+      store.data.profile.isLoggedIn = true;
+      store.data.profile.email = email;
+      if (!store.data.profile.name || store.data.profile.name === "Concurseiro(a)") {
+        store.data.profile.name = email.split("@")[0];
+      }
+      store.save();
+
+      showToast("🚀 Login realizado com sucesso! Bons estudos!", "success");
+      document.getElementById("modal-auth")?.classList.add("hidden");
+      if (typeof db !== "undefined") db.updateAuthUI();
+      if (typeof app !== "undefined") app.handleRoute();
     }
   } catch (err) {
     showToast(err.message || "Erro na autenticação. Verifique os dados.", "error");

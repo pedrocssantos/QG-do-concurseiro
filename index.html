@@ -1633,16 +1633,20 @@
     </div>
   </div>
 
-  <!-- Modal: Autenticação (Login e Cadastro) -->
-  <div class="modal-overlay hidden" id="modal-auth" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-    <div class="modal-box" style="max-width: 440px;">
-      <div class="modal-header">
-        <h3 id="auth-modal-title"><i class="fa-solid fa-user-shield text-primary"></i> Acessar Conta</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+  <!-- Modal: Autenticação (Login e Cadastro Obrigatório) -->
+  <div class="modal-overlay hidden" id="modal-auth" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" style="backdrop-filter: blur(8px); background: rgba(5, 16, 20, 0.85); z-index: 9999;">
+    <div class="modal-box" style="max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color-light); position: relative;">
+      <div class="modal-header" style="flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 24px 20px 14px; position: relative;">
+        <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--color-primary-tint); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 4px;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 id="auth-modal-title" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">QG do Concurseiro</h3>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Faça login ou crie sua conta para acessar a plataforma.</p>
+        <button class="modal-close-btn" aria-label="Fechar janela" style="position: absolute; top: 14px; right: 14px;">&times;</button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="padding: 10px 20px 24px;">
         <!-- Abas Login / Cadastro -->
-        <div class="auth-tabs-row" style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <div class="auth-tabs-row" style="display: flex; gap: 8px; margin-bottom: 18px;">
           <button class="btn btn-secondary btn-sm active" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1;">Entrar</button>
           <button class="btn btn-secondary btn-sm" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1;">Criar Conta</button>
         </div>
@@ -1660,7 +1664,7 @@
             <label for="auth-password">Senha:</label>
             <input type="password" class="form-input" id="auth-password" placeholder="Sua senha secreta (min. 6 dígitos)" minlength="6" required>
           </div>
-          <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 10px;">
+          <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 14px;">
             <i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma
           </button>
         </form>
