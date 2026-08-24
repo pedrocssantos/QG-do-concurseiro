@@ -66,6 +66,12 @@ class FlashcardsManager {
     });
   }
 
+  selectDeck(deckId) {
+    this.currentDeckId = deckId;
+    this.renderDeckSelector();
+    this.loadCards();
+  }
+
   loadCards() {
     const today = new Date().toISOString().split("T")[0];
     const all = store.data.flashcards;

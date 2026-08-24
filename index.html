@@ -187,6 +187,31 @@
           </div>
         </div>
 
+        <!-- Painel de Telemetria Tática: Alertas & Revisões Pendentes -->
+        <div class="dash-alerts-grid">
+          <!-- Card de Alertas & Telemetria Tática -->
+          <div class="card" id="dash-insights-card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-radar text-warning"></i> Telemetria & Alertas Táticos</h3>
+              <span class="badge badge-warning" id="dash-insights-badge">3 Alertas</span>
+            </div>
+            <div class="card-body" id="dash-insights-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Gerado dinamicamente via dashboardManager -->
+            </div>
+          </div>
+
+          <!-- Card de Revisões & Memória (SRS + R24h/R7d/R30d) -->
+          <div class="card" id="dash-revisoes-card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Revisões Pendentes Hoje</h3>
+              <span class="badge badge-primary" id="dash-revisoes-badge">0 Pendências</span>
+            </div>
+            <div class="card-body" id="dash-revisoes-content" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Gerado dinamicamente via dashboardManager -->
+            </div>
+          </div>
+        </div>
+
         <!-- Missões Diárias + Frase -->
         <div class="dash-main-grid">
           <div class="card">
@@ -1146,6 +1171,105 @@
       <div class="modal-footer">
         <button class="btn btn-secondary modal-close-btn">Cancelar</button>
         <button class="btn btn-primary" id="btn-save-new-question">Salvar Questão</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Configuração do Simulado Customizado -->
+  <div class="modal-overlay hidden" id="modal-config-simulado">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-stopwatch text-warning"></i> Configurar Simulado Cronometrado</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+          Personalize as condições de prova para simular o ambiente real do seu concurso.
+        </p>
+
+        <div class="form-group">
+          <label>Quantidade de Questões:</label>
+          <div class="simulado-options-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            <button type="button" class="btn btn-primary btn-sm sim-btn-count active" data-count="10">10 Itens</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-count" data-count="20">20 Itens</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-count" data-count="30">30 Itens</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-count" data-count="60">60 Itens</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tempo Limite de Prova:</label>
+          <div class="simulado-options-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+            <button type="button" class="btn btn-primary btn-sm sim-btn-time active" data-time="30">30 Min</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-time" data-time="60">1 Hora</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-time" data-time="120">2 Horas</button>
+            <button type="button" class="btn btn-secondary btn-sm sim-btn-time" data-time="240">4 Horas</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sim-scoring-model">Modelo de Avaliação:</label>
+          <select class="form-select" id="sim-scoring-model">
+            <option value="cespe">Padrão Cebraspe (1 Errada Anula 1 Certa - Nota Líquida)</option>
+            <option value="standard">Padrão Tradicional (Pontuação Simples sem penalidade)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="margin-bottom: 0;">Disciplinas Inclusas:</label>
+            <button type="button" class="btn btn-secondary btn-xs" id="sim-select-all-disciplinas" style="font-size: 0.72rem; padding: 2px 8px;">Selecionar Todas</button>
+          </div>
+          <div id="sim-disciplinas-checkboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 150px; overflow-y: auto; background: var(--bg-surface-inset); padding: 10px; border-radius: var(--radius-xs); border: 1px solid var(--border-color);">
+            <!-- Checkboxes gerados dinamicamente com base nas matérias -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-confirm-start-simulado">
+          <i class="fa-solid fa-play"></i> Iniciar Prova
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Conclusão de Sessão & Próximo Passo Tático -->
+  <div class="modal-overlay hidden" id="modal-post-pomodoro">
+    <div class="modal-box" style="text-align: center; max-width: 520px;">
+      <div class="modal-header" style="justify-content: center;">
+        <h3><i class="fa-solid fa-circle-check text-success"></i> SESSÃO DE ESTUDO CONCLUÍDA!</h3>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <div style="font-size: 2.8rem; margin-bottom: 8px;">⚔️</div>
+        <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);" id="post-pomo-title">Excelente Combate!</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 8px 0 20px;" id="post-pomo-summary">
+          Você cumpriu <strong id="post-pomo-minutes" class="text-primary">25 minutos</strong> de teoria em <strong id="post-pomo-disc" class="text-warning">Direito Administrativo</strong>.
+        </p>
+
+        <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px; text-align: left;">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-warning); font-weight: 700; text-transform: uppercase;">Próxima Ação Tática Recomendada:</span>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
+            A neurociência comprova: resolver questões ou revisar flashcards imediatamente após a teoria fixa até 300% mais o conteúdo.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn btn-primary" id="post-pomo-btn-questoes" style="justify-content: center;">
+            <i class="fa-solid fa-bullseye"></i> Praticar Questões Desta Matéria
+          </button>
+          <button class="btn btn-secondary" id="post-pomo-btn-flashcards" style="justify-content: center;">
+            <i class="fa-solid fa-layer-group"></i> Revisar Flashcards Desta Matéria
+          </button>
+          <div style="display: flex; gap: 10px; margin-top: 6px;">
+            <button class="btn btn-secondary btn-sm" id="post-pomo-btn-intervalo" style="flex: 1; justify-content: center;">
+              <i class="fa-solid fa-mug-hot"></i> Iniciar Descanso
+            </button>
+            <button class="btn btn-secondary btn-sm modal-close-btn" style="flex: 1; justify-content: center;">
+              <i class="fa-solid fa-house"></i> Voltar ao QG
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

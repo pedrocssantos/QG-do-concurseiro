@@ -371,6 +371,65 @@ class PomodoroController {
     });
 
     showToast(`+${minutes * 2} XP! Sessão de ${minutes} min computada com sucesso! 🔥`, "success");
+    this.showPostSessionModal(minutes, this.selectedDisciplinaId);
+  }
+
+  showPostSessionModal(minutes, disciplinaId) {
+    const modal = document.getElementById("modal-post-pomodoro");
+    if (!modal) return;
+
+    const concurso = store.getActiveConcurso();
+    const disc = (concurso.disciplinas || []).find(d => d.id === disciplinaId);
+    const discName = disc ? disc.name : "Matéria de Estudo";
+
+    const discEl = document.getElementById("post-pomo-disc");
+    const minsEl = document.getElementById("post-pomo-minutes");
+
+    if (discEl) discEl.textContent = discName;
+    if (minsEl) minsEl.textContent = `${minutes} minutos`;
+
+    modal.classList.remove("hidden");
+
+    // Botão Praticar Questões
+    const btnQuestoes = document.getElementById("post-pomo-btn-questoes");
+    if (btnQuestoes) {
+      btnQuestoes.onclick = () => {
+        modal.classList.add("hidden");
+        window.location.hash = "#questoes";
+        setTimeout(() => {
+          const filterSelect = document.getElementById("q-filter-disciplina");
+          if (filterSelect) {
+            filterSelect.value = disciplinaId;
+            questionsManager.applyFilters();
+          }
+          showToast(`Filtro tático: Questões de ${discName}!`, "info");
+        }, 150);
+      };
+    }
+
+    // Botão Revisar Flashcards
+    const btnCards = document.getElementById("post-pomo-btn-flashcards");
+    if (btnCards) {
+      btnCards.onclick = () => {
+        modal.classList.add("hidden");
+        window.location.hash = "#flashcards";
+        setTimeout(() => {
+          flashcardsManager.selectDeck(disciplinaId);
+          showToast(`Deck selecionado: Flashcards de ${discName}!`, "info");
+        }, 150);
+      };
+    }
+
+    // Botão Iniciar Descanso
+    const btnBreak = document.getElementById("post-pomo-btn-intervalo");
+    if (btnBreak) {
+      btnBreak.onclick = () => {
+        modal.classList.add("hidden");
+        this.state = "break";
+        this.secondsRemaining = 5 * 60;
+        this.start(true);
+      };
+    }
   }
 
   toggleZenMode(active) {

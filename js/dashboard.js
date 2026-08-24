@@ -10,6 +10,8 @@ class DashboardManager {
   init() {
     this.renderHeaderInfo();
     this.renderKPICards();
+    this.renderTacticalInsights();
+    this.renderPendingReviews();
     this.renderDailyMissions();
     this.renderCharts();
     this.renderMotivationalQuote();
@@ -17,6 +19,15 @@ class DashboardManager {
       this.bindEvents();
       this.eventsBound = true;
     }
+  }
+
+  getStreakTier(days) {
+    if (days >= 60) return { tier: 5, label: "Caveira Inquebrável (60+ Dias)", icon: "fa-skull-crossbones", class: "tier-5" };
+    if (days >= 30) return { tier: 4, label: "Chama Dourada de Elite (30+ Dias)", icon: "fa-fire-flame-curved", class: "tier-4" };
+    if (days >= 14) return { tier: 3, label: "Chama de Prata (14+ Dias)", icon: "fa-fire-flame-simple", class: "tier-3" };
+    if (days >= 7)  return { tier: 2, label: "Chama de Bronze (7+ Dias)", icon: "fa-fire", class: "tier-2" };
+    if (days >= 3)  return { tier: 1, label: "Faísca Operacional (3+ Dias)", icon: "fa-fire", class: "tier-1" };
+    return { tier: 0, label: "Sem Ofensiva Ativa", icon: "fa-fire", class: "tier-0" };
   }
 
   renderHeaderInfo() {
@@ -37,6 +48,19 @@ class DashboardManager {
     if (userLevelEl) userLevelEl.textContent = `Nível ${profile.level || 1}`;
     if (streakCountEl) streakCountEl.textContent = `${profile.streak || 0}`;
 
+    // Atualiza o visual progressivo do Streak (Chamas de Combate)
+    const streak = profile.streak || 0;
+    const streakInfo = this.getStreakTier(streak);
+    const streakPill = document.querySelector(".streak-pill");
+    if (streakPill) {
+      streakPill.className = `streak-pill ${streakInfo.class}`;
+      streakPill.title = `Ofensiva de Estudos: ${streakInfo.label}`;
+      const icon = streakPill.querySelector("i");
+      if (icon) {
+        icon.className = `fa-solid ${streakInfo.icon}`;
+      }
+    }
+
     // Atualiza perfil na barra lateral (Sidebar Footer)
     const sidebarAvatar = document.getElementById("user-avatar-text");
     const sidebarName = document.getElementById("user-profile-name");
@@ -56,6 +80,191 @@ class DashboardManager {
         concursoSelect.appendChild(opt);
       });
     }
+  }
+
+  renderTacticalInsights() {
+    const list = document.getElementById("dash-insights-list");
+    const badge = document.getElementById("dash-insights-badge");
+    if (!list) return;
+    list.innerHTML = "";
+
+    const concurso = store.getActiveConcurso();
+    const sessions = store.data.studySessions || [];
+    const questions = store.data.questionHistory || [];
+    const insights = [];
+
+    // 1. Contagem Regressiva para a Prova
+    if (concurso.targetDate) {
+      const target = new Date(concurso.targetDate);
+      const today = new Date();
+      const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+      if (diffDays > 0) {
+        insights.push({
+          type: diffDays < 30 ? "danger" : "info",
+          icon: "fa-hourglass-half",
+          title: `Contagem Regressiva: ${diffDays} Dias até a Prova`,
+          text: `Seu alvo (${concurso.shortTitle || concurso.title}) está se aproximando. Mantenha o padrão operacional nas horas líquidas!`
+        });
+      }
+    }
+
+    // 2. Análise de Disciplinas Negligenciadas
+    const now = Date.now();
+    (concurso.disciplinas || []).forEach(d => {
+      const discSessions = sessions.filter(s => s.disciplinaId === d.id);
+      if (discSessions.length === 0) {
+        insights.push({
+          type: "danger",
+          icon: "fa-triangle-exclamation",
+          title: `Disciplina sem Estudo: ${d.name}`,
+          text: `Você ainda não registrou horas em ${d.name} (Peso ${d.weight}). Inicie pelo menos 1 bloco de foco hoje!`
+        });
+      } else {
+        const lastSession = Math.max(...discSessions.map(s => s.timestamp || 0));
+        const daysSince = Math.floor((now - lastSession) / (1000 * 60 * 60 * 24));
+        if (daysSince >= 5) {
+          insights.push({
+            type: "danger",
+            icon: "fa-clock-rotate-left",
+            title: `Atenção: ${d.name} sem Estudo há ${daysSince} Dias`,
+            text: `A curva do esquecimento está agindo. Faça uma sessão de revisão rápida ou bateria de questões hoje.`
+          });
+        }
+      }
+    });
+
+    // 3. Análise de Aproveitamento por Disciplina
+    (concurso.disciplinas || []).forEach(d => {
+      const discQuestions = questions.filter(q => q.disciplinaId === d.id);
+      if (discQuestions.length >= 5) {
+        const correct = discQuestions.filter(q => q.isCorrect).length;
+        const acc = Math.round((correct / discQuestions.length) * 100);
+        if (acc < 70) {
+          insights.push({
+            type: "danger",
+            icon: "fa-shield-heart",
+            title: `Zona de Risco em ${d.name}: ${acc}% de Acertos`,
+            text: `Seu índice está abaixo do ponto de corte recomendado (70%+). Revise o Caderno de Erros desta matéria!`
+          });
+        } else if (acc >= 85 && discQuestions.length >= 10) {
+          insights.push({
+            type: "success",
+            icon: "fa-circle-check",
+            title: `Ponto Forte: ${d.name} com ${acc}% de Domínio!`,
+            text: `Excelente taxa de acerto em ${discQuestions.length} questões resolvidas. Continue na manutenção quinzenal.`
+          });
+        }
+      }
+    });
+
+    // Se não houver alertas críticos, dá um feedback positivo
+    if (insights.length === 0) {
+      insights.push({
+        type: "success",
+        icon: "fa-shield-halved",
+        title: "QG Operando em Alta Performance",
+        text: "Todas as disciplinas e matérias estão balanceadas. Siga firme no cumprimento do ciclo de estudos!"
+      });
+    }
+
+    if (badge) {
+      badge.textContent = `${insights.length} Alertas`;
+      badge.className = `badge ${insights.some(i => i.type === "danger") ? "badge-danger" : "badge-warning"}`;
+    }
+
+    insights.slice(0, 3).forEach(ins => {
+      const el = document.createElement("div");
+      el.className = `insight-item ${ins.type}`;
+      el.innerHTML = `
+        <div class="insight-icon text-${ins.type === 'danger' ? 'danger' : (ins.type === 'success' ? 'success' : 'primary')}">
+          <i class="fa-solid ${ins.icon}"></i>
+        </div>
+        <div class="insight-text">
+          <strong>${ins.title}</strong>
+          <p>${ins.text}</p>
+        </div>
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  renderPendingReviews() {
+    const content = document.getElementById("dash-revisoes-content");
+    const badge = document.getElementById("dash-revisoes-badge");
+    if (!content) return;
+    content.innerHTML = "";
+
+    const today = new Date().toISOString().split("T")[0];
+    const cards = store.data.flashcards || [];
+    const cardsDue = cards.filter(c => c.dueDate <= today);
+
+    const concurso = store.getActiveConcurso();
+    const pendingReviewTopics = [];
+
+    (concurso.disciplinas || []).forEach(d => {
+      (d.topicos || []).forEach(t => {
+        if (t.teoria && (!t.r24h || !t.r7d || !t.r30d)) {
+          let nextRev = !t.r24h ? "R24h" : (!t.r7d ? "R7d" : "R30d");
+          pendingReviewTopics.push({
+            disciplina: d.name,
+            disciplinaId: d.id,
+            topico: t.title,
+            topicoId: t.id,
+            revType: nextRev
+          });
+        }
+      });
+    });
+
+    const totalPending = cardsDue.length + pendingReviewTopics.length;
+
+    if (badge) {
+      badge.textContent = `${totalPending} Pendências`;
+      badge.className = `badge ${totalPending > 0 ? "badge-primary" : "badge-success"}`;
+    }
+
+    if (totalPending === 0) {
+      content.innerHTML = `
+        <div style="text-align: center; padding: 16px 0; color: var(--text-muted);">
+          <div style="font-size: 1.8rem; margin-bottom: 6px;">🛡️</div>
+          <strong style="color: var(--text-main); font-size: 0.9rem;">Todas as Revisões em Dia!</strong>
+          <p style="font-size: 0.8rem; margin-top: 4px;">Nenhum flashcard ou ciclo de revisão pendente para hoje.</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Card de Flashcards SRS se houver
+    if (cardsDue.length > 0) {
+      const item = document.createElement("div");
+      item.className = "revisao-item";
+      item.innerHTML = `
+        <div class="revisao-info">
+          <strong><i class="fa-solid fa-layer-group text-warning"></i> ${cardsDue.length} Flashcards SRS Vencidos</strong>
+          <span>Repetição Espaçada • SuperMemo SM-2</span>
+        </div>
+        <a href="#flashcards" class="btn btn-primary btn-xs" style="padding: 4px 10px; font-size: 0.75rem;">
+          Revisar <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      `;
+      content.appendChild(item);
+    }
+
+    // Até 2 tópicos prioritários de revisão
+    pendingReviewTopics.slice(0, 2).forEach(rev => {
+      const item = document.createElement("div");
+      item.className = "revisao-item";
+      item.innerHTML = `
+        <div class="revisao-info">
+          <strong><i class="fa-solid fa-book-bookmark text-primary"></i> ${rev.topico}</strong>
+          <span>${rev.disciplina} • Ciclo ${rev.revType}</span>
+        </div>
+        <a href="#edital" class="btn btn-secondary btn-xs" style="padding: 4px 10px; font-size: 0.75rem;">
+          Ver no Edital <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      `;
+      content.appendChild(item);
+    });
   }
 
   renderKPICards() {

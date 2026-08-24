@@ -78,6 +78,7 @@ class QuestionsManager {
 
     if (startSimuladoBtn) startSimuladoBtn.addEventListener("click", () => this.startSimuladoModal());
     if (finishSimuladoBtn) finishSimuladoBtn.addEventListener("click", () => this.finishSimulado());
+    this.bindSimuladoConfigHandlers();
   }
 
   applyFilters() {
@@ -278,21 +279,115 @@ class QuestionsManager {
 
   // ================= MODO SIMULADO CRONOMETRADO =================
   startSimuladoModal() {
-    const count = Math.min(10, store.data.questions.length);
-    if (confirm(`Iniciar Simulado Oficial de ${count} questões com tempo cronometrado de 30 minutos?`)) {
-      this.startSimulado(count, 30 * 60);
+    this.openSimuladoConfigModal();
+  }
+
+  openSimuladoConfigModal() {
+    const modal = document.getElementById("modal-config-simulado");
+    if (!modal) return;
+
+    // Popula checkboxes das disciplinas
+    const container = document.getElementById("sim-disciplinas-checkboxes");
+    const concurso = store.getActiveConcurso();
+
+    if (container) {
+      container.innerHTML = "";
+      (concurso.disciplinas || []).forEach(d => {
+        const item = document.createElement("label");
+        item.style.display = "flex";
+        item.style.alignItems = "center";
+        item.style.gap = "6px";
+        item.style.fontSize = "0.8rem";
+        item.style.cursor = "pointer";
+        item.innerHTML = `
+          <input type="checkbox" class="custom-chk-sm sim-disc-chk" value="${d.id}" checked>
+          <span>${d.name}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    modal.classList.remove("hidden");
+  }
+
+  bindSimuladoConfigHandlers() {
+    // Configura botões de quantidade de itens
+    document.querySelectorAll(".sim-btn-count").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".sim-btn-count").forEach(b => {
+          b.classList.remove("active", "btn-primary");
+          b.classList.add("btn-secondary");
+        });
+        btn.classList.remove("btn-secondary");
+        btn.classList.add("active", "btn-primary");
+      };
+    });
+
+    // Configura botões de tempo
+    document.querySelectorAll(".sim-btn-time").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".sim-btn-time").forEach(b => {
+          b.classList.remove("active", "btn-primary");
+          b.classList.add("btn-secondary");
+        });
+        btn.classList.remove("btn-secondary");
+        btn.classList.add("active", "btn-primary");
+      };
+    });
+
+    // Botão Selecionar Todas
+    const selectAllBtn = document.getElementById("sim-select-all-disciplinas");
+    if (selectAllBtn) {
+      selectAllBtn.onclick = () => {
+        const chks = document.querySelectorAll(".sim-disc-chk");
+        const allChecked = Array.from(chks).every(c => c.checked);
+        chks.forEach(c => c.checked = !allChecked);
+        selectAllBtn.textContent = allChecked ? "Selecionar Todas" : "Desmarcar Todas";
+      };
+    }
+
+    // Botão Iniciar Prova no Modal
+    const confirmBtn = document.getElementById("btn-confirm-start-simulado");
+    if (confirmBtn) {
+      confirmBtn.onclick = () => {
+        const activeCountBtn = document.querySelector(".sim-btn-count.active");
+        const count = activeCountBtn ? parseInt(activeCountBtn.dataset.count, 10) : 10;
+
+        const activeTimeBtn = document.querySelector(".sim-btn-time.active");
+        const minutes = activeTimeBtn ? parseInt(activeTimeBtn.dataset.time, 10) : 30;
+
+        const scoringModel = document.getElementById("sim-scoring-model")?.value || "cespe";
+
+        const selectedDiscIds = Array.from(document.querySelectorAll(".sim-disc-chk:checked")).map(c => c.value);
+
+        const modal = document.getElementById("modal-config-simulado");
+        if (modal) modal.classList.add("hidden");
+
+        this.startSimulado(count, minutes * 60, selectedDiscIds, scoringModel);
+      };
     }
   }
 
-  startSimulado(questionCount = 10, totalSeconds = 1800) {
+  startSimulado(questionCount = 10, totalSeconds = 1800, selectedDiscIds = [], scoringModel = "cespe") {
     this.simuladoMode = true;
     this.simuladoAnswers = {};
     this.simuladoSecondsLeft = totalSeconds;
     this.simuladoTotalSeconds = totalSeconds;
     this.simuladoStartTime = Date.now();
+    this.simuladoScoringModel = scoringModel;
+
+    // Filtra questões pelas disciplinas selecionadas
+    let baseQuestions = store.data.questions;
+    if (selectedDiscIds.length > 0) {
+      baseQuestions = baseQuestions.filter(q => selectedDiscIds.includes(q.disciplinaId));
+    }
+
+    if (baseQuestions.length === 0) {
+      baseQuestions = store.data.questions;
+    }
 
     // Embaralha questões
-    this.filteredQuestions = [...store.data.questions]
+    this.filteredQuestions = [...baseQuestions]
       .sort(() => Math.random() - 0.5)
       .slice(0, questionCount);
 
@@ -322,7 +417,7 @@ class QuestionsManager {
 
     this.renderCurrentQuestion();
     this.renderSimuladoGrid();
-    showToast("Simulado iniciado! Boa prova e mantenha o foco!", "info");
+    showToast(`Simulado iniciado! ${this.filteredQuestions.length} itens • ${Math.round(totalSeconds / 60)} min.`, "info");
   }
 
   renderSimuladoGrid() {
@@ -353,7 +448,7 @@ class QuestionsManager {
       : 300;
     const avgTimePerQuestion = Math.max(5, Math.round(elapsedSeconds / (this.filteredQuestions.length || 1)));
 
-    // Calcula Pontuação (Padrão Cespe: Certo +1, Errado -1, Em branco 0)
+    // Calcula Pontuação
     let correct = 0;
     let incorrect = 0;
     let blank = 0;
@@ -385,7 +480,8 @@ class QuestionsManager {
       }
     });
 
-    const netScore = correct - incorrect; // Nota líquida Cespe
+    const isCespe = this.simuladoScoringModel !== "standard";
+    const netScore = isCespe ? (correct - incorrect) : correct;
     const accuracy = this.filteredQuestions.length > 0 ? Math.round((correct / this.filteredQuestions.length) * 100) : 0;
 
     // Oculta barra de simulado
@@ -401,7 +497,8 @@ class QuestionsManager {
       incorrect,
       blank,
       netScore,
-      accuracy
+      accuracy,
+      isCespe
     });
 
     // Restaura o banco de questões completo

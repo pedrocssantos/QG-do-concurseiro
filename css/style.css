@@ -495,11 +495,54 @@ button, input, select, textarea {
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.02em;
+  transition: var(--transition-fast);
 }
 
-.streak-pill i {
-  color: #f59e0b;
+.streak-pill.tier-0 {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-color);
+  color: var(--text-dimmed);
 }
+.streak-pill.tier-0 i { color: var(--text-dimmed); }
+
+.streak-pill.tier-1 {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+.streak-pill.tier-1 i { color: #f59e0b; }
+
+.streak-pill.tier-2 {
+  background: rgba(217, 119, 6, 0.12);
+  border-color: rgba(217, 119, 6, 0.4);
+  color: #fbbf24;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+.streak-pill.tier-2 i { color: #fbbf24; }
+
+.streak-pill.tier-3 {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+.streak-pill.tier-3 i { color: #38bdf8; }
+
+.streak-pill.tier-4 {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+.streak-pill.tier-4 i { color: #34d399; }
+
+.streak-pill.tier-5 {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+}
+.streak-pill.tier-5 i { color: #ef4444; }
 
 .xp-pill {
   display: flex;
