@@ -219,15 +219,19 @@ a {
   text-decoration: none;
 }
 
+.hidden {
+  display: none !important;
+}
+
 button, input, select, textarea {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
 }
 
-/* Foco de Acessibilidade Visível e Tático */
+/* Foco de Acessibilidade Visível */
 :focus-visible {
-  outline: 2px solid var(--color-warning);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 

@@ -115,13 +115,20 @@ class QuestionsManager {
   }
 
   applyFilters() {
-    const all = store.data.questions;
-    const history = store.data.questionHistory;
+    const all = store.data.questions || [];
+    const history = store.data.questionHistory || [];
+    const activeConcurso = store.getActiveConcurso();
 
     this.filteredQuestions = all.filter(q => {
-      // Filtro por disciplina
-      if (this.filters.disciplinaId !== "all" && q.disciplinaId !== this.filters.disciplinaId) {
-        return false;
+      // Filtro por disciplina (compatível com IDs específicos ou nomes de disciplinas)
+      if (this.filters.disciplinaId !== "all") {
+        const selectedDisc = (activeConcurso.disciplinas || []).find(d => d.id === this.filters.disciplinaId);
+        const matchId = q.disciplinaId === this.filters.disciplinaId;
+        const matchName = selectedDisc && q.disciplinaName && (
+          q.disciplinaName.toLowerCase().includes(selectedDisc.name.toLowerCase()) ||
+          selectedDisc.name.toLowerCase().includes(q.disciplinaName.toLowerCase())
+        );
+        if (!matchId && !matchName) return false;
       }
       // Filtro por banca
       if (this.filters.banca !== "all" && q.banca !== this.filters.banca) {
@@ -160,9 +167,10 @@ class QuestionsManager {
     const emptyState = document.getElementById("questions-empty-state");
     if (!container) return;
 
-    if (this.filteredQuestions.length === 0) {
+    if (!this.filteredQuestions || this.filteredQuestions.length === 0) {
       container.classList.add("hidden");
       if (emptyState) emptyState.classList.remove("hidden");
+      this.renderQuestionsCounter();
       return;
     }
 
@@ -305,13 +313,17 @@ class QuestionsManager {
   renderQuestionsCounter() {
     const counter = document.getElementById("q-counter-text");
     if (counter) {
-      counter.textContent = `Questão ${this.currentIndex + 1} de ${this.filteredQuestions.length}`;
+      if (this.filteredQuestions.length === 0) {
+        counter.textContent = "0 questões encontradas";
+      } else {
+        counter.textContent = `Questão ${this.currentIndex + 1} de ${this.filteredQuestions.length}`;
+      }
     }
 
     const prevBtn = document.getElementById("q-btn-prev");
     const nextBtn = document.getElementById("q-btn-next");
-    if (prevBtn) prevBtn.disabled = this.currentIndex === 0;
-    if (nextBtn) nextBtn.disabled = this.currentIndex === this.filteredQuestions.length - 1;
+    if (prevBtn) prevBtn.disabled = this.currentIndex === 0 || this.filteredQuestions.length === 0;
+    if (nextBtn) nextBtn.disabled = this.currentIndex >= this.filteredQuestions.length - 1 || this.filteredQuestions.length === 0;
   }
 
   // ================= MODO SIMULADO CRONOMETRADO =================

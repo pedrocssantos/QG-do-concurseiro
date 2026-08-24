@@ -16,22 +16,44 @@ class GamificationManager {
     if (!tbody) return;
     tbody.innerHTML = "";
 
+    // Garante que o leaderboard exista e não esteja vazio
+    let lb = store.data.leaderboard;
+    if (!Array.isArray(lb) || lb.length === 0) {
+      store.data.leaderboard = JSON.parse(JSON.stringify(DEFAULT_LEADERBOARD));
+      lb = store.data.leaderboard;
+      store.save();
+    }
+
     // Atualiza pontuação do usuário no ranking
-    const profile = store.data.profile;
+    const profile = store.data.profile || {};
     const weekly = store.getWeeklyStats();
     const userWeeklyHours = weekly.hours.reduce((a, b) => a + b, 0);
     const userWeeklyQuestions = weekly.questions.reduce((a, b) => a + b, 0);
 
-    const lb = store.data.leaderboard || [];
-    const userEntry = lb.find(l => l.isUser);
+    let userEntry = lb.find(l => l.isUser);
     if (userEntry) {
+      userEntry.name = profile.name ? `${profile.name}` : "Você";
+      userEntry.avatar = (profile.name || "VC").substring(0, 2).toUpperCase();
       userEntry.hoursWeekly = Number(userWeeklyHours.toFixed(1));
       userEntry.questionsWeekly = userWeeklyQuestions;
-      userEntry.xp = profile.xp;
+      userEntry.xp = profile.xp || 0;
+    } else {
+      userEntry = {
+        rank: lb.length + 1,
+        name: profile.name || "Você",
+        avatar: (profile.name || "VC").substring(0, 2).toUpperCase(),
+        hoursWeekly: Number(userWeeklyHours.toFixed(1)),
+        questionsWeekly: userWeeklyQuestions,
+        accuracy: 85,
+        xp: profile.xp || 0,
+        isUser: true,
+        badge: "Estudante"
+      };
+      lb.push(userEntry);
     }
 
-    // Ordena por XP
-    lb.sort((a, b) => b.xp - a.xp);
+    // Ordena por XP decrescente
+    lb.sort((a, b) => (b.xp || 0) - (a.xp || 0));
 
     lb.forEach((user, idx) => {
       const rankPos = idx + 1;
@@ -50,17 +72,17 @@ class GamificationManager {
             <div class="user-avatar-circle ${user.isUser ? 'avatar-user' : ''}">${user.avatar || 'U'}</div>
             <div class="user-info-text">
               <strong>${user.name} ${user.isUser ? '(Você)' : ''}</strong>
-              <span class="user-badge-tag">${user.badge || 'Guerreiro'}</span>
+              <span class="user-badge-tag">${user.badge || 'Estudante'}</span>
             </div>
           </div>
         </td>
-        <td class="text-center"><strong>${user.hoursWeekly}h</strong></td>
-        <td class="text-center">${user.questionsWeekly}</td>
+        <td class="text-center"><strong>${user.hoursWeekly || 0}h</strong></td>
+        <td class="text-center">${user.questionsWeekly || 0}</td>
         <td class="text-center">
-          <span class="acc-pill ${user.accuracy >= 85 ? 'acc-high' : 'acc-normal'}">${user.accuracy}%</span>
+          <span class="acc-pill ${(user.accuracy || 0) >= 85 ? 'acc-high' : 'acc-normal'}">${user.accuracy || 0}%</span>
         </td>
         <td class="text-right">
-          <span class="xp-val"><i class="fa-solid fa-bolt text-warning"></i> ${user.xp} XP</span>
+          <span class="xp-val"><i class="fa-solid fa-bolt text-warning"></i> ${user.xp || 0} XP</span>
         </td>
       `;
 
