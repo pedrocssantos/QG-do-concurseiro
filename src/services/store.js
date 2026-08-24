@@ -3,6 +3,7 @@
 // ==========================================================================
 import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGES, DEFAULT_LEADERBOARD } from "../data/data.js";
 import { db } from "./supabase.js";
+import { localDB } from "./dexie.js";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)
@@ -197,6 +198,9 @@ class Store {
   save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+      if (typeof localDB !== "undefined" && localDB.saveAppState) {
+        localDB.saveAppState(this.data);
+      }
       if (typeof db !== "undefined" && db.scheduleSync) {
         db.scheduleSync();
       }

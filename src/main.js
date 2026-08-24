@@ -27,10 +27,11 @@ import { cadernoManager } from "./modules/errors.js";
 import { gamificationManager } from "./modules/gamification.js";
 import { pomodoro, pomodoroManager } from "./modules/pomodoro.js";
 import { PapiroCharts } from "./modules/analytics.js";
-import { app, showToast, openAuthModal, switchAuthTab, handleAuthSubmit, openUpgradeModal, startCheckout } from "./app.js";
+import { localDB } from "./services/dexie.js";
 
 // Inicialização da aplicação
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await localDB.init();
   db.init();
   app.init();
 });
