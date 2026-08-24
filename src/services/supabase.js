@@ -1,9 +1,8 @@
 // ==========================================================================
-// QG DO CONCURSEIRO - SUPABASE SERVICE (ESM)
+// QG DO CONCURSEIRO - SUPABASE SERVICE & OFFLINE-FIRST SYNC ENGINE (ESM)
 // ==========================================================================
-// ==========================================================================
-// QG DO CONCURSEIRO - SUPABASE CLIENT & AUTENTICAÇÃO
-// ==========================================================================
+import { store } from "./store.js";
+import { showToast, openUpgradeModal, openAuthModal } from "../app.js";
 
 const SUPABASE_URL = "https://enkdykbbayloriedogzj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0yq01ZlZNTS-NOYar9cZjQ_TarnMj2t";
@@ -14,6 +13,8 @@ class SupabaseService {
     this.currentUser = null;
     this.profile = null;
     this.isInitialized = false;
+    this.isSyncing = false;
+    this.syncTimeout = null;
   }
 
   init() {
@@ -27,9 +28,17 @@ class SupabaseService {
       this.isInitialized = true;
       this.checkSession();
       this.listenAuthChanges();
+      this.bindNetworkListeners();
     } else {
-      console.warn("SDK do Supabase não carregado. Operando em modo offline/localStorage.");
+      console.warn("SDK do Supabase não carregado. Operando em modo offline/local.");
     }
+  }
+
+  bindNetworkListeners() {
+    window.addEventListener("online", () => {
+      console.log("🌐 Conexão restabelecida. Disparando sincronização em segundo plano...");
+      this.scheduleSync(1000);
+    });
   }
 
   async checkSession() {
@@ -65,7 +74,7 @@ class SupabaseService {
   // ================= AUTENTICAÇÃO =================
 
   async signUp(name, email, password) {
-    if (!this.client) throw new Error("Supabase não inicializado.");
+    if (!this.client) throw new Error("Serviço de autenticação não inicializado.");
     const { data, error } = await this.client.auth.signUp({
       email,
       password,
@@ -74,11 +83,16 @@ class SupabaseService {
       }
     });
     if (error) throw error;
+    if (data.user) {
+      this.currentUser = data.user;
+      await this.pushLocalDataToCloud();
+      this.updateAuthUI();
+    }
     return data;
   }
 
   async signIn(email, password) {
-    if (!this.client) throw new Error("Supabase não inicializado.");
+    if (!this.client) throw new Error("Serviço de autenticação não inicializado.");
     const { data, error } = await this.client.auth.signInWithPassword({
       email,
       password
@@ -92,15 +106,18 @@ class SupabaseService {
   }
 
   async signOut() {
-    if (!this.client) return;
-    await this.client.auth.signOut();
+    if (this.client) {
+      try {
+        await this.client.auth.signOut();
+      } catch (e) {}
+    }
     this.currentUser = null;
     this.profile = null;
     this.updateAuthUI();
-    showToast("Você saiu da sua conta.", "info");
+    showToast("Você saiu da sua conta na nuvem. O app continua em modo local.", "info");
   }
 
-  // ================= PERFIL E SINCRONIZAÇÃO EM NUVEM =================
+  // ================= PERFIL DO USUÁRIO =================
 
   async loadUserProfile(userId) {
     if (!this.client) return;
@@ -113,163 +130,262 @@ class SupabaseService {
 
       if (data) {
         this.profile = data;
-        // Atualiza os dados do Store local com os dados da nuvem
         store.data.profile.name = data.name || store.data.profile.name;
-        store.data.profile.xp = data.xp || store.data.profile.xp;
-        store.data.profile.level = data.level || store.data.profile.level;
-        store.data.profile.streak = data.streak || store.data.profile.streak;
-        store.data.profile.plan_tier = data.plan_tier || "free";
+        store.data.profile.plan_tier = data.plan_tier || store.data.profile.plan_tier || "free";
+        store.data.profile.dailyGoalMinutes = data.daily_goal_minutes || store.data.profile.dailyGoalMinutes;
+        store.data.profile.weeklyGoalHours = data.weekly_goal_hours || store.data.profile.weeklyGoalHours;
         store.save();
       }
     } catch (e) {
-      console.warn("Perfil sendo criado ou erro na leitura:", e);
+      console.warn("Perfil em criação ou aviso de leitura:", e);
     }
+  }
+
+  // ================= MOTOR DE SINCRONIZAÇÃO OFFLINE-FIRST =================
+
+  scheduleSync(delay = 2500) {
+    if (!this.client || !this.currentUser || !navigator.onLine) return;
+    if (this.syncTimeout) clearTimeout(this.syncTimeout);
+    this.syncTimeout = setTimeout(() => {
+      this.syncCloudData();
+    }, delay);
   }
 
   async syncCloudData() {
-    if (!this.client || !this.currentUser) return;
+    if (!this.client || !this.currentUser || this.isSyncing) return;
+    this.isSyncing = true;
+
     try {
-      // 1. Carrega Sessões de Estudo da Nuvem
-      const { data: sessions } = await this.client
-        .from("study_sessions")
-        .select("*")
-        .eq("user_id", this.currentUser.id);
+      const uid = this.currentUser.id;
 
-      if (sessions && sessions.length > 0) {
-        const cloudSessions = sessions.map(s => ({
-          id: s.id,
-          concursoId: s.concurso_id,
-          disciplinaId: s.disciplina_id,
-          durationMinutes: s.duration_minutes,
-          type: s.type,
-          date: s.session_date,
-          timestamp: new Date(s.created_at).getTime()
-        }));
-        const localOnly = (store.data.studySessions || []).filter(ls => !cloudSessions.some(cs => cs.id === ls.id));
-        store.data.studySessions = [...cloudSessions, ...localOnly];
+      // 1. SINCRONIZA GAMIFICAÇÃO & PERFIL (BIDIRECIONAL)
+      const { data: cloudGam } = await this.client.from("gamification").select("*").eq("user_id", uid).single();
+      if (cloudGam) {
+        const localXp = store.data.profile.xp || 0;
+        const cloudXp = cloudGam.xp || 0;
+        const highestXp = Math.max(localXp, cloudXp);
+
+        const localBadges = store.data.profile.badges || [];
+        const cloudBadges = Array.isArray(cloudGam.badges) ? cloudGam.badges : [];
+        const mergedBadges = Array.from(new Set([...localBadges, ...cloudBadges]));
+
+        store.data.profile.xp = highestXp;
+        store.data.profile.level = store.calculateLevel(highestXp);
+        store.data.profile.badges = mergedBadges;
+        store.data.profile.streak = Math.max(store.data.profile.streak || 0, cloudGam.streak_count || 0);
+
+        // Atualiza na nuvem se local tinha dados maiores
+        if (localXp > cloudXp || mergedBadges.length > cloudBadges.length) {
+          await this.client.from("gamification").upsert({
+            user_id: uid,
+            xp: highestXp,
+            level: store.data.profile.level,
+            streak_count: store.data.profile.streak,
+            badges: mergedBadges,
+            updated_at: new Date().toISOString()
+          });
+        }
+      } else {
+        // Envia primeira gamificação
+        await this.client.from("gamification").upsert({
+          user_id: uid,
+          xp: store.data.profile.xp || 0,
+          level: store.data.profile.level || 1,
+          streak_count: store.data.profile.streak || 0,
+          badges: store.data.profile.badges || [],
+          updated_at: new Date().toISOString()
+        });
       }
 
-      // 2. Carrega Flashcards da Nuvem
-      const { data: cards } = await this.client
-        .from("flashcards")
-        .select("*")
-        .eq("user_id", this.currentUser.id);
+      // 2. SINCRONIZA SESSÕES DE ESTUDO (STUDY_SESSIONS)
+      const { data: cloudSessions } = await this.client.from("study_sessions").select("*").eq("user_id", uid);
+      const localSessions = store.data.studySessions || [];
+      const sessionMap = new Map();
 
-      if (cards && cards.length > 0) {
-        const cloudCards = cards.map(c => ({
-          id: c.id,
-          disciplinaId: c.disciplina_id,
-          frente: c.frente,
-          verso: c.verso,
-          interval: c.interval_days,
-          repetitions: c.repetitions,
-          easeFactor: Number(c.ease_factor),
-          dueDate: c.due_date
-        }));
-        const localOnly = (store.data.flashcards || []).filter(lc => !cloudCards.some(cc => cc.id === lc.id));
-        store.data.flashcards = [...cloudCards, ...localOnly];
+      // Mapeia sessões locais
+      localSessions.forEach(s => sessionMap.set(s.id, {
+        id: s.id,
+        user_id: uid,
+        disciplina_id: s.disciplinaId,
+        topic_id: s.topicId || null,
+        session_type: s.type || "pomodoro",
+        duration_minutes: s.durationMinutes,
+        date: s.date,
+        timestamp: s.timestamp || Date.now()
+      }));
+
+      // Mescla com sessões da nuvem
+      (cloudSessions || []).forEach(cs => {
+        if (!sessionMap.has(cs.id)) {
+          sessionMap.set(cs.id, cs);
+        }
+      });
+
+      const mergedSessions = Array.from(sessionMap.values()).map(s => ({
+        id: s.id,
+        disciplinaId: s.disciplina_id,
+        topicId: s.topic_id,
+        type: s.session_type,
+        durationMinutes: s.duration_minutes,
+        date: s.date,
+        timestamp: Number(s.timestamp)
+      }));
+
+      store.data.studySessions = mergedSessions;
+
+      // Envia sessões locais que não estavam na nuvem
+      const newSessionsToUpload = Array.from(sessionMap.values()).filter(s => 
+        !(cloudSessions || []).some(cs => cs.id === s.id)
+      );
+      if (newSessionsToUpload.length > 0) {
+        await this.client.from("study_sessions").upsert(newSessionsToUpload);
       }
 
-      // 3. Carrega Caderno de Erros da Nuvem
-      const { data: errors } = await this.client
-        .from("caderno_erros")
-        .select("*")
-        .eq("user_id", this.currentUser.id);
+      // 3. SINCRONIZA HISTÓRICO DE QUESTÕES (QUESTION_ATTEMPTS)
+      const { data: cloudAttempts } = await this.client.from("question_attempts").select("*").eq("user_id", uid);
+      const localHistory = store.data.questionHistory || [];
+      const attemptMap = new Map();
 
-      if (errors && errors.length > 0) {
-        const cloudErrors = errors.map(e => ({
-          id: e.id,
-          questionId: e.question_id,
-          reason: e.reason,
-          note: e.note,
-          resolved: e.resolved,
-          date: e.created_at.split("T")[0]
-        }));
-        const localOnly = (store.data.cadernoErros || []).filter(le => !cloudErrors.some(ce => ce.id === le.id));
-        store.data.cadernoErros = [...cloudErrors, ...localOnly];
+      localHistory.forEach(h => {
+        const attemptId = h.id || `att-${h.timestamp}-${h.questionId}`;
+        attemptMap.set(attemptId, {
+          id: attemptId,
+          user_id: uid,
+          question_id: h.questionId,
+          selected_answer: h.selectedAnswer || h.userAnswer || "",
+          is_correct: !!h.isCorrect,
+          mode: h.mode || "treino",
+          timestamp: h.timestamp || Date.now()
+        });
+      });
+
+      (cloudAttempts || []).forEach(ca => {
+        if (!attemptMap.has(ca.id)) {
+          attemptMap.set(ca.id, ca);
+        }
+      });
+
+      store.data.questionHistory = Array.from(attemptMap.values()).map(a => ({
+        id: a.id,
+        questionId: a.question_id,
+        selectedAnswer: a.selected_answer,
+        isCorrect: a.is_correct,
+        mode: a.mode,
+        timestamp: Number(a.timestamp),
+        date: new Date(Number(a.timestamp)).toISOString().split("T")[0]
+      }));
+
+      const newAttemptsToUpload = Array.from(attemptMap.values()).filter(a => 
+        !(cloudAttempts || []).some(ca => ca.id === a.id)
+      );
+      if (newAttemptsToUpload.length > 0) {
+        await this.client.from("question_attempts").upsert(newAttemptsToUpload.slice(0, 100)); // Lotes de 100
       }
 
+      // 4. SINCRONIZA CADERNO DE ERROS (USER_ERRORS)
+      const { data: cloudErrors } = await this.client.from("user_errors").select("*").eq("user_id", uid);
+      const localErrors = store.data.cadernoErros || [];
+      const errorMap = new Map();
+
+      localErrors.forEach(e => errorMap.set(e.id, {
+        id: e.id,
+        user_id: uid,
+        question_id: e.questionId,
+        reason: e.reason || "conteudo",
+        notes: e.note || e.notes || "",
+        resolved: !!e.resolved,
+        created_at: e.date ? new Date(e.date).toISOString() : new Date().toISOString()
+      }));
+
+      (cloudErrors || []).forEach(ce => {
+        if (!errorMap.has(ce.id)) {
+          errorMap.set(ce.id, ce);
+        }
+      });
+
+      store.data.cadernoErros = Array.from(errorMap.values()).map(e => ({
+        id: e.id,
+        questionId: e.question_id,
+        reason: e.reason,
+        note: e.notes,
+        resolved: e.resolved,
+        date: e.created_at ? e.created_at.split("T")[0] : new Date().toISOString().split("T")[0]
+      }));
+
+      const newErrorsToUpload = Array.from(errorMap.values()).filter(e => 
+        !(cloudErrors || []).some(ce => ce.id === e.id)
+      );
+      if (newErrorsToUpload.length > 0) {
+        await this.client.from("user_errors").upsert(newErrorsToUpload);
+      }
+
+      // 5. Salva estado unificado no store
       store.save();
-      // Atualiza a interface
-      if (typeof app !== "undefined" && app.handleRoute) {
-        app.activateViewModule(app.currentRoute);
-      }
+
+      console.log("☁️ Sincronização em nuvem concluída com sucesso!");
     } catch (err) {
-      console.error("Erro na sincronização:", err);
+      console.warn("⚠️ Falha durante a sincronização em nuvem:", err);
+    } finally {
+      this.isSyncing = false;
     }
   }
 
-  // ================= SALVAMENTO EM TEMPO REAL =================
+  async pushLocalDataToCloud() {
+    return this.syncCloudData();
+  }
+
+  // ================= SALVAMENTOS PONTUAIS ASSÍNCRONOS =================
 
   async saveSessionToCloud(session) {
     if (!this.client || !this.currentUser) return;
     try {
-      await this.client.from("study_sessions").insert([{
+      await this.client.from("study_sessions").upsert({
+        id: session.id,
         user_id: this.currentUser.id,
-        concurso_id: session.concursoId,
         disciplina_id: session.disciplinaId,
+        topic_id: session.topicId || null,
+        session_type: session.type || "pomodoro",
         duration_minutes: session.durationMinutes,
-        type: session.type,
-        session_date: session.date
-      }]);
-
-      // Atualiza XP no perfil
-      await this.client.from("profiles").update({
-        xp: store.data.profile.xp,
-        level: store.data.profile.level,
-        streak: store.data.profile.streak
-      }).eq("id", this.currentUser.id);
+        date: session.date,
+        timestamp: session.timestamp || Date.now()
+      });
+      this.scheduleSync(3000);
     } catch (e) {
-      console.error("Erro ao salvar sessão na nuvem:", e);
+      console.warn("Erro ao salvar sessão na nuvem:", e);
     }
   }
 
   async saveQuestionAnswerToCloud(answer) {
     if (!this.client || !this.currentUser) return;
     try {
-      await this.client.from("question_answers").insert([{
+      await this.client.from("question_attempts").upsert({
+        id: answer.id || `att-${Date.now()}-${answer.questionId}`,
         user_id: this.currentUser.id,
         question_id: answer.questionId,
-        selected_option: answer.selectedOption,
+        selected_answer: answer.selectedAnswer || "",
         is_correct: answer.isCorrect,
-        time_spent_seconds: answer.timeSpentSeconds
-      }]);
+        mode: answer.mode || "treino",
+        timestamp: answer.timestamp || Date.now()
+      });
+      this.scheduleSync(3000);
     } catch (e) {
-      console.error("Erro ao salvar resposta na nuvem:", e);
-    }
-  }
-
-  async saveFlashcardToCloud(card) {
-    if (!this.client || !this.currentUser) return;
-    try {
-      await this.client.from("flashcards").upsert([{
-        id: card.id.startsWith("fc-custom") ? undefined : card.id,
-        user_id: this.currentUser.id,
-        disciplina_id: card.disciplinaId,
-        frente: card.frente,
-        verso: card.verso,
-        interval_days: card.interval,
-        repetitions: card.repetitions,
-        ease_factor: card.easeFactor,
-        due_date: card.dueDate
-      }]);
-    } catch (e) {
-      console.error("Erro ao salvar flashcard na nuvem:", e);
+      console.warn("Erro ao salvar resposta na nuvem:", e);
     }
   }
 
   async saveErrorToCloud(errItem) {
     if (!this.client || !this.currentUser) return;
     try {
-      await this.client.from("caderno_erros").upsert([{
+      await this.client.from("user_errors").upsert({
+        id: errItem.id,
         user_id: this.currentUser.id,
         question_id: errItem.questionId,
-        reason: errItem.reason,
-        note: errItem.note,
-        resolved: errItem.resolved
-      }]);
+        reason: errItem.reason || "conteudo",
+        notes: errItem.note || "",
+        resolved: !!errItem.resolved
+      });
     } catch (e) {
-      console.error("Erro ao salvar no caderno de erros na nuvem:", e);
+      console.warn("Erro ao salvar erro na nuvem:", e);
     }
   }
 
@@ -281,7 +397,7 @@ class SupabaseService {
   }
 
   isAuthenticated() {
-    return !!(this.currentUser || (typeof store !== "undefined" && store.data && store.data.profile && store.data.profile.isLoggedIn));
+    return !!(this.currentUser);
   }
 
   updateAuthUI() {
@@ -294,10 +410,10 @@ class SupabaseService {
     const isAuth = this.isAuthenticated();
 
     if (isAuth) {
-      const name = this.profile?.name || this.currentUser?.user_metadata?.name || store.data.profile?.name || "Concurseiro";
+      const name = this.profile?.name || this.currentUser?.user_metadata?.name || store.data?.profile?.name || "Concurseiro";
 
       if (authBtn) {
-        authBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Sair`;
+        authBtn.innerHTML = `<i class="fa-solid fa-cloud-check"></i> Sair (${name.split(' ')[0]})`;
         authBtn.className = "btn btn-secondary btn-sm";
         authBtn.onclick = () => this.signOut();
       }
@@ -313,14 +429,10 @@ class SupabaseService {
           ? `<span class="badge-plan-pro"><i class="fa-solid fa-crown"></i> PRO</span>`
           : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
       }
-
-      // Desbloqueia e fecha o modal de login
-      const modal = document.getElementById("modal-auth");
-      if (modal) modal.classList.add("hidden");
     } else {
       const localName = (typeof store !== "undefined" && store.data?.profile?.name) || "Concurseiro(a)";
       if (authBtn) {
-        authBtn.innerHTML = `<i class="fa-solid fa-user"></i> Entrar`;
+        authBtn.innerHTML = `<i class="fa-solid fa-user"></i> Entrar / Sincronizar`;
         authBtn.className = "btn btn-primary btn-sm";
         authBtn.onclick = () => {
           if (typeof openAuthModal === "function") openAuthModal("login");
@@ -337,22 +449,6 @@ class SupabaseService {
           : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
       }
     }
-  }
-
-  async signOut() {
-    if (this.client) {
-      try {
-        await this.client.auth.signOut();
-      } catch (e) {}
-    }
-    this.currentUser = null;
-    this.profile = null;
-    if (typeof store !== "undefined" && store.data && store.data.profile) {
-      store.data.profile.isLoggedIn = false;
-      store.save();
-    }
-    this.updateAuthUI();
-    showToast("Você saiu da sua conta. Faça login novamente para acessar.", "info");
   }
 }
 

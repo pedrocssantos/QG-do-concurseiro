@@ -197,6 +197,9 @@ class Store {
   save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+      if (typeof db !== "undefined" && db.scheduleSync) {
+        db.scheduleSync();
+      }
     } catch (e) {
       console.error("Erro ao salvar no LocalStorage:", e);
     }
