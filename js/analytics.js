@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - MOTOR DE GRÁFICOS EM CANVAS PURO (ANALYTICS)
+// QG DO CONCURSEIRO - MOTOR DE GRÁFICOS EM CANVAS PURO (ANALYTICS)
 // ==========================================================================
 
 class PapiroCharts {

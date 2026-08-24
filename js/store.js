@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)
+// QG DO CONCURSEIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)
 // ==========================================================================
 
 const STORAGE_KEY = "foco_no_papiro_v1";
@@ -613,7 +613,7 @@ class Store {
       {
         id: `mis-4-${today}`,
         date: today,
-        title: `Papiro Noturno: ${discs[2]?.name || "Informática"}`,
+        title: `Estudo Noturno: ${discs[2]?.name || "Informática"}`,
         desc: "Completar 1 ciclo de 50 minutos de concentração plena no Pomodoro.",
         type: "pomodoro",
         disciplinaId: discs[2]?.id || "",
@@ -632,7 +632,7 @@ class Store {
     if (m) {
       m.completed = !m.completed;
       if (m.completed) {
-        this.addXP(m.xpReward, `Missão Cumprida: ${m.title}! 🏆`);
+        this.addXP(m.xpReward, `Meta Concluída: ${m.title}! 🏆`);
       }
       this.notify("mission_updated", m);
     }
@@ -644,7 +644,7 @@ class Store {
       if (!m.completed && m.disciplinaId === session.disciplinaId && m.type === session.type) {
         if (session.durationMinutes >= (m.targetMinutes || 30)) {
           m.completed = true;
-          this.addXP(m.xpReward, `Missão Concluída Automaticamente: ${m.title} 🎯`);
+          this.addXP(m.xpReward, `Meta Concluída Automaticamente: ${m.title} 🎯`);
         }
       }
     });
@@ -676,10 +676,10 @@ class Store {
 
   getRankTitle(level) {
     const ranks = [
-      "Recruta", "Aspirante", "Soldado de 1ª Classe", "Cabo do Papiro",
-      "Sargento Operacional", "Subtenente Focado", "Tenente Tático",
-      "Capitão Estrategista", "Major da Aprovação", "Coronel Caveira",
-      "General Aprovado", "Mestre Supremo do Concurso"
+      "Recruta", "Aspirante", "Soldado de 1ª Classe", "Cabo de Operações",
+      "Sargento Operacional", "Subtenente Focado", "Tenente Estrategista",
+      "Capitão do QG", "Major da Aprovação", "Coronel Caveira",
+      "General Aprovado", "Mestre dos Concursos"
     ];
     return ranks[Math.min(level - 1, ranks.length - 1)] || "General Aprovado";
   }

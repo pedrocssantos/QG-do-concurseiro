@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS
+// QG DO CONCURSEIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS
 // ==========================================================================
 
 class QuestionsManager {

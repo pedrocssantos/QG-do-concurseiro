@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - CICLO DE ESTUDOS E PLANEJAMENTO SEMANAL
+// QG DO CONCURSEIRO - CICLO DE ESTUDOS E PLANEJAMENTO SEMANAL
 // ==========================================================================
 
 class CicloManager {

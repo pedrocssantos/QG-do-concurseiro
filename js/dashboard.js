@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - CONTROLLER DO DASHBOARD PRINCIPAL
+// QG DO CONCURSEIRO - CONTROLLER DO DASHBOARD PRINCIPAL
 // ==========================================================================
 
 class DashboardManager {

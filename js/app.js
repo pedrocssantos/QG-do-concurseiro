@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL
+// QG DO CONCURSEIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL
 // ==========================================================================
 
 class App {

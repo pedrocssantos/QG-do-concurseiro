@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - GAMIFICAÇÃO, RANKING SEMANAL E CONQUISTAS
+// QG DO CONCURSEIRO - GAMIFICAÇÃO, RANKING SEMANAL E CONQUISTAS
 // ==========================================================================
 
 class GamificationManager {

@@ -1,5 +1,5 @@
 // ==========================================================================
-// QG DO CONCURSEIRO / FOCO NO PAPIRO - SUPABASE CLIENT & AUTENTICAÇÃO
+// QG DO CONCURSEIRO - SUPABASE CLIENT & AUTENTICAÇÃO
 // ==========================================================================
 
 const SUPABASE_URL = "https://enkdykbbayloriedogzj.supabase.co";

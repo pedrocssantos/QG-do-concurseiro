@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - SISTEMA DE FLASHCARDS COM REPETIÇÃO ESPAÇADA (SRS)
+// QG DO CONCURSEIRO - SISTEMA DE FLASHCARDS COM REPETIÇÃO ESPAÇADA (SRS)
 // ==========================================================================
 
 class FlashcardsManager {

@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - CADERNO DE ERROS AUTOMATIZADO
+// QG DO CONCURSEIRO - CADERNO DE ERROS AUTOMATIZADO
 // ==========================================================================
 
 class CadernoErrosManager {

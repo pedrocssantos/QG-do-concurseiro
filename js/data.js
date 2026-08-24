@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - DADOS INICIAIS / SEED DATA
+// QG DO CONCURSEIRO - DADOS INICIAIS / SEED DATA
 // ==========================================================================
 
 const DEFAULT_CONCURSOS = [

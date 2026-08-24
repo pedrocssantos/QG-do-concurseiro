@@ -1,8 +1,8 @@
-# 📜 Foco no Papiro - Sistema Completo de Gestão de Estudos (SPA)
+# 🎯 QG do Concurseiro - Sistema Completo de Gestão de Estudos (SPA)
 
 Sistema completo de planejamento e execução de estudos para concursos públicos e exames de alto rendimento, construído com **HTML5, CSS3 e JavaScript Puro (Vanilla JS)** em arquitetura **SPA (Single Page Application)**.
 
-Inspirado na plataforma [Foco no Papiro](https://foconopapiro.com.br/dashboard), o sistema transforma editais complexos em um plano tático automatizado, eliminando a perda de tempo com organização e permitindo foco total na execução.
+Com uma interface moderna, flexível e intuitiva, o sistema transforma editais complexos em um planejamento estruturado e automatizado, eliminando a perda de tempo com organização e permitindo foco total na execução.
 
 ---
 

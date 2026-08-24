@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - EDITAL VERTICALIZADO E GESTÃO DE CONTEÚDO PROGRAMÁTICO
+// QG DO CONCURSEIRO - EDITAL VERTICALIZADO E GESTÃO DE CONTEÚDO PROGRAMÁTICO
 // ==========================================================================
 
 class EditalManager {
@@ -171,7 +171,7 @@ class EditalManager {
           </td>
           <td>
             <div class="actions-group">
-              <button class="action-btn-icon" title="Iniciar Papiro no Pomodoro" onclick="editalManager.startPapiroOnTopic('${disc.id}', '${t.id}')">
+              <button class="action-btn-icon" title="Iniciar Sessão de Foco" onclick="editalManager.startPapiroOnTopic('${disc.id}', '${t.id}')">
                 <i class="fa-solid fa-stopwatch"></i>
               </button>
               <button class="action-btn-icon delete-btn" title="Excluir Tópico" onclick="editalManager.deleteTopico('${concursoId}', '${disc.id}', '${t.id}')">

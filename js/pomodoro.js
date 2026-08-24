@@ -1,5 +1,5 @@
 // ==========================================================================
-// FOCO NO PAPIRO - POMODORO, CRONÔMETRO LÍQUIDO E SINTETIZADOR DE ÁUDIO
+// QG DO CONCURSEIRO - POMODORO, CRONÔMETRO LÍQUIDO E SINTETIZADOR DE ÁUDIO
 // ==========================================================================
 
 class AudioEngine {
@@ -198,7 +198,7 @@ class PomodoroController {
     if (!select) return;
 
     const concurso = store.getActiveConcurso();
-    select.innerHTML = `<option value="">-- Selecione a Matéria do Papiro --</option>`;
+    select.innerHTML = `<option value="">-- Selecione a Matéria de Estudo --</option>`;
     
     (concurso.disciplinas || []).forEach(d => {
       const opt = document.createElement("option");
