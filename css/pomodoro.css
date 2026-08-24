@@ -1,0 +1,183 @@
+/* ==========================================================================
+   FOCO NO PAPIRO - ESTILOS DO POMODORO E MODO ZEN DE FOCO
+   ========================================================================== */
+
+.pomodoro-wrapper {
+  max-width: 650px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* Modos do Timer */
+.pomo-mode-selector {
+  display: flex;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  border-radius: var(--radius-full);
+  gap: 6px;
+}
+
+.pomo-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pomo-mode-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 0 12px var(--color-primary-glow);
+}
+
+/* Palco Circular do Timer */
+.timer-stage {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-circle-bg {
+  fill: none;
+  stroke: var(--bg-surface-elevated);
+  stroke-width: 12;
+}
+
+.timer-circle-progress {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 816.8; /* 2 * PI * 130 */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.8s ease, stroke 0.4s ease;
+  filter: drop-shadow(0 0 10px var(--color-primary-glow));
+}
+
+.timer-display-box {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pomo-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.status-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); }
+.status-running { background: rgba(16, 185, 129, 0.2); color: #34d399; animation: pulseGlow 2s infinite; }
+.status-paused { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.status-break { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+.timer-digits {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-main);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Controles do Timer */
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.timer-settings-card {
+  width: 100%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+/* Modo Zen Imersivo (Fullscreen) */
+.zen-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px;
+  animation: fadeIn 0.4s ease;
+}
+
+.zen-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zen-center {
+  text-align: center;
+}
+
+.zen-digits {
+  font-size: 7rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+  animation: zenBreathe 4s ease-in-out infinite;
+}
+
+@keyframes zenBreathe {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
+  50% { transform: scale(1.03); filter: drop-shadow(0 0 50px rgba(16, 185, 129, 0.6)); }
+}
+
+.zen-quote {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 16px auto 0;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .timer-settings-card {
+    grid-template-columns: 1fr;
+  }
+  .zen-digits {
+    font-size: 4.5rem;
+  }
+}

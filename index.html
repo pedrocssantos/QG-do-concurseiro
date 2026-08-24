@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foco no Papiro - Plataforma Inteligente de Estudos</title>
+  <meta name="description" content="Transforme seu edital num plano de estudos tático. Ciclo de estudos, cronômetro pomodoro, flashcards SRS, banco de questões e caderno de erros.">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/edital.css">
+  <link rel="stylesheet" href="css/questions.css">
+  <link rel="stylesheet" href="css/flashcards.css">
+  <link rel="stylesheet" href="css/pomodoro.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Backdrop Mobile -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
+
+    <!-- Barra Lateral (Sidebar) -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="logo-icon"><i class="fa-solid fa-scroll"></i></div>
+          <div class="brand-text">
+            <h2>FOCO NO PAPIRO</h2>
+            <span>PLATAFORMA TÁTICA</span>
+          </div>
+        </div>
+        <button class="mobile-menu-btn" id="sidebar-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Principal</span>
+        <a href="#dashboard" class="nav-link active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        <a href="#edital" class="nav-link"><i class="fa-solid fa-list-check"></i> Edital Verticalizado</a>
+        <a href="#ciclo" class="nav-link"><i class="fa-solid fa-rotate"></i> Ciclo de Estudos</a>
+
+        <span class="nav-section-title">Prática & Memória</span>
+        <a href="#questoes" class="nav-link"><i class="fa-solid fa-circle-question"></i> Questões & Simulado</a>
+        <a href="#flashcards" class="nav-link"><i class="fa-solid fa-layer-group"></i> Flashcards SRS</a>
+        <a href="#erros" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Caderno de Erros</a>
+
+        <span class="nav-section-title">Ferramentas & Evolução</span>
+        <a href="#pomodoro" class="nav-link"><i class="fa-solid fa-stopwatch"></i> Foco Pomodoro</a>
+        <a href="#desempenho" class="nav-link"><i class="fa-solid fa-chart-line"></i> Estatísticas & Métricas</a>
+        <a href="#ranking" class="nav-link"><i class="fa-solid fa-trophy"></i> Ranking & Conquistas</a>
+        <a href="#configuracoes" class="nav-link"><i class="fa-solid fa-gear"></i> Configurações</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget">
+          <div class="user-avatar-badge" id="user-avatar-text">MA</div>
+          <div class="user-meta">
+            <h4 id="dash-user-name">Max Aldana</h4>
+            <p id="dash-user-rank">Aspirante</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Área Principal de Conteúdo -->
+    <main class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+          <div class="concurso-badge-wrapper">
+            <i class="fa-solid fa-bullseye"></i>
+            <select class="concurso-header-select" id="header-concurso-select">
+              <!-- Popula dinamicamente -->
+            </select>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="streak-pill" title="Dias seguidos de papiro ativo">
+            <i class="fa-solid fa-fire"></i>
+            <span><strong id="dash-streak-count">7</strong> Dias Seguidos</span>
+          </div>
+
+          <div class="xp-pill" title="Total de Pontos de Experiência">
+            <i class="fa-solid fa-bolt"></i>
+            <span id="dash-user-xp">3420 XP</span>
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="header-btn-quick-focus" title="Iniciar Pomodoro Instantâneo">
+            <i class="fa-solid fa-stopwatch"></i> Foco Rápido
+          </button>
+
+          <button class="header-icon-btn" id="btn-theme-toggle" title="Alternar Modo Escuro/Claro">
+            <i class="fa-solid fa-sun" id="theme-toggle-icon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: DASHBOARD -->
+      <div class="view-content-wrapper view-section" id="view-dashboard">
+        <div class="dashboard-hero">
+          <div class="hero-left">
+            <h1>Missão de Hoje: Disciplina e Constância! ⚔️</h1>
+            <p>Seu concurso ativo está a passos de ser dominado. Cumpra suas missões diárias.</p>
+          </div>
+          <div class="hero-quick-actions">
+            <a href="#questoes" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-question"></i> Resolver Questões</a>
+            <a href="#flashcards" class="btn btn-secondary btn-sm"><i class="fa-solid fa-layer-group"></i> Revisar Cards</a>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title">Horas Líquidas Hoje</span>
+              <div class="kpi-icon-box icon-blue"><i class="fa-solid fa-clock"></i></div>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-main-val" id="kpi-hours-today">2.5h</span>
+              <span class="kpi-sub-text" id="kpi-hours-goal">Meta: 4.0h (62%)</span>
+            </div>
+            <div class="kpi-progress-track">
+              <div class="kpi-progress-fill fill-blue" id="kpi-hours-bar" style="width: 62%;"></div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title">Questões Feitas Hoje</span>
+              <div class="kpi-icon-box icon-green"><i class="fa-solid fa-bullseye"></i></div>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-main-val" id="kpi-questions-today">28</span>
+              <span class="kpi-sub-text text-success" id="kpi-questions-accuracy">85% acertos</span>
+            </div>
+            <div class="kpi-progress-track">
+              <div class="kpi-progress-fill fill-green" style="width: 85%;"></div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title">Cards Para Revisar Hoje</span>
+              <div class="kpi-icon-box icon-amber"><i class="fa-solid fa-brain"></i></div>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-main-val" id="kpi-flashcards-due">12</span>
+              <span class="kpi-sub-text">Repetição Espaçada</span>
+            </div>
+            <div class="kpi-progress-track">
+              <div class="kpi-progress-fill fill-green" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title">Edital Coberto</span>
+              <div class="kpi-icon-box icon-purple"><i class="fa-solid fa-map-location-dot"></i></div>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-main-val" id="kpi-edital-percent">34%</span>
+              <span class="kpi-sub-text" id="kpi-edital-summary">14/41 tópicos</span>
+            </div>
+            <div class="kpi-progress-track">
+              <div class="kpi-progress-fill fill-purple" id="kpi-edital-bar" style="width: 34%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Missões Diárias + Frase -->
+        <div class="dash-main-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-list-check text-primary"></i> Missões do Papiro de Hoje</h3>
+              <span class="missions-header-summary" id="dash-missions-summary">0/4 Cumpridas</span>
+            </div>
+            <div class="card-body">
+              <div class="missions-list" id="dash-missions-list">
+                <!-- Gerado dinamicamente -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card quote-card">
+            <i class="fa-solid fa-quote-right quote-icon-decor"></i>
+            <div class="card-body">
+              <blockquote id="dash-quote-text">"O papiro não perdoa, mas a aprovação recompensa com glória eterna."</blockquote>
+              <cite id="dash-quote-author">— Lema dos Concurseiros</cite>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráficos do Dashboard -->
+        <div class="charts-grid-2col">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-chart-area text-primary"></i> Evolução de Horas nos Últimos 7 Dias</h3>
+            </div>
+            <div class="card-body">
+              <div class="canvas-container">
+                <canvas id="chart-weekly-hours"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-chart-pie text-accent"></i> Distribuição por Disciplina</h3>
+            </div>
+            <div class="card-body">
+              <div class="canvas-container">
+                <canvas id="chart-subject-donut"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar & Heatmap -->
+        <div class="charts-grid-2col">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-compass text-warning"></i> Radar de Domínio do Conteúdo</h3>
+            </div>
+            <div class="card-body">
+              <div class="canvas-container">
+                <canvas id="chart-domain-radar"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-calendar-check text-success"></i> Constância de Estudos (Últimas 10 Semanas)</h3>
+            </div>
+            <div class="card-body">
+              <div id="dash-consistency-heatmap"></div>
+              <div class="heatmap-legend">
+                <span>Menos</span>
+                <div class="legend-cell level-0"></div>
+                <div class="legend-cell level-1"></div>
+                <div class="legend-cell level-2"></div>
+                <div class="legend-cell level-3"></div>
+                <div class="legend-cell level-4"></div>
+                <span>Mais Horas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: EDITAL VERTICALIZADO -->
+      <div class="view-content-wrapper view-section hidden" id="view-edital">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Edital Verticalizado Interativo</h1>
+            <p>Monitore cada disciplina, teoria, resumos e as revisões periódicas R24h, R7d e R30d.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary btn-sm" id="btn-open-add-disc-modal">
+              <i class="fa-solid fa-folder-plus"></i> Nova Disciplina
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-open-new-concurso-modal">
+              <i class="fa-solid fa-plus"></i> Criar Novo Edital
+            </button>
+          </div>
+        </div>
+
+        <div class="edital-hero-banner">
+          <div class="edital-hero-left">
+            <h2 id="edital-concurso-title">Polícia Federal - Agente</h2>
+            <div class="edital-meta-tags">
+              <span class="edital-tag" id="edital-concurso-banca">Banca: Cebraspe</span>
+              <span class="edital-tag countdown-badge" id="edital-countdown-badge"><i class="fa-solid fa-hourglass-half"></i> Faltam 82 dias</span>
+            </div>
+          </div>
+          <div class="edital-hero-right">
+            <div class="edital-progress-header">
+              <span>Progresso do Edital</span>
+              <span id="edital-progress-text">34%</span>
+            </div>
+            <div class="edital-progress-bar-track">
+              <div class="edital-progress-bar-fill" id="edital-progress-bar-fill" style="width: 34%;"></div>
+            </div>
+            <div class="edital-topicos-summary" id="edital-topicos-summary">14 de 41 tópicos dominados</div>
+          </div>
+        </div>
+
+        <div class="edital-accordion-container" id="edital-disciplinas-accordion">
+          <!-- Gerado dinamicamente -->
+        </div>
+      </div>
+
+      <!-- VIEW 3: CICLO DE ESTUDOS -->
+      <div class="view-content-wrapper view-section hidden" id="view-ciclo">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Ciclo de Estudos & Cronograma Inteligente</h1>
+            <p>Estude em blocos sequenciais proporcionais ao peso e dificuldade de cada matéria.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-recalibrate-ciclo">
+            <i class="fa-solid fa-sliders"></i> Recalcular Horas Semanais
+          </button>
+        </div>
+
+        <div id="ciclo-current-banner">
+          <!-- Banner da matéria da vez gerado dinamicamente -->
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-rotate text-primary"></i> Sequência do Ciclo Atual</h3>
+          </div>
+          <div class="card-body">
+            <div class="ciclo-grid-steps" id="ciclo-cards-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+              <!-- Passos do ciclo -->
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-calendar-days text-accent"></i> Sugestão de Planejamento Semanal</h3>
+          </div>
+          <div class="card-body">
+            <div class="weekly-schedule-grid" id="weekly-schedule-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+              <!-- Dias da semana -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: BANCO DE QUESTÕES & SIMULADO -->
+      <div class="view-content-wrapper view-section hidden" id="view-questoes">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Banco de Questões & Simulado</h1>
+            <p>Treine com questões comentadas por especialistas e realize simulados cronometrados.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary btn-sm" id="btn-open-new-question-modal">
+              <i class="fa-solid fa-plus"></i> Adicionar Questão
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-start-simulado">
+              <i class="fa-solid fa-stopwatch"></i> Iniciar Simulado Oficial
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra de Simulado Ativo (Oculta por padrão) -->
+        <div class="simulado-bar hidden" id="simulado-active-bar">
+          <div class="simulado-timer-box">
+            <i class="fa-solid fa-clock"></i>
+            <span id="simulado-timer-text">30:00</span>
+          </div>
+          <div class="simulado-grid" id="simulado-questions-grid">
+            <!-- Números das questões -->
+          </div>
+          <button class="btn btn-danger btn-sm" id="btn-finish-simulado">
+            <i class="fa-solid fa-flag-checkered"></i> Entregar Prova
+          </button>
+        </div>
+
+        <!-- Filtros de Questões -->
+        <div class="filter-toolbar" id="questions-filter-toolbar">
+          <div class="filters-group">
+            <select class="filter-select" id="q-filter-disciplina">
+              <option value="all">Todas as Disciplinas</option>
+            </select>
+            <select class="filter-select" id="q-filter-banca">
+              <option value="all">Todas as Bancas</option>
+            </select>
+            <select class="filter-select" id="q-filter-status">
+              <option value="all">Todas as Questões</option>
+              <option value="nao_feitas">Não Resolvidas</option>
+              <option value="erradas">Apenas Erradas</option>
+            </select>
+            <input type="text" class="search-input" id="q-filter-search" placeholder="Buscar no enunciado ou assunto...">
+          </div>
+        </div>
+
+        <!-- Card da Questão Ativa -->
+        <div id="question-display-container">
+          <div class="question-card">
+            <div class="question-header">
+              <div class="question-tags">
+                <span class="q-tag q-tag-primary" id="q-tag-disciplina">Direito Administrativo</span>
+                <span class="q-tag" id="q-tag-assunto">Princípios</span>
+                <span class="q-tag" id="q-tag-banca">Cebraspe • 2024</span>
+                <span class="q-tag" id="q-tag-orgao">Polícia Federal - Agente</span>
+              </div>
+              <div class="text-dimmed" style="font-size: 0.85rem; font-weight: 600;" id="q-counter-text">
+                Questão 1 de 12
+              </div>
+            </div>
+
+            <div class="question-body">
+              <p class="question-enunciado" id="q-enunciado">
+                Carregando questão...
+              </p>
+
+              <div class="alternativas-list" id="q-alternativas-container">
+                <!-- Alternativas geradas dinamicamente -->
+              </div>
+
+              <!-- Caixa de Gabarito Comentado -->
+              <div class="feedback-box hidden" id="q-feedback-box">
+                <div id="q-feedback-status"></div>
+                <div class="feedback-text" id="q-feedback-text"></div>
+              </div>
+            </div>
+
+            <div class="question-footer">
+              <div class="q-nav-buttons">
+                <button class="btn btn-secondary btn-sm" id="q-btn-prev">
+                  <i class="fa-solid fa-arrow-left"></i> Anterior
+                </button>
+                <button class="btn btn-secondary btn-sm" id="q-btn-next">
+                  Próxima <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <button class="btn btn-primary" id="q-btn-submit">
+                Responder Questão
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state-box hidden" id="questions-empty-state">
+          <i class="fa-solid fa-filter empty-state-icon"></i>
+          <h3>Nenhuma questão encontrada com esses filtros</h3>
+          <p>Tente ajustar os filtros de disciplina, banca ou limpar o campo de busca.</p>
+        </div>
+      </div>
+
+      <!-- VIEW 5: FLASHCARDS SRS -->
+      <div class="view-content-wrapper view-section hidden" id="view-flashcards">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Flashcards com Repetição Espaçada (SRS)</h1>
+            <p>Fixe conceitos com o algoritmo SuperMemo SM-2. Quanto melhor a lembrança, mais longe o próximo intervalo.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="fc-btn-new">
+            <i class="fa-solid fa-plus"></i> Novo Flashcard
+          </button>
+        </div>
+
+        <div class="flashcards-layout">
+          <!-- Lista de Decks -->
+          <div class="deck-chips-container" id="flashcards-deck-list">
+            <!-- Decks gerados dinamicamente -->
+          </div>
+
+          <!-- Palco do Card 3D -->
+          <div id="flashcard-main-container">
+            <div class="flashcard-stage">
+              <div class="flashcard-3d-box" id="flashcard-3d-box">
+                <div class="flashcard-inner" id="flashcard-inner">
+                  <!-- Frente -->
+                  <div class="flashcard-front">
+                    <div class="fc-card-header">
+                      <span class="fc-tag" id="fc-tag-deck">Português</span>
+                      <span class="fc-counter" id="fc-counter-text">Card 1 de 6</span>
+                    </div>
+                    <div class="fc-card-content" id="fc-front-text">
+                      Pergunta do Flashcard...
+                    </div>
+                    <div class="fc-card-footer">
+                      <i class="fa-solid fa-hand-pointer"></i> Clique para revelar a resposta
+                    </div>
+                  </div>
+
+                  <!-- Verso -->
+                  <div class="flashcard-back">
+                    <div class="fc-card-header">
+                      <span class="fc-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Resposta & Fundamento</span>
+                    </div>
+                    <div class="fc-card-content" id="fc-back-text">
+                      Explicação detalhada da resposta...
+                    </div>
+                    <div class="fc-card-footer">
+                      Classifique sua lembrança abaixo:
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ações do Card -->
+            <div class="flashcard-actions-wrapper" style="margin-top: 20px;">
+              <div class="fc-flip-btn-row" style="margin-bottom: 14px;">
+                <button class="btn btn-secondary" id="fc-btn-flip">
+                  <i class="fa-solid fa-arrows-rotate"></i> Virar Cartão (Espaço)
+                </button>
+              </div>
+
+              <div class="fc-grade-grid hidden" id="flashcard-grade-actions">
+                <button class="fc-grade-btn btn-grade-0" data-grade="0">
+                  <span>🔴 Errei</span>
+                  <span>Revisar em 1 min</span>
+                </button>
+                <button class="fc-grade-btn btn-grade-3" data-grade="3">
+                  <span>🟠 Difícil</span>
+                  <span>Revisar em 1 dia</span>
+                </button>
+                <button class="fc-grade-btn btn-grade-4" data-grade="4">
+                  <span>🟢 Bom</span>
+                  <span>Revisar em 3-6 dias</span>
+                </button>
+                <button class="fc-grade-btn btn-grade-5" data-grade="5">
+                  <span>🔵 Fácil</span>
+                  <span>Revisar em 7+ dias</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state-box hidden" id="flashcard-empty-state">
+            <i class="fa-solid fa-circle-check empty-state-icon text-success"></i>
+            <h3>Todos os cards deste deck foram revisados!</h3>
+            <p>Excelente disciplina! Retorne amanhã para a próxima rodada de repetição espaçada.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 6: CADERNO DE ERROS -->
+      <div class="view-content-wrapper view-section hidden" id="view-erros">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Caderno de Erros Automatizado</h1>
+            <p>O segredo da aprovação é blindar os seus erros. Toda questão errada é arquivada aqui para reestudo.</p>
+          </div>
+          <span class="badge-weight" id="caderno-total-badge" style="font-size: 0.9rem; padding: 6px 14px;">2 Erros Pendentes</span>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="filters-group">
+            <select class="filter-select" id="caderno-filter-reason">
+              <option value="all">Todos os Motivos</option>
+              <option value="pegadinha">⚠️ Pegadinha da Banca</option>
+              <option value="conteudo">📖 Desconhecimento Teórico</option>
+              <option value="atencao">👀 Falta de Atenção</option>
+            </select>
+            <select class="filter-select" id="caderno-filter-status">
+              <option value="all">Todos os Status</option>
+              <option value="pending">Apenas Pendentes</option>
+              <option value="resolved">Apenas Dominados</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="caderno-list" id="caderno-erros-list">
+          <!-- Itens do Caderno de Erros -->
+        </div>
+
+        <div class="empty-state-box hidden" id="caderno-empty-state">
+          <i class="fa-solid fa-shield-halved empty-state-icon text-success"></i>
+          <h3>Nenhum erro registrado neste filtro!</h3>
+          <p>Você está com o conteúdo blindado ou sem questões pendentes de correção.</p>
+        </div>
+      </div>
+
+      <!-- VIEW 7: FOCO POMODORO & CRONÔMETRO -->
+      <div class="view-content-wrapper view-section hidden" id="view-pomodoro">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Cronômetro de Estudo Líquido & Pomodoro</h1>
+            <p>Monitore suas horas líquidas com áudios de foco e transições automáticas de descanso.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="pomo-btn-zen">
+            <i class="fa-solid fa-expand"></i> Modo Zen Tela Cheia
+          </button>
+        </div>
+
+        <div class="pomodoro-wrapper">
+          <!-- Seletor de Modo -->
+          <div class="pomo-mode-selector">
+            <button class="pomo-mode-btn active" data-mode="pomodoro_25">Pomodoro 25/5</button>
+            <button class="pomo-mode-btn" data-mode="pomodoro_50">Bloco 50/10</button>
+            <button class="pomo-mode-btn" data-mode="stopwatch">Cronômetro Livre</button>
+          </div>
+
+          <!-- Círculo Central -->
+          <div class="timer-stage">
+            <svg class="timer-svg" viewBox="0 0 300 300">
+              <circle class="timer-circle-bg" cx="150" cy="150" r="130"></circle>
+              <circle class="timer-circle-progress" id="pomo-progress-circle" cx="150" cy="150" r="130"></circle>
+            </svg>
+            <div class="timer-display-box">
+              <span class="pomo-badge status-idle" id="pomo-status-badge">PRONTO PARA O COMBATE</span>
+              <span class="timer-digits" id="pomo-time-display">25:00</span>
+            </div>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="timer-controls">
+            <button class="btn btn-primary btn-lg pulse-glow" id="pomo-btn-start">
+              <i class="fa-solid fa-play"></i> Iniciar Papiro
+            </button>
+            <button class="btn btn-warning btn-lg hidden" id="pomo-btn-pause">
+              <i class="fa-solid fa-pause"></i> Pausar
+            </button>
+            <button class="btn btn-secondary btn-lg" id="pomo-btn-reset">
+              <i class="fa-solid fa-rotate-left"></i> Concluir / Reiniciar
+            </button>
+          </div>
+
+          <!-- Configurações da Sessão -->
+          <div class="timer-settings-card">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label><i class="fa-solid fa-book"></i> Matéria Sendo Estudada:</label>
+              <select class="form-select" id="pomo-subject-select">
+                <!-- Preenchido dinamicamente -->
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label><i class="fa-solid fa-headphones"></i> Som Ambiente de Foco:</label>
+              <select class="form-select" id="pomo-sound-select">
+                <option value="none">Silêncio Total</option>
+                <option value="rain">Chuva Suave (Sintetizada)</option>
+                <option value="white">Ruído Branco / Concentração</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 8: DESEMPENHO & ESTATÍSTICAS -->
+      <div class="view-content-wrapper view-section hidden" id="view-desempenho">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Desempenho & Analytics Completo</h1>
+            <p>Métricas precisas sobre tempo estudado, taxa de acerto e evolução semanal.</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-title">Total de Horas Líquidas</span>
+            <div class="kpi-main-val" id="analytics-total-hours">24.2h</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Questões Feitas</span>
+            <div class="kpi-main-val" id="analytics-total-questions">195</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Taxa Média de Acerto</span>
+            <div class="kpi-main-val text-success" id="analytics-total-accuracy">84%</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title">Progresso no Edital</span>
+            <div class="kpi-main-val text-primary" id="analytics-edital-progress">34%</div>
+          </div>
+        </div>
+
+        <div class="charts-grid-2col">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-chart-line text-primary"></i> Horas Estudadas nos Últimos Dias</h3>
+            </div>
+            <div class="card-body">
+              <div class="canvas-container">
+                <canvas id="chart-analytics-hours"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-chart-pie text-accent"></i> Proporção de Tempo por Disciplina</h3>
+            </div>
+            <div class="card-body">
+              <div class="canvas-container">
+                <canvas id="chart-analytics-donut"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-chart-column text-warning"></i> Volume de Questões por Matéria</h3>
+          </div>
+          <div class="card-body">
+            <div class="canvas-container">
+              <canvas id="chart-analytics-bar"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-calendar-days text-success"></i> Mapa de Frequência de Papiro</h3>
+          </div>
+          <div class="card-body">
+            <div id="analytics-heatmap-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 9: RANKING & CONQUISTAS -->
+      <div class="view-content-wrapper view-section hidden" id="view-ranking">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Ranking Semanal & Conquistas</h1>
+            <p>Acompanhe sua posição na liga dos concurseiros e desbloqueie medalhas de honra.</p>
+          </div>
+        </div>
+
+        <!-- Progresso de Nível -->
+        <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(139,92,246,0.15));">
+          <div class="card-body" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+            <div>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase;">Patente Militar Atual</span>
+              <h2 id="level-current-rank-title" style="font-size: 1.5rem; font-weight: 800;">Sargento Operacional</h2>
+            </div>
+            <div style="flex: 1; max-width: 450px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px;">
+                <span>Progresso para o Próximo Nível</span>
+                <span id="level-progress-label">3420 / 4900 XP</span>
+              </div>
+              <div class="kpi-progress-track" style="height: 10px;">
+                <div class="kpi-progress-fill fill-blue" id="level-progress-fill" style="width: 70%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela do Leaderboard -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-trophy text-warning"></i> Classificação Semanal da Liga</h3>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="topics-table-wrapper">
+              <table class="topics-table">
+                <thead>
+                  <tr>
+                    <th style="width: 80px; text-align: center;">Posição</th>
+                    <th>Concurseiro</th>
+                    <th style="text-align: center;">Horas Semanais</th>
+                    <th style="text-align: center;">Questões</th>
+                    <th style="text-align: center;">% Acerto</th>
+                    <th style="text-align: right;">Total de XP</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-tbody">
+                  <!-- Linhas da tabela de ranking -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conquistas Grid -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-medal text-warning"></i> Galeria de Medalhas e Conquistas</h3>
+          </div>
+          <div class="card-body">
+            <div class="badges-grid" id="badges-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+              <!-- Badges geradas dinamicamente -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 10: CONFIGURAÇÕES & BACKUP -->
+      <div class="view-content-wrapper view-section hidden" id="view-configuracoes">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1>Configurações & Backup de Dados</h1>
+            <p>Personalize suas metas diárias, exporte backups e garanta a segurança das suas anotações.</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-user-gear text-primary"></i> Perfil & Metas de Estudo</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Seu Nome ou Codinome:</label>
+                <input type="text" class="form-input" id="setting-user-name" value="Max Aldana">
+              </div>
+              <div class="form-group">
+                <label>Meta Diária de Horas Líquidas (horas):</label>
+                <input type="number" class="form-input" id="setting-daily-goal" min="1" max="14" value="4">
+              </div>
+              <div class="form-group">
+                <label>Meta Semanal (horas):</label>
+                <input type="number" class="form-input" id="setting-weekly-goal" min="5" max="80" value="25">
+              </div>
+              <button class="btn btn-primary" id="btn-save-settings">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Preferências
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-database text-accent"></i> Backup & Restauração (100% Offline)</h3>
+            </div>
+            <div class="card-body">
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px;">
+                Todos os seus estudos ficam salvos no armazenamento local do navegador. Exporte o arquivo JSON para manter uma cópia de segurança.
+              </p>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-secondary" id="btn-export-backup">
+                  <i class="fa-solid fa-download"></i> Exportar Dados (Backup JSON)
+                </button>
+                <label class="btn btn-secondary" style="cursor: pointer;">
+                  <i class="fa-solid fa-upload"></i> Restaurar Backup JSON
+                  <input type="file" id="input-import-backup" accept=".json" style="display: none;">
+                </label>
+                <button class="btn btn-danger btn-sm" id="btn-reset-data" style="margin-top: 10px;">
+                  <i class="fa-solid fa-trash-can"></i> Resetar Dados para o Padrão
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- OVERLAYS E MODAIS -->
+
+  <!-- Modo Zen Fullscreen -->
+  <div class="zen-overlay hidden" id="zen-mode-overlay">
+    <div class="zen-top">
+      <div class="brand-logo">
+        <div class="logo-icon"><i class="fa-solid fa-scroll"></i></div>
+        <div class="brand-text"><h2>FOCO NO PAPIRO</h2></div>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="zen-btn-exit">
+        <i class="fa-solid fa-compress"></i> Sair do Modo Zen
+      </button>
+    </div>
+    <div class="zen-center">
+      <div class="zen-digits" id="zen-time-display">25:00</div>
+      <p class="zen-quote">"A dor da disciplina é passageira, o orgulho da posse no cargo é eterno."</p>
+    </div>
+    <div class="zen-bottom">
+      <span class="pomo-badge status-running">SESSÃO DE CONCENTRAÇÃO MÁXIMA</span>
+    </div>
+  </div>
+
+  <!-- Modal: Nova Disciplina -->
+  <div class="modal-overlay hidden" id="modal-add-disciplina">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-book text-primary"></i> Nova Disciplina</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nome da Disciplina:</label>
+          <input type="text" class="form-input" id="new-disc-name" placeholder="Ex: Direito Penal Especial">
+        </div>
+        <div class="form-group">
+          <label>Peso no Edital (1 a 5):</label>
+          <input type="number" class="form-input" id="new-disc-weight" min="1" max="5" value="3">
+        </div>
+        <div class="form-group">
+          <label>Cor de Destaque:</label>
+          <select class="form-select" id="new-disc-color">
+            <option value="#3b82f6">Azul Tático (#3b82f6)</option>
+            <option value="#10b981">Verde Floresta (#10b981)</option>
+            <option value="#f59e0b">Âmbar (#f59e0b)</option>
+            <option value="#ef4444">Vermelho Operacional (#ef4444)</option>
+            <option value="#8b5cf6">Roxo (#8b5cf6)</option>
+            <option value="#06b6d4">Ciano (#06b6d4)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" onclick="editalManager.saveNewDisciplina()">Salvar Disciplina</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Tópico -->
+  <div class="modal-overlay hidden" id="modal-add-topico">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-list text-primary"></i> Adicionar Tópico ao Edital</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Título do Tópico ou Conteúdo:</label>
+          <input type="text" class="form-input" id="new-topico-title" placeholder="Ex: Da Prisão em Flagrante (Art. 301 a 310)">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" onclick="editalManager.saveNewTopico()">Adicionar Tópico</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Concurso -->
+  <div class="modal-overlay hidden" id="modal-new-concurso">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-trophy text-primary"></i> Criar Novo Plano de Concurso</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Título Completo do Cargo:</label>
+          <input type="text" class="form-input" id="new-concurso-title" placeholder="Ex: Auditor Fiscal da Receita Federal">
+        </div>
+        <div class="form-group">
+          <label>Sigla / Nome Curto:</label>
+          <input type="text" class="form-input" id="new-concurso-short" placeholder="Ex: Receita Federal - Auditor">
+        </div>
+        <div class="form-group">
+          <label>Banca Organizadora:</label>
+          <input type="text" class="form-input" id="new-concurso-banca" placeholder="Ex: FGV, Cebraspe, FCC">
+        </div>
+        <div class="form-group">
+          <label>Data Prevista da Prova:</label>
+          <input type="date" class="form-input" id="new-concurso-date" value="2026-12-31">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-new-concurso">Criar e Ativar Plano</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Flashcard -->
+  <div class="modal-overlay hidden" id="modal-new-flashcard">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-layer-group text-primary"></i> Criar Flashcard</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Disciplina:</label>
+          <select class="form-select" id="new-fc-disciplina"></select>
+        </div>
+        <div class="form-group">
+          <label>Frente do Cartão (Pergunta / Conceito / Pergunta Chave):</label>
+          <textarea class="form-textarea" id="new-fc-front" placeholder="Ex: Qual é o prazo decadencial para impetrar Mandado de Segurança?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Verso do Cartão (Resposta / Mnemônico / Fundamento):</label>
+          <textarea class="form-textarea" id="new-fc-back" placeholder="Ex: 120 dias, contados da ciência do ato impugnado (Lei 12.016/09)."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" onclick="flashcardsManager.saveNewCard()">Salvar Cartão</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Nova Questão -->
+  <div class="modal-overlay hidden" id="modal-new-question">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-question text-primary"></i> Adicionar Questão ao Banco</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Disciplina:</label>
+          <input type="text" class="form-input" id="new-q-disciplina" placeholder="Ex: Direito Administrativo">
+        </div>
+        <div class="form-group">
+          <label>Assunto:</label>
+          <input type="text" class="form-input" id="new-q-assunto" placeholder="Ex: Atos Administrativos">
+        </div>
+        <div class="form-group">
+          <label>Enunciado da Questão:</label>
+          <textarea class="form-textarea" id="new-q-enunciado" placeholder="Digite o texto da assertiva..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Gabarito Correto:</label>
+          <select class="form-select" id="new-q-resposta">
+            <option value="C">Certo</option>
+            <option value="E">Errado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Explicação / Fundamento do Gabarito:</label>
+          <textarea class="form-textarea" id="new-q-explicacao" placeholder="Justificativa com artigo de lei ou jurisprudência..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-new-question">Salvar Questão</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Resultado do Simulado -->
+  <div class="modal-overlay hidden" id="modal-simulado-result">
+    <div class="modal-box" style="text-align: center;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-award text-warning"></i> Relatório do Simulado</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size: 2.8rem; margin: 10px 0;">🎯</div>
+        <h2>Simulado Finalizado com Honra!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Confira o seu desempenho tático nesta prova:</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+          <div style="background: var(--bg-surface-elevated); padding: 12px; border-radius: var(--radius-md);">
+            <div style="font-size: 0.78rem; color: var(--text-dimmed);">Total de Itens</div>
+            <strong style="font-size: 1.4rem;" id="res-simulado-total">10</strong>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.15); padding: 12px; border-radius: var(--radius-md); color: #34d399;">
+            <div style="font-size: 0.78rem;">Acertos</div>
+            <strong style="font-size: 1.4rem;" id="res-simulado-correct">8</strong>
+          </div>
+          <div style="background: rgba(239, 68, 68, 0.15); padding: 12px; border-radius: var(--radius-md); color: #f87171;">
+            <div style="font-size: 0.78rem;">Erros</div>
+            <strong style="font-size: 1.4rem;" id="res-simulado-incorrect">2</strong>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-around; margin-bottom: 14px;">
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Em Branco:</span>
+            <strong id="res-simulado-blank">0</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Nota Líquida (Cespe):</span>
+            <strong id="res-simulado-net" style="color: #60a5fa; font-size: 1.1rem;">6.0</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Aproveitamento:</span>
+            <strong id="res-simulado-accuracy" style="color: #34d399; font-size: 1.1rem;">80%</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button class="btn btn-primary modal-close-btn">Continuar Papiro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Level Up -->
+  <div class="modal-overlay hidden" id="modal-level-up">
+    <div class="modal-box" style="text-align: center; border: 2px solid var(--color-accent);">
+      <div class="modal-body" style="padding: 36px 24px;">
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">⚡</div>
+        <h2 style="font-size: 1.8rem; font-weight: 900; color: #34d399;" id="levelup-title">NOVA PATENTE CONQUISTADA!</h2>
+        <h3 style="font-size: 1.3rem; margin: 10px 0 16px; color: var(--text-main);" id="levelup-rank">Sargento Operacional</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 380px; margin: 0 auto 24px;">
+          Sua constância e disciplina no papiro foram recompensadas. Continue avançando rumo à posse!
+        </p>
+        <button class="btn btn-primary btn-lg modal-close-btn">
+          <i class="fa-solid fa-fire"></i> Rumo à Aprovação!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Toasts -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts da Aplicação SPA (Ordem de Dependência) -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/pomodoro.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/flashcards.js"></script>
+  <script src="js/edital.js"></script>
+  <script src="js/ciclo.js"></script>
+  <script src="js/errors.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

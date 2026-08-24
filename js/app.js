@@ -1,0 +1,465 @@
+// ==========================================================================
+// FOCO NO PAPIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL
+// ==========================================================================
+
+class App {
+  constructor() {
+    this.currentRoute = "dashboard";
+    this.routes = [
+      "dashboard",
+      "edital",
+      "ciclo",
+      "questoes",
+      "flashcards",
+      "erros",
+      "desempenho",
+      "ranking",
+      "pomodoro",
+      "configuracoes"
+    ];
+  }
+
+  init() {
+    this.applyTheme(store.data.profile.theme || "dark");
+    this.bindGlobalNavigation();
+    this.bindModalHandlers();
+    this.bindSettingsHandlers();
+    this.handleRoute();
+    this.listenToStore();
+
+    window.addEventListener("hashchange", () => this.handleRoute());
+    window.addEventListener("resize", () => {
+      if (this.currentRoute === "dashboard" || this.currentRoute === "desempenho") {
+        dashboardManager.renderCharts();
+      }
+    });
+
+    console.log("🚀 Foco no Papiro SPA inicializado com sucesso!");
+  }
+
+  handleRoute() {
+    const rawHash = window.location.hash.replace("#", "").trim();
+    const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
+    this.currentRoute = route;
+
+    // Atualiza links da barra de navegação
+    document.querySelectorAll(".nav-link").forEach(link => {
+      const target = link.getAttribute("href")?.replace("#", "");
+      if (target === route) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+
+    // Oculta todas as páginas e exibe a página ativa
+    document.querySelectorAll(".view-section").forEach(sec => {
+      sec.classList.add("hidden");
+    });
+
+    const activeView = document.getElementById(`view-${route}`);
+    if (activeView) {
+      activeView.classList.remove("hidden");
+    }
+
+    // Fecha menu mobile se aberto
+    this.toggleMobileSidebar(false);
+
+    // Rola para o topo suavemente
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Inicializa o módulo da view ativa
+    this.activateViewModule(route);
+  }
+
+  activateViewModule(route) {
+    switch (route) {
+      case "dashboard":
+        dashboardManager.init();
+        break;
+      case "edital":
+        editalManager.init();
+        break;
+      case "ciclo":
+        cicloManager.init();
+        break;
+      case "questoes":
+        questionsManager.init();
+        break;
+      case "flashcards":
+        flashcardsManager.init();
+        break;
+      case "erros":
+        cadernoManager.init();
+        break;
+      case "desempenho":
+        this.renderDesempenhoView();
+        break;
+      case "ranking":
+        gamificationManager.init();
+        break;
+      case "pomodoro":
+        pomodoro.init();
+        break;
+      case "configuracoes":
+        this.renderSettingsView();
+        break;
+    }
+  }
+
+  renderDesempenhoView() {
+    const overall = store.getEditalOverallProgress();
+    const weekly = store.getWeeklyStats();
+    const totalMinutes = store.data.studySessions.reduce((a, b) => a + b.durationMinutes, 0);
+    const totalHours = (totalMinutes / 60).toFixed(1);
+    const totalQ = store.data.questionHistory.length;
+    const correctQ = store.data.questionHistory.filter(q => q.isCorrect).length;
+    const accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+
+    const elHours = document.getElementById("analytics-total-hours");
+    const elQ = document.getElementById("analytics-total-questions");
+    const elAcc = document.getElementById("analytics-total-accuracy");
+    const elProg = document.getElementById("analytics-edital-progress");
+
+    if (elHours) elHours.textContent = `${totalHours}h`;
+    if (elQ) elQ.textContent = totalQ;
+    if (elAcc) elAcc.textContent = `${accuracy}%`;
+    if (elProg) elProg.textContent = `${overall.percent}%`;
+
+    // Gráficos da tela de desempenho
+    setTimeout(() => {
+      PapiroCharts.renderLineAreaChart("chart-analytics-hours", weekly.labels, weekly.hours);
+      
+      const subjectDist = store.getSubjectDistribution();
+      const donutItems = subjectDist.map(s => ({
+        label: s.name,
+        value: s.minutes,
+        color: s.color
+      }));
+      PapiroCharts.renderDonutChart("chart-analytics-donut", donutItems);
+
+      const barItems = subjectDist.map(s => ({
+        label: s.name,
+        value: s.questions,
+        color: s.color
+      }));
+      PapiroCharts.renderBarChart("chart-analytics-bar", barItems);
+
+      PapiroCharts.renderConsistencyHeatmap("analytics-heatmap-container", store.data.studySessions);
+    }, 50);
+  }
+
+  renderSettingsView() {
+    const profile = store.data.profile;
+    const nameInput = document.getElementById("setting-user-name");
+    const goalInput = document.getElementById("setting-daily-goal");
+    const weeklyGoalInput = document.getElementById("setting-weekly-goal");
+
+    if (nameInput) nameInput.value = profile.name || "";
+    if (goalInput) goalInput.value = profile.dailyGoalMinutes ? Math.round(profile.dailyGoalMinutes / 60) : 4;
+    if (weeklyGoalInput) weeklyGoalInput.value = profile.weeklyGoalHours || 25;
+  }
+
+  bindGlobalNavigation() {
+    // Menu mobile
+    const toggleBtn = document.getElementById("mobile-menu-toggle");
+    const closeBtn = document.getElementById("sidebar-close-btn");
+    const backdrop = document.getElementById("sidebar-backdrop");
+
+    if (toggleBtn) toggleBtn.addEventListener("click", () => this.toggleMobileSidebar(true));
+    if (closeBtn) closeBtn.addEventListener("click", () => this.toggleMobileSidebar(false));
+    if (backdrop) backdrop.addEventListener("click", () => this.toggleMobileSidebar(false));
+
+    // Botão de Tema
+    const themeBtn = document.getElementById("btn-theme-toggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        const current = store.data.profile.theme || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        this.applyTheme(next);
+      });
+    }
+
+    // Botão de Foco Rápido no Header
+    const quickFocusBtn = document.getElementById("header-btn-quick-focus");
+    if (quickFocusBtn) {
+      quickFocusBtn.addEventListener("click", () => {
+        window.location.hash = "#pomodoro";
+      });
+    }
+  }
+
+  toggleMobileSidebar(open) {
+    const sidebar = document.getElementById("app-sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    if (sidebar && backdrop) {
+      if (open) {
+        sidebar.classList.add("mobile-open");
+        backdrop.classList.remove("hidden");
+      } else {
+        sidebar.classList.remove("mobile-open");
+        backdrop.classList.add("hidden");
+      }
+    }
+  }
+
+  applyTheme(theme) {
+    store.data.profile.theme = theme;
+    store.save();
+    document.documentElement.setAttribute("data-theme", theme);
+    
+    const themeIcon = document.getElementById("theme-toggle-icon");
+    if (themeIcon) {
+      themeIcon.className = theme === "dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    }
+  }
+
+  bindModalHandlers() {
+    // Fechamento de modais ao clicar no X ou fora
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+          overlay.classList.add("hidden");
+        }
+      });
+    });
+
+    document.querySelectorAll(".modal-close-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const modal = btn.closest(".modal-overlay");
+        if (modal) modal.classList.add("hidden");
+      });
+    });
+
+    // Modal de Novo Concurso
+    const openNewConcursoBtn = document.getElementById("btn-open-new-concurso-modal");
+    if (openNewConcursoBtn) {
+      openNewConcursoBtn.addEventListener("click", () => {
+        const m = document.getElementById("modal-new-concurso");
+        if (m) m.classList.remove("hidden");
+      });
+    }
+
+    const saveConcursoBtn = document.getElementById("btn-save-new-concurso");
+    if (saveConcursoBtn) {
+      saveConcursoBtn.addEventListener("click", () => this.saveNewConcurso());
+    }
+
+    // Modal de Nova Questão
+    const openNewQuestionBtn = document.getElementById("btn-open-new-question-modal");
+    if (openNewQuestionBtn) {
+      openNewQuestionBtn.addEventListener("click", () => {
+        const m = document.getElementById("modal-new-question");
+        if (m) m.classList.remove("hidden");
+      });
+    }
+
+    const saveQuestionBtn = document.getElementById("btn-save-new-question");
+    if (saveQuestionBtn) {
+      saveQuestionBtn.addEventListener("click", () => this.saveNewQuestion());
+    }
+  }
+
+  saveNewConcurso() {
+    const title = document.getElementById("new-concurso-title").value.trim();
+    const shortTitle = document.getElementById("new-concurso-short").value.trim() || title;
+    const banca = document.getElementById("new-concurso-banca").value.trim() || "Cebraspe";
+    const date = document.getElementById("new-concurso-date").value || "2026-12-31";
+
+    if (!title) {
+      showToast("Preencha o nome do concurso!", "warning");
+      return;
+    }
+
+    const newConcurso = {
+      id: `concurso-${Date.now()}`,
+      title,
+      shortTitle,
+      category: "Personalizado",
+      banca,
+      targetDate: date,
+      totalHoursGoal: 500,
+      dailyGoalMinutes: 240,
+      disciplinas: [
+        {
+          id: `disc-${Date.now()}-1`,
+          name: "Língua Portuguesa",
+          color: "#3b82f6",
+          icon: "fa-book",
+          weight: 3,
+          difficulty: 3,
+          topicos: [
+            { id: `top-${Date.now()}-1`, title: "Interpretação e Compreensão de Texto", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+          ]
+        }
+      ]
+    };
+
+    store.addConcurso(newConcurso);
+    const m = document.getElementById("modal-new-concurso");
+    if (m) m.classList.add("hidden");
+
+    dashboardManager.init();
+    showToast(`Concurso "${shortTitle}" criado e ativado!`, "success");
+  }
+
+  saveNewQuestion() {
+    const enunciado = document.getElementById("new-q-enunciado").value.trim();
+    const disciplinaName = document.getElementById("new-q-disciplina").value.trim() || "Geral";
+    const assunto = document.getElementById("new-q-assunto").value.trim() || "Geral";
+    const resposta = document.getElementById("new-q-resposta").value;
+    const explicacao = document.getElementById("new-q-explicacao").value.trim();
+
+    if (!enunciado || !explicacao) {
+      showToast("Preencha o enunciado e a explicação da questão!", "warning");
+      return;
+    }
+
+    store.addQuestion({
+      disciplinaId: "pf-port",
+      disciplinaName,
+      assunto,
+      banca: "Cebraspe",
+      orgao: "Simulado",
+      cargo: "Concurso",
+      ano: 2026,
+      tipo: "certo_errado",
+      enunciado,
+      alternativas: [
+        { id: "C", text: "Certo" },
+        { id: "E", text: "Errado" }
+      ],
+      respostaCorreta: resposta,
+      explicacao
+    });
+
+    const m = document.getElementById("modal-new-question");
+    if (m) m.classList.add("hidden");
+
+    showToast("Questão adicionada ao banco com sucesso!", "success");
+    if (this.currentRoute === "questoes") questionsManager.init();
+  }
+
+  bindSettingsHandlers() {
+    const saveProfileBtn = document.getElementById("btn-save-settings");
+    if (saveProfileBtn) {
+      saveProfileBtn.addEventListener("click", () => {
+        const name = document.getElementById("setting-user-name").value.trim();
+        const dailyH = parseInt(document.getElementById("setting-daily-goal").value, 10) || 4;
+        const weeklyH = parseInt(document.getElementById("setting-weekly-goal").value, 10) || 25;
+
+        if (name) store.data.profile.name = name;
+        store.data.profile.dailyGoalMinutes = dailyH * 60;
+        store.data.profile.weeklyGoalHours = weeklyH;
+        store.save();
+
+        showToast("Configurações e metas salvas com sucesso!", "success");
+        dashboardManager.renderHeaderInfo();
+      });
+    }
+
+    // Exportar Backup
+    const exportBtn = document.getElementById("btn-export-backup");
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        const json = store.exportBackup();
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `foco-no-papiro-backup-${new Date().toISOString().split("T")[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Backup exportado com sucesso!", "success");
+      });
+    }
+
+    // Importar Backup
+    const importInput = document.getElementById("input-import-backup");
+    if (importInput) {
+      importInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const success = store.importBackup(evt.target.result);
+            if (success) {
+              showToast("Backup restaurado com sucesso!", "success");
+              this.handleRoute();
+            } else {
+              showToast("Arquivo de backup inválido!", "error");
+            }
+          };
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    // Resetar Dados
+    const resetBtn = document.getElementById("btn-reset-data");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        if (confirm("⚠️ Tem certeza que deseja resetar todos os dados para o padrão inicial? Todas as anotações e histórico serão limpos.")) {
+          store.resetData();
+          showToast("Dados reiniciados para o padrão inicial.", "info");
+          location.reload();
+        }
+      });
+    }
+  }
+
+  listenToStore() {
+    store.subscribe((event, payload) => {
+      if (event === "level_up") {
+        this.showLevelUpModal(payload);
+      }
+      if (event === "badge_unlocked") {
+        showToast(`🎖️ Conquista Desbloqueada: ${payload.title}!`, "success");
+      }
+    });
+  }
+
+  showLevelUpModal(data) {
+    const modal = document.getElementById("modal-level-up");
+    if (modal) {
+      document.getElementById("levelup-title").textContent = `NÍVEL ${data.newLevel}`;
+      document.getElementById("levelup-rank").textContent = data.title;
+      audio.playCompletionChime();
+      modal.classList.remove("hidden");
+    }
+  }
+}
+
+// Toast Notifier
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast-item toast-${type}`;
+
+  const icons = {
+    success: "fa-circle-check",
+    warning: "fa-triangle-exclamation",
+    error: "fa-circle-xmark",
+    info: "fa-circle-info"
+  };
+
+  toast.innerHTML = `
+    <i class="fa-solid ${icons[type] || icons.info}"></i>
+    <span class="toast-message">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("toast-fade-out");
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+}
+
+// Inicialização Global
+const app = new App();
+document.addEventListener("DOMContentLoaded", () => {
+  app.init();
+});

@@ -1,0 +1,244 @@
+/* ==========================================================================
+   FOCO NO PAPIRO - ESTILOS DO EDITAL VERTICALIZADO
+   ========================================================================== */
+
+.edital-hero-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.edital-hero-left h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.edital-meta-tags {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.edital-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.countdown-badge {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.edital-hero-right {
+  min-width: 240px;
+}
+
+.edital-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.edital-progress-bar-track {
+  width: 100%;
+  height: 10px;
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.edital-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.edital-topicos-summary {
+  font-size: 0.78rem;
+  color: var(--text-dimmed);
+  margin-top: 6px;
+  text-align: right;
+}
+
+/* Accordion de Disciplinas */
+.edital-accordion-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.edital-disc-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.edital-disc-card.expanded {
+  border-color: var(--border-color-light);
+  box-shadow: var(--shadow-md);
+}
+
+.edital-disc-header {
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--bg-surface);
+  transition: var(--transition);
+}
+
+.edital-disc-header:hover {
+  background-color: var(--bg-surface-elevated);
+}
+
+.disc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.disc-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.disc-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.disc-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.disc-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.disc-header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.mini-progress-track {
+  width: 120px;
+  height: 6px;
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+.accordion-chevron-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  transition: transform 0.25s ease;
+}
+
+.edital-disc-card.expanded .accordion-chevron-btn {
+  transform: rotate(180deg);
+}
+
+/* Tabela de Tópicos */
+.edital-disc-body {
+  border-top: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease;
+}
+
+.topics-table-wrapper {
+  overflow-x: auto;
+}
+
+.topics-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.topics-table th {
+  padding: 12px 18px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dimmed);
+  border-bottom: 1px solid var(--border-color);
+  letter-spacing: 0.04em;
+}
+
+.topics-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.topic-row:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.topic-title-cell strong {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.dominio-select {
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+}
+
+.disc-body-footer {
+  padding: 14px 20px;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}

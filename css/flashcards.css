@@ -1,0 +1,230 @@
+/* ==========================================================================
+   FOCO NO PAPIRO - ESTILOS DO SISTEMA DE FLASHCARDS (3D SRS)
+   ========================================================================== */
+
+.flashcards-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Lista de Decks */
+.deck-chips-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.deck-chip {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.deck-chip:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--border-color-light);
+  color: var(--text-main);
+}
+
+.deck-chip.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--color-primary);
+  color: #60a5fa;
+}
+
+.deck-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-elevated);
+  color: var(--text-dimmed);
+}
+
+.deck-badge.badge-due {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-weight: 700;
+}
+
+/* Palco 3D do Flashcard */
+.flashcard-stage {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: 380px;
+}
+
+.flashcard-3d-box {
+  width: 100%;
+  height: 380px;
+  cursor: pointer;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flashcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-lg);
+}
+
+.flashcard-front {
+  background: linear-gradient(145deg, var(--bg-surface-elevated), var(--bg-surface));
+  border: 2px solid var(--border-color-light);
+}
+
+.flashcard-back {
+  background: linear-gradient(145deg, #132338, var(--bg-surface));
+  border: 2px solid var(--color-primary);
+  transform: rotateY(180deg);
+}
+
+.fc-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fc-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.fc-counter {
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+  font-weight: 600;
+}
+
+.fc-card-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-main);
+  padding: 20px 0;
+  text-align: center;
+}
+
+.flashcard-back .fc-card-content {
+  font-size: 1.05rem;
+  font-weight: 400;
+  text-align: left;
+}
+
+.fc-card-footer {
+  font-size: 0.82rem;
+  color: var(--text-dimmed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Ações de Avaliação SM-2 */
+.flashcard-actions-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.fc-flip-btn-row {
+  display: flex;
+  justify-content: center;
+}
+
+.fc-grade-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.fc-grade-btn {
+  padding: 14px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition);
+}
+
+.fc-grade-btn span:first-child {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.fc-grade-btn span:last-child {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.btn-grade-0 {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+.btn-grade-0:hover { background: #ef4444; color: #fff; }
+
+.btn-grade-3 {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+.btn-grade-3:hover { background: #f59e0b; color: #fff; }
+
+.btn-grade-4 {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+.btn-grade-4:hover { background: #3b82f6; color: #fff; }
+
+.btn-grade-5 {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+.btn-grade-5:hover { background: #10b981; color: #fff; }

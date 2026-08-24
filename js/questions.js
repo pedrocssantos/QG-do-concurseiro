@@ -1,0 +1,410 @@
+// ==========================================================================
+// FOCO NO PAPIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS
+// ==========================================================================
+
+class QuestionsManager {
+  constructor() {
+    this.filteredQuestions = [];
+    this.currentIndex = 0;
+    this.selectedOption = null;
+    this.isAnswered = false;
+    this.simuladoMode = false;
+    this.simuladoTimer = null;
+    this.simuladoSecondsLeft = 0;
+    this.simuladoAnswers = {}; // { questionId: selectedOption }
+    this.filters = {
+      disciplinaId: "all",
+      banca: "all",
+      status: "all", // all, nao_feitas, erradas
+      search: ""
+    };
+  }
+
+  init() {
+    this.populateFilterDropdowns();
+    this.applyFilters();
+    this.bindEvents();
+  }
+
+  populateFilterDropdowns() {
+    const discSelect = document.getElementById("q-filter-disciplina");
+    const bancaSelect = document.getElementById("q-filter-banca");
+    if (!discSelect) return;
+
+    const concurso = store.getActiveConcurso();
+    discSelect.innerHTML = `<option value="all">Todas as Disciplinas</option>`;
+    (concurso.disciplinas || []).forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.name;
+      discSelect.appendChild(opt);
+    });
+
+    if (bancaSelect) {
+      const bancas = [...new Set(store.data.questions.map(q => q.banca).filter(Boolean))];
+      bancaSelect.innerHTML = `<option value="all">Todas as Bancas</option>`;
+      bancas.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        bancaSelect.appendChild(opt);
+      });
+    }
+  }
+
+  bindEvents() {
+    const discSelect = document.getElementById("q-filter-disciplina");
+    const bancaSelect = document.getElementById("q-filter-banca");
+    const statusSelect = document.getElementById("q-filter-status");
+    const searchInput = document.getElementById("q-filter-search");
+    const prevBtn = document.getElementById("q-btn-prev");
+    const nextBtn = document.getElementById("q-btn-next");
+    const submitBtn = document.getElementById("q-btn-submit");
+    const startSimuladoBtn = document.getElementById("btn-start-simulado");
+    const finishSimuladoBtn = document.getElementById("btn-finish-simulado");
+
+    if (discSelect) discSelect.addEventListener("change", (e) => { this.filters.disciplinaId = e.target.value; this.applyFilters(); });
+    if (bancaSelect) bancaSelect.addEventListener("change", (e) => { this.filters.banca = e.target.value; this.applyFilters(); });
+    if (statusSelect) statusSelect.addEventListener("change", (e) => { this.filters.status = e.target.value; this.applyFilters(); });
+    if (searchInput) searchInput.addEventListener("input", (e) => { this.filters.search = e.target.value.toLowerCase(); this.applyFilters(); });
+
+    if (prevBtn) prevBtn.addEventListener("click", () => this.navigate(-1));
+    if (nextBtn) nextBtn.addEventListener("click", () => this.navigate(1));
+    if (submitBtn) submitBtn.addEventListener("click", () => this.submitAnswer());
+
+    if (startSimuladoBtn) startSimuladoBtn.addEventListener("click", () => this.startSimuladoModal());
+    if (finishSimuladoBtn) finishSimuladoBtn.addEventListener("click", () => this.finishSimulado());
+  }
+
+  applyFilters() {
+    const all = store.data.questions;
+    const history = store.data.questionHistory;
+
+    this.filteredQuestions = all.filter(q => {
+      // Filtro por disciplina
+      if (this.filters.disciplinaId !== "all" && q.disciplinaId !== this.filters.disciplinaId) {
+        return false;
+      }
+      // Filtro por banca
+      if (this.filters.banca !== "all" && q.banca !== this.filters.banca) {
+        return false;
+      }
+      // Filtro por busca de texto
+      if (this.filters.search) {
+        const text = `${q.enunciado} ${q.assunto} ${q.disciplinaName}`.toLowerCase();
+        if (!text.includes(this.filters.search)) return false;
+      }
+      // Filtro por status
+      if (this.filters.status === "nao_feitas") {
+        return !history.some(h => h.questionId === q.id);
+      }
+      if (this.filters.status === "erradas") {
+        const errorHistory = history.filter(h => h.questionId === q.id);
+        const last = errorHistory[errorHistory.length - 1];
+        return last && !last.isCorrect;
+      }
+      return true;
+    });
+
+    this.currentIndex = 0;
+    this.selectedOption = null;
+    this.isAnswered = false;
+    this.renderCurrentQuestion();
+    this.renderQuestionsCounter();
+  }
+
+  renderCurrentQuestion() {
+    const container = document.getElementById("question-display-container");
+    const emptyState = document.getElementById("questions-empty-state");
+    if (!container) return;
+
+    if (this.filteredQuestions.length === 0) {
+      container.classList.add("hidden");
+      if (emptyState) emptyState.classList.remove("hidden");
+      return;
+    }
+
+    container.classList.remove("hidden");
+    if (emptyState) emptyState.classList.add("hidden");
+
+    const q = this.filteredQuestions[this.currentIndex];
+    this.selectedOption = this.simuladoMode ? (this.simuladoAnswers[q.id] || null) : null;
+    this.isAnswered = false;
+
+    // Cabeçalho da Questão
+    document.getElementById("q-tag-disciplina").textContent = q.disciplinaName || "Geral";
+    document.getElementById("q-tag-assunto").textContent = q.assunto || "Tópico Geral";
+    document.getElementById("q-tag-banca").textContent = `${q.banca || "Cebraspe"} • ${q.ano || "2024"}`;
+    document.getElementById("q-tag-orgao").textContent = `${q.orgao || "Concurso"} - ${q.cargo || "Oficial"}`;
+    document.getElementById("q-enunciado").textContent = q.enunciado;
+
+    // Renderiza Alternativas
+    const optionsContainer = document.getElementById("q-alternativas-container");
+    optionsContainer.innerHTML = "";
+
+    q.alternativas.forEach(alt => {
+      const btn = document.createElement("button");
+      btn.className = `option-item ${this.selectedOption === alt.id ? "selected" : ""}`;
+      btn.dataset.optId = alt.id;
+      btn.innerHTML = `
+        <span class="option-badge">${alt.id}</span>
+        <span class="option-text">${alt.text}</span>
+      `;
+
+      btn.addEventListener("click", () => {
+        if (this.isAnswered && !this.simuladoMode) return;
+        this.selectOption(alt.id);
+      });
+
+      optionsContainer.appendChild(btn);
+    });
+
+    // Oculta explicação até responder
+    const feedbackBox = document.getElementById("q-feedback-box");
+    if (feedbackBox) feedbackBox.classList.add("hidden");
+
+    const submitBtn = document.getElementById("q-btn-submit");
+    if (submitBtn) {
+      submitBtn.disabled = this.simuladoMode;
+      submitBtn.textContent = "Responder Questão";
+    }
+
+    this.renderQuestionsCounter();
+  }
+
+  selectOption(optId) {
+    this.selectedOption = optId;
+    if (this.simuladoMode) {
+      const q = this.filteredQuestions[this.currentIndex];
+      this.simuladoAnswers[q.id] = optId;
+      this.renderSimuladoGrid();
+    }
+
+    const options = document.querySelectorAll("#q-alternativas-container .option-item");
+    options.forEach(opt => {
+      if (opt.dataset.optId === optId) {
+        opt.classList.add("selected");
+      } else {
+        opt.classList.remove("selected");
+      }
+    });
+  }
+
+  submitAnswer() {
+    if (!this.selectedOption) {
+      showToast("Selecione uma alternativa antes de responder!", "warning");
+      return;
+    }
+    if (this.isAnswered) return;
+
+    const q = this.filteredQuestions[this.currentIndex];
+    const isCorrect = this.selectedOption === q.respostaCorreta;
+    this.isAnswered = true;
+
+    // Efeito de Áudio
+    if (isCorrect) {
+      audio.playSuccessTone();
+    } else {
+      audio.playErrorTone();
+    }
+
+    // Registra no Store
+    store.recordQuestionAnswer({
+      questionId: q.id,
+      disciplinaId: q.disciplinaId,
+      disciplinaName: q.disciplinaName,
+      selectedOption: this.selectedOption,
+      isCorrect: isCorrect,
+      timeSpentSeconds: 45
+    });
+
+    // Destaca as opções
+    const options = document.querySelectorAll("#q-alternativas-container .option-item");
+    options.forEach(opt => {
+      const optId = opt.dataset.optId;
+      if (optId === q.respostaCorreta) {
+        opt.classList.add("correct");
+      } else if (optId === this.selectedOption && !isCorrect) {
+        opt.classList.add("incorrect");
+      }
+    });
+
+    // Mostra caixa de explicação e gabarito
+    const feedbackBox = document.getElementById("q-feedback-box");
+    const feedbackStatus = document.getElementById("q-feedback-status");
+    const feedbackText = document.getElementById("q-feedback-text");
+
+    if (feedbackBox) {
+      feedbackBox.classList.remove("hidden");
+      feedbackStatus.innerHTML = isCorrect
+        ? `<div class="badge-success-feedback"><i class="fa-solid fa-circle-check"></i> RESPOSTA CORRETA (+15 XP)</div>`
+        : `<div class="badge-error-feedback"><i class="fa-solid fa-circle-xmark"></i> RESPOSTA INCORRETA (Enviado para o Caderno de Erros)</div>`;
+
+      feedbackText.innerHTML = q.explicacao.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    }
+
+    const submitBtn = document.getElementById("q-btn-submit");
+    if (submitBtn) submitBtn.disabled = true;
+  }
+
+  navigate(direction) {
+    const newIdx = this.currentIndex + direction;
+    if (newIdx >= 0 && newIdx < this.filteredQuestions.length) {
+      this.currentIndex = newIdx;
+      this.renderCurrentQuestion();
+    }
+  }
+
+  renderQuestionsCounter() {
+    const counter = document.getElementById("q-counter-text");
+    if (counter) {
+      counter.textContent = `Questão ${this.currentIndex + 1} de ${this.filteredQuestions.length}`;
+    }
+
+    const prevBtn = document.getElementById("q-btn-prev");
+    const nextBtn = document.getElementById("q-btn-next");
+    if (prevBtn) prevBtn.disabled = this.currentIndex === 0;
+    if (nextBtn) nextBtn.disabled = this.currentIndex === this.filteredQuestions.length - 1;
+  }
+
+  // ================= MODO SIMULADO CRONOMETRADO =================
+  startSimuladoModal() {
+    const count = Math.min(10, store.data.questions.length);
+    if (confirm(`Iniciar Simulado Oficial de ${count} questões com tempo cronometrado de 30 minutos?`)) {
+      this.startSimulado(count, 30 * 60);
+    }
+  }
+
+  startSimulado(questionCount = 10, totalSeconds = 1800) {
+    this.simuladoMode = true;
+    this.simuladoAnswers = {};
+    this.simuladoSecondsLeft = totalSeconds;
+
+    // Embaralha questões
+    this.filteredQuestions = [...store.data.questions]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, questionCount);
+
+    this.currentIndex = 0;
+
+    // Exibe barra de simulado e oculta filtros
+    const simuladoBar = document.getElementById("simulado-active-bar");
+    const filtersBar = document.getElementById("questions-filter-toolbar");
+    if (simuladoBar) simuladoBar.classList.remove("hidden");
+    if (filtersBar) filtersBar.classList.add("hidden");
+
+    this.simuladoTimer = setInterval(() => {
+      this.simuladoSecondsLeft--;
+      const timeDisplay = document.getElementById("simulado-timer-text");
+      if (timeDisplay) {
+        const mins = Math.floor(this.simuladoSecondsLeft / 60);
+        const secs = this.simuladoSecondsLeft % 60;
+        timeDisplay.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      }
+
+      if (this.simuladoSecondsLeft <= 0) {
+        clearInterval(this.simuladoTimer);
+        alert("Tempo esgotado para o Simulado!");
+        this.finishSimulado();
+      }
+    }, 1000);
+
+    this.renderCurrentQuestion();
+    this.renderSimuladoGrid();
+    showToast("Simulado iniciado! Boa prova e mantenha o foco!", "info");
+  }
+
+  renderSimuladoGrid() {
+    const grid = document.getElementById("simulado-questions-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    this.filteredQuestions.forEach((q, idx) => {
+      const btn = document.createElement("button");
+      const isAnswered = Boolean(this.simuladoAnswers[q.id]);
+      btn.className = `simulado-grid-btn ${idx === this.currentIndex ? "current" : ""} ${isAnswered ? "answered" : ""}`;
+      btn.textContent = `${idx + 1}`;
+      btn.addEventListener("click", () => {
+        this.currentIndex = idx;
+        this.renderCurrentQuestion();
+        this.renderSimuladoGrid();
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  finishSimulado() {
+    clearInterval(this.simuladoTimer);
+    this.simuladoMode = false;
+
+    // Calcula Pontuação (Padrão Cespe: Certo +1, Errado -1, Em branco 0)
+    let correct = 0;
+    let incorrect = 0;
+    let blank = 0;
+
+    this.filteredQuestions.forEach(q => {
+      const userAns = this.simuladoAnswers[q.id];
+      if (!userAns) {
+        blank++;
+      } else if (userAns === q.respostaCorreta) {
+        correct++;
+        store.recordQuestionAnswer({
+          questionId: q.id,
+          disciplinaId: q.disciplinaId,
+          disciplinaName: q.disciplinaName,
+          selectedOption: userAns,
+          isCorrect: true,
+          timeSpentSeconds: 60
+        });
+      } else {
+        incorrect++;
+        store.recordQuestionAnswer({
+          questionId: q.id,
+          disciplinaId: q.disciplinaId,
+          disciplinaName: q.disciplinaName,
+          selectedOption: userAns,
+          isCorrect: false,
+          timeSpentSeconds: 60
+        });
+      }
+    });
+
+    const netScore = correct - incorrect; // Nota líquida Cespe
+    const accuracy = this.filteredQuestions.length > 0 ? Math.round((correct / this.filteredQuestions.length) * 100) : 0;
+
+    // Oculta barra de simulado
+    const simuladoBar = document.getElementById("simulado-active-bar");
+    const filtersBar = document.getElementById("questions-filter-toolbar");
+    if (simuladoBar) simuladoBar.classList.add("hidden");
+    if (filtersBar) filtersBar.classList.remove("hidden");
+
+    // Modal de Resultado
+    this.showSimuladoResultModal({
+      total: this.filteredQuestions.length,
+      correct,
+      incorrect,
+      blank,
+      netScore,
+      accuracy
+    });
+  }
+
+  showSimuladoResultModal(stats) {
+    const modal = document.getElementById("modal-simulado-result");
+    if (!modal) return;
+
+    document.getElementById("res-simulado-total").textContent = stats.total;
+    document.getElementById("res-simulado-correct").textContent = stats.correct;
+    document.getElementById("res-simulado-incorrect").textContent = stats.incorrect;
+    document.getElementById("res-simulado-blank").textContent = stats.blank;
+    document.getElementById("res-simulado-net").textContent = stats.netScore;
+    document.getElementById("res-simulado-accuracy").textContent = `${stats.accuracy}%`;
+
+    const xpEarned = stats.correct * 20 + 100;
+    store.addXP(xpEarned, "Simulado Completo Concluído! 🎓");
+
+    modal.classList.remove("hidden");
+  }
+}
+
+const questionsManager = new QuestionsManager();
