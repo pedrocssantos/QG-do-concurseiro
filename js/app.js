@@ -25,7 +25,7 @@ class App {
     this.bindGlobalNavigation();
     this.bindModalHandlers();
     this.bindSettingsHandlers();
-    this.bindOnboardingHandlers();
+    this.registerServiceWorker();
     this.checkPaymentReturn();
     this.handleRoute();
     this.listenToStore();
@@ -49,6 +49,26 @@ class App {
     });
 
     console.log("🚀 QG do Concurseiro SPA inicializado com sucesso!");
+  }
+
+  registerServiceWorker() {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+          .then((reg) => {
+            console.log("✅ PWA Service Worker ativo! Escopo:", reg.scope);
+          })
+          .catch((err) => {
+            console.warn("⚠️ Falha ao registrar Service Worker:", err);
+          });
+      });
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      window.deferredPwaPrompt = e;
+      console.log("📲 PWA pronto para instalação!");
+    });
   }
 
   checkPaymentReturn() {
