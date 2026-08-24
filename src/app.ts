@@ -43,6 +43,7 @@ class App {
     this.bindOnboardingHandlers();
     this.registerServiceWorker();
     this.checkPaymentReturn();
+    this.checkAuthReturn();
     this.handleRoute();
     this.listenToStore();
 
@@ -121,6 +122,36 @@ class App {
       }
     } catch (e) {
       console.warn("Erro ao verificar retorno de pagamento:", e);
+    }
+  }
+
+  checkAuthReturn() {
+    try {
+      const hash = window.location.hash;
+      if (hash && (hash.includes("access_token=") || hash.includes("type=signup") || hash.includes("type=recovery"))) {
+        console.log("🔑 Retorno de confirmação de e-mail do Supabase detectado.");
+        setTimeout(async () => {
+          if (typeof db !== "undefined" && db.client) {
+            const { data: { session } } = await db.client.auth.getSession();
+            if (session?.user) {
+              store.data.profile.isLoggedIn = true;
+              store.data.profile.email = session.user.email || store.data.profile.email;
+              if (session.user.user_metadata?.name) {
+                store.data.profile.name = session.user.user_metadata.name;
+                store.data.profile.avatar = session.user.user_metadata.name.substring(0, 2).toUpperCase();
+              }
+              store.save();
+              showToast("🎉 E-mail confirmado com sucesso! Sua conta está ativa!", "success");
+              db.updateAuthUI();
+              dashboardManager.renderHeaderInfo();
+            }
+          }
+          window.history.replaceState({}, document.title, window.location.pathname + "#dashboard");
+          this.handleRoute();
+        }, 600);
+      }
+    } catch (e) {
+      console.warn("Aviso ao processar retorno de auth:", e);
     }
   }
 

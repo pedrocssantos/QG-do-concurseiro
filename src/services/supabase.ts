@@ -75,15 +75,20 @@ class SupabaseService {
 
   async signUp(name, email, password) {
     if (!this.client) throw new Error("Serviço de autenticação não inicializado.");
+    
+    // Redireciona sempre para o domínio onde o usuário está acessando
+    const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : undefined;
+
     const { data, error } = await this.client.auth.signUp({
       email,
       password,
       options: {
-        data: { name: name }
+        data: { name: name },
+        emailRedirectTo: redirectUrl
       }
     });
     if (error) throw error;
-    if (data.user) {
+    if (data.user && data.session) {
       this.currentUser = data.user;
       await this.pushLocalDataToCloud();
       this.updateAuthUI();
