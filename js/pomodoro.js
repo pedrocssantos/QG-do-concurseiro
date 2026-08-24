@@ -397,10 +397,8 @@ class PomodoroController {
         modal.classList.add("hidden");
         window.location.hash = "#questoes";
         setTimeout(() => {
-          const filterSelect = document.getElementById("q-filter-disciplina");
-          if (filterSelect) {
-            filterSelect.value = disciplinaId;
-            questionsManager.applyFilters();
+          if (typeof questionsManager !== "undefined" && questionsManager.setDisciplinaFilter) {
+            questionsManager.setDisciplinaFilter(disciplinaId);
           }
           showToast(`Filtro tático: Questões de ${discName}!`, "info");
         }, 150);
@@ -512,3 +510,4 @@ class PomodoroController {
 }
 
 const pomodoro = new PomodoroController();
+const pomodoroManager = pomodoro;

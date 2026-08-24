@@ -536,9 +536,12 @@
 
             <!-- Ações do Card -->
             <div class="flashcard-actions-wrapper" style="margin-top: 20px;">
-              <div class="fc-flip-btn-row" style="margin-bottom: 14px;">
+              <div class="fc-flip-btn-row" style="margin-bottom: 14px; display: flex; justify-content: center; gap: 8px;">
                 <button class="btn btn-secondary" id="fc-btn-flip">
                   <i class="fa-solid fa-arrows-rotate"></i> Virar Cartão (Espaço)
+                </button>
+                <button class="btn btn-outline-danger btn-sm" id="fc-btn-delete" title="Excluir este Flashcard">
+                  <i class="fa-solid fa-trash-can"></i> Excluir
                 </button>
               </div>
 
@@ -1310,7 +1313,7 @@
             <strong id="res-simulado-blank">0</strong>
           </div>
           <div>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Nota Líquida (Cespe):</span>
+            <span id="res-simulado-net-label" style="font-size: 0.8rem; color: var(--text-muted);">Nota Líquida (Cespe):</span>
             <strong id="res-simulado-net" style="color: var(--color-primary); font-size: 1.1rem;">6.0</strong>
           </div>
           <div>

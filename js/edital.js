@@ -196,6 +196,22 @@ class EditalManager {
   handleCheckToggle(concursoId, discId, topicoId, fieldName, isChecked) {
     store.updateTopico(concursoId, discId, topicoId, { [fieldName]: isChecked });
     this.renderHeader();
+    const concurso = store.getActiveConcurso();
+    const disc = (concurso?.disciplinas || []).find(d => d.id === discId);
+    if (disc) {
+      const totalTopicos = disc.topicos?.length || 0;
+      const doneTopicos = disc.topicos?.filter(t => t.teoria && t.resumo).length || 0;
+      const percent = totalTopicos > 0 ? Math.round((doneTopicos / totalTopicos) * 100) : 0;
+      const card = document.getElementById(`disc-card-${discId}`);
+      if (card) {
+        const countEl = card.querySelector(".disc-topics-count");
+        const percentLabel = card.querySelector(".disc-percent-label");
+        const fillEl = card.querySelector(".mini-progress-fill");
+        if (countEl) countEl.textContent = `${doneTopicos}/${totalTopicos} tópicos`;
+        if (percentLabel) percentLabel.textContent = `${percent}%`;
+        if (fillEl) fillEl.style.width = `${percent}%`;
+      }
+    }
   }
 
   handleDominioChange(concursoId, discId, topicoId, value) {

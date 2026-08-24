@@ -145,6 +145,9 @@ class Store {
     if (state.profile.onboardingCompleted === undefined) {
       state.profile.onboardingCompleted = false;
     }
+    if (!state.profile.plan_tier) {
+      state.profile.plan_tier = "free";
+    }
     if (!state.ciclo) {
       state.ciclo = this.getDefaultState().ciclo;
     }
@@ -395,23 +398,39 @@ class Store {
       const assunto = (question && question.assunto) || data.assunto || "";
       const discId = data.disciplinaId || (question && question.disciplinaId);
 
-      const disc = concurso.disciplinas.find(d => 
-        (discId && d.id === discId) || 
-        (data.disciplinaName && d.name.toLowerCase().includes(data.disciplinaName.toLowerCase()))
-      );
+      const disc = concurso.disciplinas.find(d => {
+        if (discId && d.id === discId) return true;
+        if (data.disciplinaName) {
+          const dName = d.name.toLowerCase();
+          const qDiscName = data.disciplinaName.toLowerCase();
+          return dName.includes(qDiscName) || qDiscName.includes(dName);
+        }
+        return false;
+      });
 
       if (disc && disc.topicos && disc.topicos.length > 0) {
-        // Encontra o tópico correspondente ao assunto da questão
         let topico = null;
         if (assunto) {
           const normAssunto = assunto.toLowerCase().trim();
-          topico = disc.topicos.find(t => 
-            t.title.toLowerCase().trim().includes(normAssunto) || 
-            normAssunto.includes(t.title.toLowerCase().trim())
-          );
+          // 1. Busca por inclusão de string
+          topico = disc.topicos.find(t => {
+            const normTitle = t.title.toLowerCase().trim();
+            return normTitle.includes(normAssunto) || normAssunto.includes(normTitle);
+          });
+
+          // 2. Busca por palavras-chave significativas
+          if (!topico) {
+            const keywords = normAssunto.split(/[\s,–—\(\)\-\/]+/).filter(w => w.length > 3);
+            if (keywords.length > 0) {
+              topico = disc.topicos.find(t => {
+                const titleLower = t.title.toLowerCase();
+                return keywords.some(kw => titleLower.includes(kw));
+              });
+            }
+          }
         }
 
-        // Se não encontrou por assunto exato, usa o primeiro tópico como fallback
+        // 3. Fallback para o primeiro tópico da disciplina
         if (!topico) {
           topico = disc.topicos[0];
         }
@@ -852,6 +871,41 @@ class Store {
         resolved: false
       }
     ];
+
+    // Popula progresso de tópicos no concurso ativo para demonstração rica
+    const concurso = this.getActiveConcurso();
+    if (concurso && concurso.disciplinas) {
+      concurso.disciplinas.forEach((disc, dIdx) => {
+        (disc.topicos || []).forEach((top, tIdx) => {
+          if (tIdx === 0) {
+            top.teoria = true;
+            top.resumo = true;
+            top.r24h = true;
+            top.r7d = true;
+            top.questoesFeitas = 30;
+            top.questoesAcertos = 26;
+            top.dominio = 4;
+          } else if (tIdx === 1) {
+            top.teoria = true;
+            top.resumo = false;
+            top.r24h = true;
+            top.questoesFeitas = 15;
+            top.questoesAcertos = 12;
+            top.dominio = 3;
+          }
+        });
+      });
+    }
+
+    // Desbloqueia medalhas de demonstração
+    const demoBadgeIds = ["badge-first-study", "badge-streak-7", "badge-50-questions", "badge-edital-25"];
+    this.data.badges.forEach(b => {
+      if (demoBadgeIds.includes(b.id)) {
+        b.unlocked = true;
+        b.date = today;
+      }
+    });
+
     this.rebuildCicloForConcurso(this.data.activeConcursoId || "pf-agente");
     this.save();
     this.notify("data_imported");

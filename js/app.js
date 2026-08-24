@@ -598,6 +598,12 @@ class App {
       if (event === "badge_unlocked") {
         showToast(`🎖️ Conquista Desbloqueada: ${payload.title}!`, "success");
       }
+      if (typeof dashboardManager !== "undefined" && dashboardManager.renderHeaderInfo) {
+        dashboardManager.renderHeaderInfo();
+      }
+      if (typeof db !== "undefined" && db.updateAuthUI) {
+        db.updateAuthUI();
+      }
     });
   }
 

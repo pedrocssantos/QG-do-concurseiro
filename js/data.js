@@ -21,10 +21,10 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3, // 1-5
         topicos: [
-          { id: "pf-port-1", title: "Compreensão e Interpretação de Textos", teoria: true, resumo: true, questoesFeitas: 45, questoesAcertos: 40, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "pf-port-2", title: "Tipologia e Gêneros Textuais", teoria: true, resumo: true, questoesFeitas: 30, questoesAcertos: 26, r24h: true, r7d: false, r30d: false, dominio: 3 },
-          { id: "pf-port-3", title: "Ortografia Oficial e Acentuação Gráfica", teoria: true, resumo: false, questoesFeitas: 20, questoesAcertos: 18, r24h: false, r7d: false, r30d: false, dominio: 3 },
-          { id: "pf-port-4", title: "Morfossintaxe: Classes de Palavras", teoria: false, resumo: false, questoesFeitas: 10, questoesAcertos: 7, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-port-1", title: "Compreensão e Interpretação de Textos", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-port-2", title: "Tipologia e Gêneros Textuais", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-port-3", title: "Ortografia Oficial e Acentuação Gráfica", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-port-4", title: "Morfossintaxe: Classes de Palavras", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-port-5", title: "Sintaxe do Período Simples e Composto", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-port-6", title: "Pontuação e Uso dos Sinais", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-port-7", title: "Concordância Verbal e Nominal", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
@@ -40,9 +40,9 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3,
         topicos: [
-          { id: "pf-adm-1", title: "Princípios Expressos e Implícitos da Adm. Pública", teoria: true, resumo: true, questoesFeitas: 40, questoesAcertos: 36, r24h: true, r7d: true, r30d: true, dominio: 5 },
-          { id: "pf-adm-2", title: "Organização Administrativa: Direta e Indireta", teoria: true, resumo: true, questoesFeitas: 25, questoesAcertos: 21, r24h: true, r7d: false, r30d: false, dominio: 3 },
-          { id: "pf-adm-3", title: "Atos Administrativos (Requisitos, Atributos, Extinção)", teoria: true, resumo: false, questoesFeitas: 15, questoesAcertos: 11, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-adm-1", title: "Princípios Expressos e Implícitos da Adm. Pública", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-adm-2", title: "Organização Administrativa: Direta e Indireta", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-adm-3", title: "Atos Administrativos (Requisitos, Atributos, Extinção)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-adm-4", title: "Poderes da Administração Pública", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-adm-5", title: "Agentes Públicos e Regime da Lei 8.112/90", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-adm-6", title: "Responsabilidade Civil do Estado", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
@@ -57,12 +57,12 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 2,
         topicos: [
-          { id: "pf-const-1", title: "Princípios Fundamentais (Art. 1º a 4º CF)", teoria: true, resumo: true, questoesFeitas: 35, questoesAcertos: 32, r24h: true, r7d: true, r30d: true, dominio: 4 },
-          { id: "pf-const-2", title: "Direitos e Garantias Fundamentais (Art. 5º)", teoria: true, resumo: true, questoesFeitas: 50, questoesAcertos: 44, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "pf-const-3", title: "Direitos Sociais, Nacionalidade e Políticos", teoria: false, resumo: false, questoesFeitas: 12, questoesAcertos: 9, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-const-1", title: "Princípios Fundamentais (Art. 1º a 4º CF)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-const-2", title: "Direitos e Garantias Fundamentais (Art. 5º)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-const-3", title: "Direitos Sociais, Nacionalidade e Políticos", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-const-4", title: "Organização Político-Administrativa do Estado", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-const-5", title: "Poder Executivo e Poder Judiciário", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
-          { id: "pf-const-6", title: "Segurança Pública (Art. 144 CF)", teoria: true, resumo: true, questoesFeitas: 20, questoesAcertos: 19, r24h: true, r7d: false, r30d: false, dominio: 4 }
+          { id: "pf-const-6", title: "Segurança Pública (Art. 144 CF)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
       {
@@ -73,12 +73,12 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3,
         topicos: [
-          { id: "pf-penal-1", title: "Aplicação da Lei Penal (Tempo, Lugar, Extraterritorialidade)", teoria: true, resumo: true, questoesFeitas: 30, questoesAcertos: 27, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "pf-penal-2", title: "Teoria do Crime (Fato Típico, Ilicitude, Culpabilidade)", teoria: true, resumo: false, questoesFeitas: 25, questoesAcertos: 20, r24h: false, r7d: false, r30d: false, dominio: 3 },
+          { id: "pf-penal-1", title: "Aplicação da Lei Penal (Tempo, Lugar, Extraterritorialidade)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-penal-2", title: "Teoria do Crime (Fato Típico, Ilicitude, Culpabilidade)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-penal-3", title: "Crimes contra a Pessoa e contra o Patrimônio", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-penal-4", title: "Crimes contra a Administração Pública", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
-          { id: "pf-penal-5", title: "Inquérito Policial (Características, Instauração, Trancamento)", teoria: true, resumo: true, questoesFeitas: 40, questoesAcertos: 38, r24h: true, r7d: true, r30d: true, dominio: 5 },
-          { id: "pf-penal-6", title: "Prisões em Flagrante, Preventiva e Temporária", teoria: false, resumo: false, questoesFeitas: 15, questoesAcertos: 12, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-penal-5", title: "Inquérito Policial (Características, Instauração, Trancamento)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-penal-6", title: "Prisões em Flagrante, Preventiva e Temporária", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-penal-7", title: "Legislação Penal Especial (Drogas, Desarmamento, Tortura)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
@@ -90,12 +90,12 @@ const DEFAULT_CONCURSOS = [
         weight: 5, // Peso altíssimo na PF
         difficulty: 4,
         topicos: [
-          { id: "pf-info-1", title: "Redes de Computadores: Topologias, Protocolos TCP/IP, DNS, DHCP", teoria: true, resumo: true, questoesFeitas: 50, questoesAcertos: 42, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "pf-info-2", title: "Segurança da Informação: Criptografia, Malware, Firewall, IDS", teoria: true, resumo: true, questoesFeitas: 35, questoesAcertos: 31, r24h: true, r7d: false, r30d: false, dominio: 3 },
-          { id: "pf-info-3", title: "Banco de Dados: Modelo Relacional, SQL, NoSQL, Big Data", teoria: false, resumo: false, questoesFeitas: 15, questoesAcertos: 9, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-info-1", title: "Redes de Computadores: Topologias, Protocolos TCP/IP, DNS, DHCP", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-info-2", title: "Segurança da Informação: Criptografia, Malware, Firewall, IDS", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-info-3", title: "Banco de Dados: Modelo Relacional, SQL, NoSQL, Big Data", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-info-4", title: "Python e R para Ciência de Dados Básica", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
-          { id: "pf-info-5", title: "Sistemas Operacionais Linux e Windows", teoria: false, resumo: false, questoesFeitas: 10, questoesAcertos: 7, r24h: false, r7d: false, r30d: false, dominio: 2 },
-          { id: "pf-info-6", title: "Computação em Nuvem e Ferramentas Colaborativas", teoria: true, resumo: false, questoesFeitas: 15, questoesAcertos: 13, r24h: false, r7d: false, r30d: false, dominio: 3 }
+          { id: "pf-info-5", title: "Sistemas Operacionais Linux e Windows", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-info-6", title: "Computação em Nuvem e Ferramentas Colaborativas", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
       {
@@ -106,9 +106,9 @@ const DEFAULT_CONCURSOS = [
         weight: 4,
         difficulty: 4,
         topicos: [
-          { id: "pf-cont-1", title: "Conceitos Básicos, Objeto, Finalidade e Usuários", teoria: true, resumo: true, questoesFeitas: 30, questoesAcertos: 27, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "pf-cont-2", title: "Patrimônio: Ativo, Passivo e Patrimônio Líquido", teoria: true, resumo: true, questoesFeitas: 25, questoesAcertos: 22, r24h: true, r7d: false, r30d: false, dominio: 3 },
-          { id: "pf-cont-3", title: "Equação Fundamental do Patrimônio e Fatos Contábeis", teoria: false, resumo: false, questoesFeitas: 10, questoesAcertos: 7, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-cont-1", title: "Conceitos Básicos, Objeto, Finalidade e Usuários", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-cont-2", title: "Patrimônio: Ativo, Passivo e Patrimônio Líquido", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-cont-3", title: "Equação Fundamental do Patrimônio e Fatos Contábeis", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-cont-4", title: "Escrituração: Método das Partidas Dobradas, Razonetes", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-cont-5", title: "Balanço Patrimonial e DRE (Demonstração do Resultado)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
@@ -121,9 +121,9 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3,
         topicos: [
-          { id: "pf-rlm-1", title: "Proposições Lógicas, Conectivos e Tabelas-Verdade", teoria: true, resumo: true, questoesFeitas: 40, questoesAcertos: 35, r24h: true, r7d: true, r30d: true, dominio: 4 },
-          { id: "pf-rlm-2", title: "Equivalências e Negações Lógicas", teoria: true, resumo: true, questoesFeitas: 30, questoesAcertos: 27, r24h: true, r7d: false, r30d: false, dominio: 4 },
-          { id: "pf-rlm-3", title: "Diagramas Lógicos e Teoria dos Conjuntos", teoria: false, resumo: false, questoesFeitas: 10, questoesAcertos: 8, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "pf-rlm-1", title: "Proposições Lógicas, Conectivos e Tabelas-Verdade", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-rlm-2", title: "Equivalências e Negações Lógicas", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pf-rlm-3", title: "Diagramas Lógicos e Teoria dos Conjuntos", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-rlm-4", title: "Análise Combinatória e Probabilidade", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "pf-rlm-5", title: "Estatística Descritiva: Média, Mediana, Moda e Variância", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
@@ -148,7 +148,7 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3,
         topicos: [
-          { id: "prf-port-1", title: "Interpretação de Texto e Coesão", teoria: true, resumo: true, questoesFeitas: 30, questoesAcertos: 26, r24h: true, r7d: true, r30d: false, dominio: 3 },
+          { id: "prf-port-1", title: "Interpretação de Texto e Coesão", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "prf-port-2", title: "Sintaxe da Oração e do Período", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
@@ -160,8 +160,8 @@ const DEFAULT_CONCURSOS = [
         weight: 5,
         difficulty: 4,
         topicos: [
-          { id: "prf-trans-1", title: "Sistema Nacional de Trânsito e Normas Gerais", teoria: true, resumo: true, questoesFeitas: 45, questoesAcertos: 40, r24h: true, r7d: true, r30d: false, dominio: 4 },
-          { id: "prf-trans-2", title: "Infrações e Penalidades de Trânsito", teoria: false, resumo: false, questoesFeitas: 20, questoesAcertos: 15, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "prf-trans-1", title: "Sistema Nacional de Trânsito e Normas Gerais", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "prf-trans-2", title: "Infrações e Penalidades de Trânsito", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "prf-trans-3", title: "Crimes de Trânsito", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
@@ -173,7 +173,7 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 5,
         topicos: [
-          { id: "prf-fis-1", title: "Cinemática Escalar e Vetorial", teoria: true, resumo: false, questoesFeitas: 15, questoesAcertos: 10, r24h: false, r7d: false, r30d: false, dominio: 2 },
+          { id: "prf-fis-1", title: "Cinemática Escalar e Vetorial", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
           { id: "prf-fis-2", title: "Dinâmica e Leis de Newton aplicadas a acidentes", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       }
@@ -197,9 +197,9 @@ const DEFAULT_CONCURSOS = [
         weight: 5,
         difficulty: 3,
         topicos: [
-          { id: "inss-prev-1", title: "Princípios da Seguridade Social", teoria: true, resumo: true, questoesFeitas: 50, questoesAcertos: 45, r24h: true, r7d: true, r30d: true, dominio: 5 },
-          { id: "inss-prev-2", title: "Beneficiários do RGPS: Segurados e Dependentes", teoria: true, resumo: true, questoesFeitas: 35, questoesAcertos: 30, r24h: true, r7d: false, r30d: false, dominio: 3 },
-          { id: "inss-prev-3", title: "Benefícios em Espécie: Aposentadorias e Pensões", teoria: false, resumo: false, questoesFeitas: 10, questoesAcertos: 7, r24h: false, r7d: false, r30d: false, dominio: 2 }
+          { id: "inss-prev-1", title: "Princípios da Seguridade Social", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "inss-prev-2", title: "Beneficiários do RGPS: Segurados e Dependentes", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "inss-prev-3", title: "Benefícios em Espécie: Aposentadorias e Pensões", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       },
       {
@@ -210,7 +210,7 @@ const DEFAULT_CONCURSOS = [
         weight: 3,
         difficulty: 3,
         topicos: [
-          { id: "inss-port-1", title: "Interpretação e Gramática Geral", teoria: true, resumo: false, questoesFeitas: 25, questoesAcertos: 22, r24h: false, r7d: false, r30d: false, dominio: 3 }
+          { id: "inss-port-1", title: "Interpretação e Gramática Geral", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
         ]
       }
     ]
@@ -509,10 +509,10 @@ const DEFAULT_FLASHCARDS = [
 ];
 
 const DEFAULT_BADGES = [
-  { id: "badge-first-study", title: "Primeiro Papiro", desc: "Completou a primeira sessão de estudos no cronômetro", icon: "fa-fire", unlocked: true, date: "2026-08-20" },
-  { id: "badge-streak-7", title: "Guerreiro 7 Dias", desc: "Manteve 7 dias ininterruptos de papiro ativo", icon: "fa-shield-halved", unlocked: true, date: "2026-08-24" },
-  { id: "badge-50-questions", title: "Sniper de Questões", desc: "Resolveu mais de 50 questões no banco", icon: "fa-bullseye", unlocked: true, date: "2026-08-23" },
-  { id: "badge-edital-25", title: "Marcha Inicial", desc: "Bateu 25% dos tópicos do seu edital verticalizado", icon: "fa-map-location-dot", unlocked: true, date: "2026-08-22" },
+  { id: "badge-first-study", title: "Primeiro Papiro", desc: "Completou a primeira sessão de estudos no cronômetro", icon: "fa-fire", unlocked: false, date: null },
+  { id: "badge-streak-7", title: "Guerreiro 7 Dias", desc: "Manteve 7 dias ininterruptos de papiro ativo", icon: "fa-shield-halved", unlocked: false, date: null },
+  { id: "badge-50-questions", title: "Sniper de Questões", desc: "Resolveu mais de 50 questões no banco", icon: "fa-bullseye", unlocked: false, date: null },
+  { id: "badge-edital-25", title: "Marcha Inicial", desc: "Bateu 25% dos tópicos do seu edital verticalizado", icon: "fa-map-location-dot", unlocked: false, date: null },
   { id: "badge-master-srs", title: "Memória Blindada", desc: "Revisou 20+ flashcards com método espaçado", icon: "fa-brain", unlocked: false, date: null },
   { id: "badge-simulado-pro", title: "Pronto pro Combate", desc: "Concluiu um simulado completo cronometrado com >80% acertos", icon: "fa-trophy", unlocked: false, date: null },
   { id: "badge-night-owl", title: "Sentinela Noturna", desc: "Estudou mais de 2 horas no período da madrugada", icon: "fa-moon", unlocked: false, date: null },

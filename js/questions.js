@@ -45,6 +45,9 @@ class QuestionsManager {
       opt.textContent = d.name;
       discSelect.appendChild(opt);
     });
+    if (this.filters.disciplinaId) {
+      discSelect.value = this.filters.disciplinaId;
+    }
 
     if (bancaSelect) {
       const bancas = [...new Set(store.data.questions.map(q => q.banca).filter(Boolean))];
@@ -55,6 +58,9 @@ class QuestionsManager {
         opt.textContent = b;
         bancaSelect.appendChild(opt);
       });
+      if (this.filters.banca) {
+        bancaSelect.value = this.filters.banca;
+      }
     }
 
     if (anoSelect) {
@@ -66,7 +72,19 @@ class QuestionsManager {
         opt.textContent = `Ano ${a}`;
         anoSelect.appendChild(opt);
       });
+      if (this.filters.ano) {
+        anoSelect.value = this.filters.ano;
+      }
     }
+  }
+
+  setDisciplinaFilter(disciplinaId) {
+    this.filters.disciplinaId = disciplinaId;
+    const filterSelect = document.getElementById("q-filter-disciplina");
+    if (filterSelect) {
+      filterSelect.value = disciplinaId;
+    }
+    this.applyFilters();
   }
 
   bindEvents() {
@@ -532,6 +550,18 @@ class QuestionsManager {
     const netScore = isCespe ? (correct - incorrect) : correct;
     const accuracy = this.filteredQuestions.length > 0 ? Math.round((correct / this.filteredQuestions.length) * 100) : 0;
 
+    // Registra a sessão de estudo de Simulado no Store (atualiza horas líquidas e limites semanais)
+    const durationMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
+    const activeConcurso = store.getActiveConcurso();
+    const primaryDiscId = this.filteredQuestions[0]?.disciplinaId || activeConcurso?.disciplinas[0]?.id || "pf-port";
+    store.addStudySession({
+      concursoId: activeConcurso?.id || "pf-agente",
+      disciplinaId: primaryDiscId,
+      durationMinutes,
+      type: "simulado",
+      notes: `Simulado com ${this.filteredQuestions.length} questões (${correct}C/${incorrect}E/${blank}B - ${accuracy}%)`
+    });
+
     // Oculta barra de simulado
     const simuladoBar = document.getElementById("simulado-active-bar");
     const filtersBar = document.getElementById("questions-filter-toolbar");
@@ -563,6 +593,11 @@ class QuestionsManager {
     document.getElementById("res-simulado-blank").textContent = stats.blank;
     document.getElementById("res-simulado-net").textContent = stats.netScore;
     document.getElementById("res-simulado-accuracy").textContent = `${stats.accuracy}%`;
+
+    const labelEl = document.getElementById("res-simulado-net-label");
+    if (labelEl) {
+      labelEl.textContent = stats.isCespe ? "Nota Líquida (Cespe):" : "Pontuação Total:";
+    }
 
     const xpEarned = stats.correct * 20 + 100;
     store.addXP(xpEarned, "Simulado Completo Concluído! 🎓");

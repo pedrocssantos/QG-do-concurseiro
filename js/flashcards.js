@@ -95,6 +95,7 @@ class FlashcardsManager {
   bindEvents() {
     const cardElement = document.getElementById("flashcard-3d-box");
     const flipBtn = document.getElementById("fc-btn-flip");
+    const deleteBtn = document.getElementById("fc-btn-delete");
     const newCardBtn = document.getElementById("fc-btn-new");
 
     if (cardElement) {
@@ -102,6 +103,9 @@ class FlashcardsManager {
     }
     if (flipBtn) {
       flipBtn.addEventListener("click", () => this.toggleFlip());
+    }
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", () => this.deleteCurrentCard());
     }
     if (newCardBtn) {
       newCardBtn.addEventListener("click", () => this.openNewCardModal());
@@ -234,6 +238,19 @@ class FlashcardsManager {
     showToast("Flashcard criado com sucesso!", "success");
     this.renderDeckSelector();
     this.loadCards();
+  }
+
+  deleteCurrentCard() {
+    if (this.dueCards.length === 0) return;
+    const card = this.dueCards[this.currentIndex];
+    if (!card) return;
+
+    if (confirm("Deseja realmente excluir este flashcard?")) {
+      store.deleteFlashcard(card.id);
+      showToast("Flashcard excluído com sucesso!", "info");
+      this.loadCards();
+      this.renderDeckSelector();
+    }
   }
 }
 

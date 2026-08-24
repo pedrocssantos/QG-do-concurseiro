@@ -267,6 +267,7 @@ class SupabaseService {
   // ================= CONTROLE DE MONETIZAÇÃO / PLANOS =================
 
   isProUser() {
+    if (typeof store !== "undefined" && store.isPro && store.isPro()) return true;
     return this.profile && (this.profile.plan_tier === "pro" || this.profile.plan_tier === "vip");
   }
 
@@ -276,10 +277,10 @@ class SupabaseService {
     const userNameEl = document.getElementById("dash-user-name");
     const userRankEl = document.getElementById("dash-user-rank");
     const planBadge = document.getElementById("header-plan-badge");
+    const isPro = this.isProUser();
 
     if (this.currentUser) {
       const name = this.profile?.name || this.currentUser.user_metadata?.name || "Guerreiro";
-      const isPro = this.isProUser();
 
       if (authBtn) {
         authBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Sair`;
@@ -305,7 +306,9 @@ class SupabaseService {
         authBtn.onclick = () => openAuthModal();
       }
       if (planBadge) {
-        planBadge.innerHTML = `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
+        planBadge.innerHTML = isPro
+          ? `<span class="badge-plan-pro"><i class="fa-solid fa-crown"></i> PRO</span>`
+          : `<span class="badge-plan-free" onclick="openUpgradeModal()"><i class="fa-solid fa-bolt"></i> Seja PRO</span>`;
       }
     }
   }
