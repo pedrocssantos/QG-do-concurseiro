@@ -1,120 +1,141 @@
 /* ==========================================================================
-   FOCO NO PAPIRO - ESTILOS DO BANCO DE QUESTÕES, SIMULADOS E CADERNO DE ERROS
+   QG DO CONCURSEIRO - BANCO DE QUESTÕES, SIMULADO & CADERNO DE ERROS (CSS PURO)
    ========================================================================== */
 
-/* Barra de Filtros */
+/* ==========================================================================
+   BARRA DE FILTROS & BUSCA TÁTICA
+   ========================================================================== */
 .filter-toolbar {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
 .filters-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   flex: 1;
 }
 
 .filter-select, .search-input {
-  background-color: var(--bg-surface-elevated);
+  background-color: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xs);
   color: var(--text-main);
-  padding: 8px 12px;
-  font-size: 0.85rem;
+  padding: 7px 10px;
+  font-size: 0.82rem;
   outline: none;
-  min-width: 160px;
+  min-width: 150px;
+  transition: var(--transition-fast);
+}
+
+.filter-select:focus, .search-input:focus {
+  border-color: var(--color-warning);
 }
 
 .search-input {
-  min-width: 220px;
+  min-width: 200px;
   flex: 1;
 }
 
-/* Card Principal da Questão */
+/* ==========================================================================
+   CARD DA QUESTÃO (FORMATO DOSSIÊ DE PROVA)
+   ========================================================================== */
 .question-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hud);
   overflow: hidden;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
+  position: relative;
 }
 
 .question-header {
-  padding: 18px 24px;
-  background-color: var(--bg-surface-elevated);
+  padding: 12px 18px;
+  background-color: rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .question-tags {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .q-tag {
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color-light);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
   color: var(--text-muted);
 }
 
 .q-tag-primary {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+#q-counter-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-dimmed);
 }
 
 .question-body {
-  padding: 28px 24px;
+  padding: 22px 20px;
 }
 
 .question-enunciado {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.7;
   color: var(--text-main);
-  margin-bottom: 28px;
+  margin-bottom: 22px;
+  font-weight: 500;
 }
 
-/* Alternativas */
+/* ==========================================================================
+   ALTERNATIVAS DE RESPOSTA
+   ========================================================================== */
 .alternativas-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .option-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 18px;
+  border-radius: var(--radius-xs);
+  padding: 11px 14px;
   text-align: left;
   color: var(--text-main);
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--transition-fast);
   outline: none;
 }
 
@@ -124,44 +145,47 @@
 }
 
 .option-item.selected {
-  background-color: rgba(59, 130, 246, 0.12);
+  background-color: rgba(56, 189, 248, 0.08);
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-glow);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .option-item.correct {
-  background-color: rgba(16, 185, 129, 0.15) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
   border-color: var(--color-accent) !important;
+  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
 .option-item.incorrect {
-  background-color: rgba(239, 68, 68, 0.15) !important;
+  background-color: rgba(239, 68, 68, 0.12) !important;
   border-color: var(--color-danger) !important;
+  box-shadow: inset 0 0 0 1px var(--color-danger);
 }
 
 .option-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background-color: var(--bg-surface);
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  background-color: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.88rem;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.8rem;
   flex-shrink: 0;
 }
 
 .option-item.selected .option-badge {
   background-color: var(--color-primary);
-  color: #ffffff;
+  color: #041322;
   border-color: var(--color-primary);
 }
 
 .option-item.correct .option-badge {
   background-color: var(--color-accent);
-  color: #ffffff;
+  color: #022013;
   border-color: var(--color-accent);
 }
 
@@ -172,53 +196,63 @@
 }
 
 .option-text {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.5;
   flex: 1;
 }
 
-/* Feedback & Gabarito Comentado */
+/* ==========================================================================
+   FEEDBACK & GABARITO COMENTADO (BRIEFING)
+   ========================================================================== */
 .feedback-box {
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  margin-top: 20px;
-  animation: fadeIn 0.25s ease-out;
+  background: var(--bg-surface-inset);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--color-warning);
+  border-radius: var(--radius-xs);
+  padding: 16px;
+  margin-top: 18px;
+  animation: feedbackSlide 0.2s ease-out;
 }
 
 .badge-success-feedback {
+  font-family: var(--font-mono);
   color: var(--color-accent);
   font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 10px;
+  font-size: 0.88rem;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  letter-spacing: 0.02em;
 }
 
 .badge-error-feedback {
+  font-family: var(--font-mono);
   color: var(--color-danger);
   font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 10px;
+  font-size: 0.88rem;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  letter-spacing: 0.02em;
 }
 
 .feedback-text {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--text-main);
   line-height: 1.6;
   border-top: 1px solid var(--border-color);
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
-/* Rodapé de Navegação da Questão */
+.feedback-text strong {
+  color: #38bdf8;
+}
+
 .question-footer {
-  padding: 16px 24px;
-  background-color: var(--bg-surface-elevated);
+  padding: 12px 18px;
+  background-color: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -227,144 +261,217 @@
 
 .q-nav-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* Barra de Simulado Ativo */
+@keyframes feedbackSlide {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   BARRA DO SIMULADO ATIVO (HUD CRONOMETRADO)
+   ========================================================================== */
 .simulado-bar {
-  background: linear-gradient(135deg, #1e1b4b, #0f172a);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  border-radius: var(--radius-lg);
-  padding: 16px 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 16px;
+  margin-bottom: 20px;
+  gap: 14px;
   flex-wrap: wrap;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
 }
 
 .simulado-timer-box {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1.2rem;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
   font-weight: 800;
   color: #fbbf24;
+  letter-spacing: 0.05em;
 }
 
 .simulado-grid {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .simulado-grid-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: var(--transition-fast);
 }
 
 .simulado-grid-btn.current {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary);
-  color: #fff;
+  border-color: var(--color-warning);
+  background-color: var(--color-warning);
+  color: #000000;
+  font-weight: 800;
 }
 
 .simulado-grid-btn.answered {
   border-color: var(--color-accent);
-  background-color: rgba(16, 185, 129, 0.2);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
 }
 
-/* Caderno de Erros */
+/* ==========================================================================
+   CADERNO DE ERROS (DOSSIÊ DE BLINDAGEM)
+   ========================================================================== */
 .caderno-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 
 .caderno-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-left: 4px solid var(--color-danger);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  border-left: 3px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
   box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  transition: var(--transition-fast);
 }
 
 .caderno-card.resolved-error {
   border-left-color: var(--color-accent);
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .caderno-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-  gap: 12px;
+  margin-bottom: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.badge-reason-pegadinha { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.badge-reason-conteudo { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-.badge-reason-atencao { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+.caderno-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge-disc {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+}
+
+.badge-assunto {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.badge-reason {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+}
+
+.badge-reason-pegadinha { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-reason-conteudo { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.badge-reason-atencao { background: rgba(6, 182, 212, 0.1); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+.caderno-date {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dimmed);
+}
 
 .caderno-enunciado {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.6;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  color: var(--text-main);
 }
 
 .caderno-gabarito-snippet {
-  background: var(--bg-surface-elevated);
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  font-size: 0.88rem;
-  margin-bottom: 14px;
+  background: var(--bg-surface-inset);
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color);
 }
 
 .gabarito-tag {
   background: var(--color-accent);
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 700;
+  color: #022013;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-weight: 800;
   margin-left: 4px;
 }
 
+.gabarito-exp {
+  margin-top: 6px;
+  color: var(--text-muted);
+}
+
 .caderno-notes-section label {
-  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
   color: var(--text-muted);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .notes-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .caderno-textarea {
   width: 100%;
-  background: var(--bg-surface-elevated);
+  background: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 10px;
+  border-radius: var(--radius-xs);
+  padding: 8px 10px;
   color: var(--text-main);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   outline: none;
-  min-height: 60px;
+  min-height: 50px;
+}
+
+.caderno-textarea:focus {
+  border-color: var(--color-warning);
 }

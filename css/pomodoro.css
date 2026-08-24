@@ -1,58 +1,74 @@
 /* ==========================================================================
-   FOCO NO PAPIRO - ESTILOS DO POMODORO E MODO ZEN DE FOCO
+   QG DO CONCURSEIRO - POMODORO TÁTICO & CRONÔMETRO LÍQUIDO (CSS PURO)
    ========================================================================== */
 
-.pomodoro-wrapper {
-  max-width: 650px;
-  margin: 0 auto;
+.pomodoro-view-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   PAINEL PRINCIPAL DO RADAR POMODORO
+   ========================================================================== */
+.pomodoro-main-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  position: relative;
+  box-shadow: var(--shadow-hud);
 }
 
-/* Modos do Timer */
 .pomo-mode-selector {
   display: flex;
-  background-color: var(--bg-surface);
+  background-color: var(--bg-surface-inset);
   border: 1px solid var(--border-color);
-  padding: 6px;
-  border-radius: var(--radius-full);
-  gap: 6px;
+  padding: 3px;
+  border-radius: var(--radius-xs);
+  gap: 3px;
+  margin-bottom: 24px;
 }
 
 .pomo-mode-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--transition-fast);
+  text-transform: uppercase;
+}
+
+.pomo-mode-btn:hover {
+  color: var(--text-main);
 }
 
 .pomo-mode-btn.active {
-  background: var(--color-primary);
-  color: #ffffff;
-  box-shadow: 0 0 12px var(--color-primary-glow);
+  background-color: var(--color-warning);
+  color: #000000;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
 }
 
-/* Palco Circular do Timer */
-.timer-stage {
+/* ==========================================================================
+   ANEL CIRCULAR HUD (RETÍCULO DE FOCO)
+   ========================================================================== */
+.timer-ring-container {
   position: relative;
-  width: 320px;
-  height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 280px;
+  height: 280px;
+  margin: 10px 0 24px;
 }
 
 .timer-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
@@ -60,124 +76,216 @@
 
 .timer-circle-bg {
   fill: none;
-  stroke: var(--bg-surface-elevated);
-  stroke-width: 12;
+  stroke: var(--bg-surface-inset);
+  stroke-width: 8;
 }
 
 .timer-circle-progress {
   fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 12;
-  stroke-linecap: round;
-  stroke-dasharray: 816.8; /* 2 * PI * 130 */
+  stroke: var(--color-warning);
+  stroke-width: 8;
+  stroke-linecap: square;
+  stroke-dasharray: 816;
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 0.8s ease, stroke 0.4s ease;
-  filter: drop-shadow(0 0 10px var(--color-primary-glow));
+  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
 }
 
-.timer-display-box {
-  position: relative;
-  z-index: 10;
+.timer-center-content {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-display {
+  font-family: var(--font-mono);
+  font-size: 3.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-feature-settings: "tnum";
+}
+
+.timer-status-text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-warning);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   CONTROLES DO CRONÔMETRO
+   ========================================================================== */
+.timer-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-timer-primary {
+  width: 130px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pomo-ambient-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.ambient-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.ambient-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-surface-hover);
+}
+
+.ambient-btn.active {
+  color: var(--color-cyan);
+  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(6, 182, 212, 0.1);
+}
+
+/* ==========================================================================
+   COLUNA LATERAL: REGISTRO DA SESSÃO
+   ========================================================================== */
+.pomo-side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.recent-sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.session-history-item {
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.session-hist-left {
+  display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.pomo-badge {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
+.session-hist-disc {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.session-hist-type {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-dimmed);
   text-transform: uppercase;
 }
 
-.status-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); }
-.status-running { background: rgba(16, 185, 129, 0.2); color: #34d399; animation: pulseGlow 2s infinite; }
-.status-paused { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-.status-break { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-
-.timer-digits {
-  font-size: 4rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-main);
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+.session-hist-mins {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
 }
 
-/* Controles do Timer */
-.timer-controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.timer-settings-card {
-  width: 100%;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 16px;
-}
-
-/* Modo Zen Imersivo (Fullscreen) */
-.zen-overlay {
+/* ==========================================================================
+   MODO ZEN EM TELA CHEIA (COCKPIT TÁTICO)
+   ========================================================================== */
+.zen-mode-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+  background-color: #05070c;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 70%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
   z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 40px;
-  animation: fadeIn 0.4s ease;
+  justify-content: center;
+  padding: 24px;
 }
 
-.zen-top {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.zen-center {
-  text-align: center;
-}
-
-.zen-digits {
-  font-size: 7rem;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  color: #ffffff;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
-  animation: zenBreathe 4s ease-in-out infinite;
-}
-
-@keyframes zenBreathe {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); }
-  50% { transform: scale(1.03); filter: drop-shadow(0 0 50px rgba(16, 185, 129, 0.6)); }
-}
-
-.zen-quote {
-  font-size: 1.1rem;
+.zen-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
   color: var(--text-muted);
-  max-width: 500px;
-  margin: 16px auto 0;
-  font-style: italic;
+  padding: 8px 16px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
-@media (max-width: 600px) {
-  .timer-settings-card {
+.zen-close-btn:hover {
+  color: #fff;
+  border-color: var(--color-danger);
+}
+
+.zen-timer-display {
+  font-family: var(--font-mono);
+  font-size: 7rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  margin: 14px 0;
+  text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+}
+
+.zen-discipline-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-warning);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 900px) {
+  .pomodoro-view-layout {
     grid-template-columns: 1fr;
-  }
-  .zen-digits {
-    font-size: 4.5rem;
   }
 }

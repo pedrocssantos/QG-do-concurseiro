@@ -1,255 +1,301 @@
 /* ==========================================================================
-   FOCO NO PAPIRO - ESTILOS ESPECÍFICOS DO DASHBOARD
+   QG DO CONCURSEIRO - DASHBOARD & CENTRAL DE COMANDO (CSS PURO)
    ========================================================================== */
 
+/* ==========================================================================
+   BANNER HERO OPERACIONAL
+   ========================================================================== */
 .dashboard-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.08));
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  border-radius: var(--radius-lg);
-  padding: 24px 28px;
-  margin-bottom: 24px;
+  background-color: var(--bg-surface);
+  background-image: 
+    linear-gradient(135deg, rgba(56, 189, 248, 0.06) 0%, rgba(245, 158, 11, 0.04) 100%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
 }
 
 .hero-left h1 {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-main);
+  text-transform: uppercase;
   line-height: 1.2;
 }
 
 .hero-left p {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   margin-top: 4px;
 }
 
 .hero-quick-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-/* KPI Cards Grid */
+/* ==========================================================================
+   GRID DE TELEMETRIA & KPI CARDS
+   ========================================================================== */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
 .kpi-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 20px;
+  border-radius: var(--radius-md);
+  padding: 16px;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
-  transition: var(--transition);
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .kpi-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--border-color-glow);
+  border-color: var(--border-color-light);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 2px;
+  background-color: var(--color-warning);
 }
 
 .kpi-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .kpi-title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-dimmed);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .kpi-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 0.88rem;
+  border: 1px solid transparent;
 }
 
-.icon-blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.icon-green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.icon-amber { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.icon-purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+.icon-blue { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-color: rgba(56, 189, 248, 0.2); }
+.icon-green { background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); }
+.icon-amber { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.2); }
+.icon-purple { background: rgba(168, 85, 247, 0.1); color: #a855f7; border-color: rgba(168, 85, 247, 0.2); }
 
 .kpi-value-row {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  justify-content: space-between;
   margin-bottom: 8px;
 }
 
 .kpi-main-val {
-  font-size: 2rem;
+  font-family: var(--font-mono);
+  font-size: 1.85rem;
   font-weight: 800;
   color: var(--text-main);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .kpi-sub-text {
-  font-size: 0.82rem;
-  color: var(--text-dimmed);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .kpi-progress-track {
   width: 100%;
-  height: 6px;
-  background-color: var(--bg-surface-elevated);
-  border-radius: var(--radius-full);
+  height: 4px;
+  background-color: var(--bg-surface-inset);
+  border-radius: var(--radius-xs);
   overflow: hidden;
   margin-top: auto;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .kpi-progress-fill {
   height: 100%;
-  border-radius: var(--radius-full);
-  transition: width 0.6s ease;
+  transition: width 0.4s ease;
 }
 
-.fill-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-.fill-green { background: linear-gradient(90deg, #10b981, #34d399); }
-.fill-purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.fill-blue { background: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+.fill-green { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); }
+.fill-purple { background: #a855f7; box-shadow: 0 0 8px rgba(168, 85, 247, 0.5); }
 
-/* Seção Principal: Missões + Quote */
+/* ==========================================================================
+   MISSÕES DO DIA & DOUTRINA DE GUERRA
+   ========================================================================== */
 .dash-main-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 20px;
+  margin-bottom: 22px;
 }
 
-/* Missões do Dia */
 .missions-header-summary {
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-accent);
-  background: rgba(16, 185, 129, 0.12);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
 }
 
 .missions-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .mission-item-card {
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  transition: var(--transition);
+  gap: 12px;
+  transition: var(--transition-fast);
 }
 
 .mission-item-card:hover {
   border-color: var(--border-color-light);
-  transform: translateX(3px);
+  background-color: var(--bg-surface-hover);
 }
 
 .mission-item-card.mission-completed {
-  opacity: 0.65;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-color: rgba(16, 185, 129, 0.2);
+  opacity: 0.55;
+  background-color: var(--bg-surface-inset);
+  border-color: var(--border-color);
 }
 
 .mission-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   flex: 1;
 }
 
 .mission-checkbox {
   appearance: none;
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--text-dimmed);
-  border-radius: var(--radius-sm);
+  width: 18px;
+  height: 18px;
+  background: var(--bg-surface-inset);
+  border: 1px solid var(--border-color-strong);
+  border-radius: var(--radius-xs);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+  transition: var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .mission-checkbox:checked {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
-  background-size: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23041322'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+  background-size: 13px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .mission-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-md);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-primary);
-  font-size: 1.05rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .mission-texts h4 {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1.3;
 }
 
 .mission-texts p {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
 .mission-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .mission-xp-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
   color: #fbbf24;
-  background: rgba(245, 158, 11, 0.15);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 3px 6px;
+  border-radius: var(--radius-xs);
 }
 
 .badge-done {
+  font-family: var(--font-mono);
   color: var(--color-accent);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Card de Frase Motivacional */
+/* Card de Doutrina / Citação Tática */
 .quote-card {
-  background: linear-gradient(145deg, #1e1b4b, #0f172a);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid #38bdf8;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -258,39 +304,44 @@
 
 .quote-icon-decor {
   position: absolute;
-  top: 18px;
-  right: 22px;
-  font-size: 3rem;
-  color: rgba(255, 255, 255, 0.05);
+  top: 14px;
+  right: 18px;
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.03);
 }
 
 .quote-card blockquote {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 600;
   font-style: italic;
-  line-height: 1.5;
-  color: #e0e7ff;
+  line-height: 1.6;
+  color: var(--text-main);
   margin-bottom: 12px;
 }
 
 .quote-card cite {
-  font-size: 0.88rem;
-  color: #a5b4fc;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-primary);
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-/* Gráficos do Dashboard */
+/* ==========================================================================
+   GRÁFICOS & HEATMAP DE FREQUÊNCIA
+   ========================================================================== */
 .charts-grid-2col {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 22px;
 }
 
 .canvas-container {
   width: 100%;
-  height: 260px;
+  height: 250px;
   position: relative;
 }
 
@@ -299,50 +350,57 @@
   height: 100% !important;
 }
 
-/* Heatmap de Constância */
+/* Heatmap Tático (Matriz de 10 Semanas) */
 .heatmap-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(7, 1fr);
   grid-auto-flow: column;
-  gap: 5px;
-  padding: 12px 0;
+  gap: 4px;
+  padding: 8px 0;
 }
 
 .heatmap-cell {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 4px;
-  background-color: var(--bg-surface-elevated);
-  transition: transform 0.15s ease;
+  border-radius: var(--radius-xs);
+  background-color: var(--bg-surface-inset);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  transition: var(--transition-fast);
   cursor: pointer;
 }
 
 .heatmap-cell:hover {
-  transform: scale(1.2);
-  border: 1px solid #ffffff;
+  border-color: #ffffff;
+  transform: scale(1.15);
+  z-index: 5;
 }
 
-.heatmap-cell.level-0 { background-color: rgba(255, 255, 255, 0.04); }
-.heatmap-cell.level-1 { background-color: #064e3b; }
-.heatmap-cell.level-2 { background-color: #047857; }
-.heatmap-cell.level-3 { background-color: #10b981; }
-.heatmap-cell.level-4 { background-color: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.4); }
+.heatmap-cell.level-0 { background-color: rgba(255, 255, 255, 0.03); }
+.heatmap-cell.level-1 { background-color: #064e3b; border-color: rgba(16, 185, 129, 0.2); }
+.heatmap-cell.level-2 { background-color: #047857; border-color: rgba(16, 185, 129, 0.4); }
+.heatmap-cell.level-3 { background-color: #10b981; border-color: rgba(16, 185, 129, 0.6); }
+.heatmap-cell.level-4 { 
+  background-color: #34d399; 
+  border-color: #6ee7b7; 
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.4); 
+}
 
 .heatmap-legend {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
-  font-size: 0.75rem;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   color: var(--text-dimmed);
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .legend-cell {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
 }
 
 @media (max-width: 1000px) {

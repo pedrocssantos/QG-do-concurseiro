@@ -1,111 +1,128 @@
 /* ==========================================================================
-   FOCO NO PAPIRO - ESTILOS DO EDITAL VERTICALIZADO
+   QG DO CONCURSEIRO - EDITAL VERTICALIZADO TÁTICO (CSS PURO)
    ========================================================================== */
 
+/* ==========================================================================
+   BANNER DO EDITAL / META DO COMBATE
+   ========================================================================== */
 .edital-hero-banner {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: var(--radius-lg);
-  padding: 24px 28px;
-  margin-bottom: 28px;
+  background-color: var(--bg-surface);
+  background-image: 
+    linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(56, 189, 248, 0.03) 100%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
 .edital-hero-left h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   color: var(--text-main);
+  text-transform: uppercase;
 }
 
 .edital-meta-tags {
   display: flex;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 6px;
   flex-wrap: wrap;
 }
 
 .edital-tag {
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-surface);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
 }
 
 .countdown-badge {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.1);
   color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .edital-hero-right {
-  min-width: 240px;
+  min-width: 220px;
 }
 
 .edital-progress-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.88rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .edital-progress-bar-track {
   width: 100%;
-  height: 10px;
-  background-color: var(--bg-surface-elevated);
-  border-radius: var(--radius-full);
+  height: 6px;
+  background-color: var(--bg-surface-inset);
+  border-radius: var(--radius-xs);
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .edital-progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #3b82f6);
-  border-radius: var(--radius-full);
-  transition: width 0.6s ease;
+  background: linear-gradient(90deg, #10b981, #38bdf8);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  transition: width 0.4s ease;
 }
 
 .edital-topicos-summary {
-  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   color: var(--text-dimmed);
-  margin-top: 6px;
+  margin-top: 4px;
   text-align: right;
 }
 
-/* Accordion de Disciplinas */
+/* ==========================================================================
+   ACCORDION DE DISCIPLINAS
+   ========================================================================== */
 .edital-accordion-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .edital-disc-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: var(--transition);
+  transition: var(--transition-fast);
 }
 
 .edital-disc-card.expanded {
   border-color: var(--border-color-light);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .edital-disc-header {
-  padding: 18px 24px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   background-color: var(--bg-surface);
-  transition: var(--transition);
+  transition: var(--transition-fast);
 }
 
 .edital-disc-header:hover {
@@ -115,76 +132,82 @@
 .disc-header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .disc-icon-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .disc-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .disc-name {
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--text-main);
+  text-transform: uppercase;
 }
 
 .disc-meta-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 4px;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dimmed);
+  margin-top: 2px;
 }
 
 .disc-header-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
 }
 
 .mini-progress-track {
-  width: 120px;
-  height: 6px;
-  background-color: var(--bg-surface-elevated);
-  border-radius: var(--radius-full);
+  width: 100px;
+  height: 4px;
+  background-color: var(--bg-surface-inset);
+  border-radius: var(--radius-xs);
   overflow: hidden;
 }
 
 .mini-progress-fill {
   height: 100%;
-  border-radius: var(--radius-full);
 }
 
 .accordion-chevron-btn {
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--text-muted);
-  font-size: 1rem;
-  transition: transform 0.25s ease;
+  color: var(--text-dimmed);
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .edital-disc-card.expanded .accordion-chevron-btn {
   transform: rotate(180deg);
+  color: var(--text-main);
 }
 
-/* Tabela de Tópicos */
+/* ==========================================================================
+   TABELA MATRIZ DE TÓPICOS
+   ========================================================================== */
 .edital-disc-body {
   border-top: 1px solid var(--border-color);
-  background-color: rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.2s ease;
+  background-color: var(--bg-surface-inset);
 }
 
 .topics-table-wrapper {
@@ -195,27 +218,29 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
 }
 
 .topics-table th {
-  padding: 12px 18px;
-  font-size: 0.75rem;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-dimmed);
+  background: rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid var(--border-color);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .topics-table td {
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
 
 .topic-row:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.015);
 }
 
 .topic-title-cell strong {
@@ -227,17 +252,22 @@
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
 }
 
+.dominio-select:focus {
+  border-color: var(--color-warning);
+}
+
 .disc-body-footer {
-  padding: 14px 20px;
-  background-color: var(--bg-surface);
+  padding: 10px 16px;
+  background-color: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;

@@ -1,35 +1,38 @@
 /* ==========================================================================
-   FOCO NO PAPIRO - ESTILOS DO SISTEMA DE FLASHCARDS (3D SRS)
+   QG DO CONCURSEIRO - FLASHCARDS SRS (REPETIÇÃO ESPAÇADA TÁTICA) (CSS PURO)
    ========================================================================== */
 
 .flashcards-layout {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
-/* Lista de Decks */
+/* ==========================================================================
+   LISTA DE DECKS POR DISCIPLINA
+   ========================================================================== */
 .deck-chips-container {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .deck-chip {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
-  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--text-muted);
   cursor: pointer;
   white-space: nowrap;
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: var(--transition);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: var(--transition-fast);
 }
 
 .deck-chip:hover {
@@ -39,37 +42,42 @@
 }
 
 .deck-chip.active {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: var(--color-primary);
-  color: #60a5fa;
+  background-color: rgba(245, 158, 11, 0.08);
+  border-color: var(--color-warning);
+  color: #fbbf24;
 }
 
 .deck-badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  background: var(--bg-surface-elevated);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-surface-inset);
   color: var(--text-dimmed);
+  border: 1px solid var(--border-color);
 }
 
 .deck-badge.badge-due {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
   color: #f87171;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-/* Palco 3D do Flashcard */
+/* ==========================================================================
+   PALCO 3D DO FLASHCARD (CARTÃO DE MEMÓRIA OPERACIONAL)
+   ========================================================================== */
 .flashcard-stage {
   perspective: 1200px;
   width: 100%;
-  max-width: 680px;
+  max-width: 640px;
   margin: 0 auto;
-  min-height: 380px;
+  min-height: 360px;
 }
 
 .flashcard-3d-box {
   width: 100%;
-  height: 380px;
+  height: 360px;
   cursor: pointer;
 }
 
@@ -78,7 +86,7 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
 
@@ -92,22 +100,23 @@
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: var(--radius-xl);
-  padding: 32px;
+  border-radius: var(--radius-md);
+  padding: 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-hud);
 }
 
 .flashcard-front {
-  background: linear-gradient(145deg, var(--bg-surface-elevated), var(--bg-surface));
-  border: 2px solid var(--border-color-light);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color-light);
+  border-top: 3px solid var(--color-primary);
 }
 
 .flashcard-back {
-  background: linear-gradient(145deg, #132338, var(--bg-surface));
-  border: 2px solid var(--color-primary);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--color-accent);
   transform: rotateY(180deg);
 }
 
@@ -118,18 +127,22 @@
 }
 
 .fc-tag {
-  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #60a5fa;
-  background: rgba(59, 130, 246, 0.15);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  text-transform: uppercase;
 }
 
 .fc-counter {
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-dimmed);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .fc-card-content {
@@ -137,32 +150,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 600;
   line-height: 1.6;
   color: var(--text-main);
-  padding: 20px 0;
+  padding: 16px 0;
   text-align: center;
 }
 
 .flashcard-back .fc-card-content {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 400;
   text-align: left;
+  line-height: 1.6;
+}
+
+.flashcard-back .fc-card-content strong {
+  color: #34d399;
 }
 
 .fc-card-footer {
-  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-dimmed);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-/* Ações de Avaliação SM-2 */
+/* ==========================================================================
+   AÇÕES DE CLASSIFICAÇÃO SRS (SUPERMEMO SM-2)
+   ========================================================================== */
 .flashcard-actions-wrapper {
-  max-width: 680px;
+  max-width: 640px;
   margin: 0 auto;
   width: 100%;
 }
@@ -175,56 +198,63 @@
 .fc-grade-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  animation: fadeIn 0.2s ease-out;
+  gap: 8px;
+  animation: gradeFade 0.2s ease-out;
 }
 
 .fc-grade-btn {
-  padding: 14px 10px;
-  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  border-radius: var(--radius-xs);
   border: 1px solid transparent;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  transition: var(--transition);
+  gap: 2px;
+  transition: var(--transition-fast);
 }
 
 .fc-grade-btn span:first-child {
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
 .fc-grade-btn span:last-child {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   opacity: 0.85;
 }
 
 .btn-grade-0 {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
   color: #f87171;
 }
-.btn-grade-0:hover { background: #ef4444; color: #fff; }
+.btn-grade-0:hover { background: #dc2626; color: #fff; border-color: #ef4444; }
 
 .btn-grade-3 {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.35);
   color: #fbbf24;
 }
-.btn-grade-3:hover { background: #f59e0b; color: #fff; }
+.btn-grade-3:hover { background: #d97706; color: #000; border-color: #f59e0b; font-weight: 900; }
 
 .btn-grade-4 {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
 }
-.btn-grade-4:hover { background: #3b82f6; color: #fff; }
+.btn-grade-4:hover { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
 .btn-grade-5 {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
   color: #34d399;
 }
-.btn-grade-5:hover { background: #10b981; color: #fff; }
+.btn-grade-5:hover { background: #059669; color: #000; border-color: #10b981; font-weight: 900; }
+
+@keyframes gradeFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
