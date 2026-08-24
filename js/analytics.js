@@ -229,7 +229,7 @@ class PapiroCharts {
 
     ctx.fillStyle = theme.textMuted;
     ctx.font = "11px Inter, sans-serif";
-    ctx.fillText("Horas no Papiro", centerX, centerY + 14);
+    ctx.fillText("Horas Estudadas", centerX, centerY + 14);
   }
 
   // 4. Gráfico Radar (Domínio do Conteúdo por Disciplina)
@@ -360,7 +360,7 @@ class PapiroCharts {
 
       const dayCell = document.createElement("div");
       dayCell.className = `heatmap-cell ${levelClass}`;
-      dayCell.title = `${dateStr}: ${mins > 0 ? (mins / 60).toFixed(1) + "h de papiro" : "Sem estudos registrados"}`;
+      dayCell.title = `${dateStr}: ${mins > 0 ? (mins / 60).toFixed(1) + "h de estudo" : "Sem estudos registrados"}`;
       grid.appendChild(dayCell);
     }
 

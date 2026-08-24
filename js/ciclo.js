@@ -44,7 +44,7 @@ class CicloManager {
               <p>Meta do bloco: <strong>${currentItem.minutesGoal} min</strong> • Já estudado: <strong>${currentItem.minutesDone} min</strong> (${remainingMins} min restantes)</p>
             </div>
             <button class="btn btn-primary btn-lg pulse-glow" onclick="cicloManager.startCurrentPapiro('${currentItem.disciplinaId}')">
-              <i class="fa-solid fa-fire"></i> Iniciar Papiro Agora
+              <i class="fa-solid fa-play"></i> Iniciar Estudo Agora
             </button>
           </div>
           <div class="current-papiro-progress-track">
@@ -161,7 +161,7 @@ class CicloManager {
         pomodoro.selectedDisciplinaId = disciplinaId;
       }
       pomodoro.start();
-      showToast("Foco total iniciado! Bom papiro guerreiro(a)!", "success");
+      showToast("Sessão de foco iniciada! Bons estudos!", "success");
     }, 100);
   }
 

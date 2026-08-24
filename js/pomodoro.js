@@ -343,7 +343,7 @@ class PomodoroController {
       this.state = "idle";
       this.totalSessionSeconds = 0;
       this.secondsRemaining = this.mode === "pomodoro_25" ? 25 * 60 : 50 * 60;
-      showToast("Pausa concluída! Pronto para o próximo bloco de papiro?", "success");
+      showToast("Pausa concluída! Pronto para o próximo bloco de estudo?", "success");
       this.render();
     }
   }
@@ -380,44 +380,44 @@ class PomodoroController {
       }
     }
 
+    const activeConcurso = store.getActiveConcurso();
     store.addStudySession({
-      disciplinaId: this.selectedDisciplinaId,
-      topicoId: this.selectedTopicoId,
+      concursoId: activeConcurso.id,
+      disciplinaId: this.selectedDisciplinaId || (activeConcurso.disciplinas[0]?.id || "pf-port"),
+      topicoId: this.selectedTopicoId || null,
       durationMinutes: minutes,
-      type: this.sessionType
+      type: "teoria",
+      notes: `Sessão de Foco (${minutes} min)`
     });
 
-    showToast(`+${minutes * 2} XP! Sessão de ${minutes} min computada com sucesso! 🔥`, "success");
-    this.showPostSessionModal(minutes, this.selectedDisciplinaId);
+    const disc = (activeConcurso.disciplinas || []).find(d => d.id === this.selectedDisciplinaId);
+    const discName = disc ? disc.name : "Geral";
+
+    this.showPostPomodoroModal(minutes, discName, this.selectedDisciplinaId);
   }
 
-  showPostSessionModal(minutes, disciplinaId) {
+  showPostPomodoroModal(minutes, discName, disciplinaId) {
     const modal = document.getElementById("modal-post-pomodoro");
     if (!modal) return;
 
-    const concurso = store.getActiveConcurso();
-    const disc = (concurso.disciplinas || []).find(d => d.id === disciplinaId);
-    const discName = disc ? disc.name : "Matéria de Estudo";
-
-    const discEl = document.getElementById("post-pomo-disc");
-    const minsEl = document.getElementById("post-pomo-minutes");
-
-    if (discEl) discEl.textContent = discName;
-    if (minsEl) minsEl.textContent = `${minutes} minutos`;
-
+    document.getElementById("post-pomo-minutes").textContent = `${minutes} minutos`;
+    document.getElementById("post-pomo-disc").textContent = discName;
     modal.classList.remove("hidden");
 
     // Botão Praticar Questões
-    const btnQuestoes = document.getElementById("post-pomo-btn-questoes");
-    if (btnQuestoes) {
-      btnQuestoes.onclick = () => {
+    const btnQuestions = document.getElementById("post-pomo-btn-questoes");
+    if (btnQuestions) {
+      btnQuestions.onclick = () => {
         modal.classList.add("hidden");
         window.location.hash = "#questoes";
         setTimeout(() => {
-          if (typeof questionsManager !== "undefined" && questionsManager.setDisciplinaFilter) {
-            questionsManager.setDisciplinaFilter(disciplinaId);
+          const filterDisc = document.getElementById("filter-disciplina");
+          if (filterDisc) {
+            filterDisc.value = disciplinaId;
+            questionsManager.filterDisciplina = disciplinaId;
+            questionsManager.applyFilters();
           }
-          showToast(`Filtro tático: Questões de ${discName}!`, "info");
+          showToast(`Filtrando questões de ${discName}!`, "info");
         }, 150);
       };
     }
@@ -503,16 +503,16 @@ class PomodoroController {
 
     if (statusText) {
       if (this.state === "break") {
-        statusText.textContent = "☕ INTERVALO ATIVO";
+        statusText.textContent = "☕ INTERVALO";
         statusText.className = "pomo-badge status-break";
       } else if (this.state === "running") {
-        statusText.textContent = "⚡ PAPIRO EM FOCO TOTAL";
+        statusText.textContent = "⚡ EM FOCO";
         statusText.className = "pomo-badge status-running";
       } else if (this.state === "paused") {
         statusText.textContent = "⏸️ PAUSADO";
         statusText.className = "pomo-badge status-paused";
       } else {
-        statusText.textContent = "🎯 PRONTO PARA O COMBATE";
+        statusText.textContent = "🎯 PRONTO PARA INICIAR";
         statusText.className = "pomo-badge status-idle";
       }
     }

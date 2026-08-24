@@ -48,33 +48,53 @@
   --color-cyan: #06b6d4;
   --color-purple: #a855f7;
 
-  /* Geometria Tática (Raio Reduzido para Precisão e Disciplina) */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  /* Espaçamentos Fluidos & Responsivos */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.25rem;
+  --space-xl: 1.75rem;
+  --space-2xl: 2.5rem;
+
+  /* Tipografia Fluida */
+  --text-2xs: clamp(0.68rem, 0.75vw, 0.72rem);
+  --text-xs: clamp(0.75rem, 0.85vw, 0.8rem);
+  --text-sm: clamp(0.82rem, 0.95vw, 0.88rem);
+  --text-base: clamp(0.92rem, 1vw, 1rem);
+  --text-lg: clamp(1.05rem, 1.2vw, 1.15rem);
+  --text-xl: clamp(1.2rem, 1.5vw, 1.35rem);
+  --text-2xl: clamp(1.4rem, 2vw, 1.75rem);
+  --text-3xl: clamp(1.8rem, 3vw, 2.3rem);
+
+  /* Geometria Moderna e Suave */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
   --radius-full: 9999px;
 
-  /* Sombras & Profundidade */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.8);
-  --shadow-hud: 0 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 24px -4px rgba(0, 0, 0, 0.7);
+  /* Sombras & Profundidade Refinada */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.5);
+  --shadow-hud: 0 0 0 1px var(--border-color), 0 4px 20px rgba(0, 0, 0, 0.4);
 
   /* Famílias Tipográficas */
-  --font-display: 'Chakra Petch', -apple-system, sans-serif;
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Transição de Comando */
-  --transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
-  --sidebar-width: 264px;
-  --header-height: 64px;
-  --bg-header: rgba(17, 23, 35, 0.85);
-  --bg-header-tint: rgba(0, 0, 0, 0.2);
+  --sidebar-width: 250px;
+  --header-height: 60px;
+  --bg-header: rgba(17, 23, 35, 0.9);
+  --bg-header-tint: rgba(0, 0, 0, 0.15);
 }
 
 /* ==========================================================================
@@ -583,8 +603,8 @@ button, input, select, textarea {
    ========================================================================== */
 .view-content-wrapper {
   flex: 1;
-  padding: 24px;
-  max-width: 1440px;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  max-width: min(100%, 1440px);
   width: 100%;
   margin: 0 auto;
 }
@@ -594,23 +614,22 @@ button, input, select, textarea {
 }
 
 .view-header {
-  margin-bottom: 22px;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 1rem;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  padding-bottom: clamp(0.75rem, 1.5vw, 1.125rem);
 }
 
 .view-title-group h1 {
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
   color: var(--text-main);
-  text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -620,15 +639,16 @@ button, input, select, textarea {
   content: "";
   display: inline-block;
   width: 4px;
-  height: 1.2rem;
+  height: 1.15em;
   background: var(--color-warning);
   border-radius: var(--radius-xs);
 }
 
 .view-title-group p {
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: 4px;
+  line-height: 1.5;
 }
 
 @keyframes viewFade {

@@ -121,8 +121,8 @@
       <div class="view-content-wrapper view-section" id="view-dashboard">
         <div class="dashboard-hero">
           <div class="hero-left">
-            <h1>Missão de Hoje: Combate ao Edital! 🎯</h1>
-            <p>Operações de Carreiras Policiais. Cumpra suas missões diárias rumo à nomeação e posse.</p>
+            <h1 id="dash-greeting-title">Olá, Concurseiro! 👋</h1>
+            <p id="dash-greeting-subtitle">Acompanhe suas metas de hoje, mantenha a frequência e avance no edital.</p>
           </div>
           <div class="hero-quick-actions">
             <a href="#questoes" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-question"></i> Resolver Questões</a>
@@ -189,12 +189,12 @@
           </div>
         </div>
 
-        <!-- Painel de Telemetria Tática: Alertas & Revisões Pendentes -->
+        <!-- Painel de Alertas & Revisões Pendentes -->
         <div class="dash-alerts-grid">
-          <!-- Card de Alertas & Telemetria Tática -->
+          <!-- Card de Alertas & Recomendações -->
           <div class="card" id="dash-insights-card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-radar text-warning"></i> Telemetria & Alertas Táticos</h3>
+              <h3><i class="fa-solid fa-bell text-warning"></i> Alertas e Recomendações</h3>
               <span class="badge badge-warning" id="dash-insights-badge">3 Alertas</span>
             </div>
             <div class="card-body" id="dash-insights-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -202,10 +202,10 @@
             </div>
           </div>
 
-          <!-- Card de Revisões & Memória (SRS + R24h/R7d/R30d) -->
+          <!-- Card de Revisões Pendentes -->
           <div class="card" id="dash-revisoes-card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Revisões Pendentes Hoje</h3>
+              <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Revisões Pendentes</h3>
               <span class="badge badge-primary" id="dash-revisoes-badge">0 Pendências</span>
             </div>
             <div class="card-body" id="dash-revisoes-content" style="display: flex; flex-direction: column; gap: 10px;">
@@ -214,12 +214,12 @@
           </div>
         </div>
 
-        <!-- Missões Diárias + Frase -->
+        <!-- Metas Diárias + Frase -->
         <div class="dash-main-grid">
           <div class="card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-list-check text-primary"></i> Missões do Papiro de Hoje</h3>
-              <span class="missions-header-summary" id="dash-missions-summary">0/4 Cumpridas</span>
+              <h3><i class="fa-solid fa-list-check text-primary"></i> Metas de Hoje</h3>
+              <span class="missions-header-summary" id="dash-missions-summary">0/4 Concluídas</span>
             </div>
             <div class="card-body">
               <div class="missions-list" id="dash-missions-list">
@@ -231,8 +231,8 @@
           <div class="card quote-card">
             <i class="fa-solid fa-quote-right quote-icon-decor"></i>
             <div class="card-body">
-              <blockquote id="dash-quote-text">"O papiro não perdoa, mas a aprovação recompensa com glória eterna."</blockquote>
-              <cite id="dash-quote-author">— Lema dos Concurseiros</cite>
+              <blockquote id="dash-quote-text">"Quem não mede, não evolui. Acompanhe suas métricas diariamente."</blockquote>
+              <cite id="dash-quote-author">— Gestão de Estudos</cite>
             </div>
           </div>
         </div>
@@ -648,7 +648,7 @@
               <circle class="timer-circle-progress" id="pomo-progress-circle" cx="150" cy="150" r="130"></circle>
             </svg>
             <div class="timer-display-box">
-              <span class="pomo-badge status-idle" id="pomo-status-badge">PRONTO PARA O COMBATE</span>
+              <span class="pomo-badge status-idle" id="pomo-status-badge">PRONTO PARA INICIAR</span>
               <span class="timer-digits" id="pomo-time-display">25:00</span>
             </div>
           </div>
@@ -656,7 +656,7 @@
           <!-- Botões de Ação -->
           <div class="timer-controls">
             <button class="btn btn-primary btn-lg pulse-glow" id="pomo-btn-start">
-              <i class="fa-solid fa-play"></i> Iniciar Papiro
+              <i class="fa-solid fa-play"></i> Iniciar Estudo
             </button>
             <button class="btn btn-warning btn-lg hidden" id="pomo-btn-pause">
               <i class="fa-solid fa-pause"></i> Pausar
@@ -751,7 +751,7 @@
 
         <div class="card">
           <div class="card-header">
-            <h3><i class="fa-solid fa-calendar-days text-success"></i> Mapa de Frequência de Papiro</h3>
+            <h3><i class="fa-solid fa-calendar-days text-success"></i> Frequência de Estudos</h3>
           </div>
           <div class="card-body">
             <div id="analytics-heatmap-container"></div>
@@ -763,8 +763,8 @@
       <div class="view-content-wrapper view-section hidden" id="view-ranking">
         <div class="view-header">
           <div class="view-title-group">
-            <h1>Ranking Semanal & Conquistas</h1>
-            <p>Acompanhe sua posição na liga dos concurseiros e desbloqueie medalhas de honra.</p>
+            <h1>Ranking & Conquistas</h1>
+            <p>Acompanhe sua posição no ranking semanal e desbloqueie medalhas de evolução.</p>
           </div>
         </div>
 
@@ -772,7 +772,7 @@
         <div class="card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(139,92,246,0.15));">
           <div class="card-body" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
             <div>
-              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase;">Patente Militar Atual</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase;">Nível e Patente Atual</span>
               <h2 id="level-current-rank-title" style="font-size: 1.5rem; font-weight: 800;">Sargento Operacional</h2>
             </div>
             <div style="flex: 1; max-width: 450px;">
@@ -790,7 +790,7 @@
         <!-- Tabela do Leaderboard -->
         <div class="card" style="margin-bottom: 24px;">
           <div class="card-header">
-            <h3><i class="fa-solid fa-trophy text-warning"></i> Classificação Semanal da Liga</h3>
+            <h3><i class="fa-solid fa-trophy text-warning"></i> Ranking Semanal</h3>
           </div>
           <div class="card-body" style="padding: 0;">
             <div class="topics-table-wrapper">
@@ -798,7 +798,7 @@
                 <thead>
                   <tr>
                     <th style="width: 80px; text-align: center;">Posição</th>
-                    <th>Concurseiro</th>
+                    <th>Estudante</th>
                     <th style="text-align: center;">Horas Semanais</th>
                     <th style="text-align: center;">Questões</th>
                     <th style="text-align: center;">% Acerto</th>
@@ -816,7 +816,7 @@
         <!-- Conquistas Grid -->
         <div class="card">
           <div class="card-header">
-            <h3><i class="fa-solid fa-medal text-warning"></i> Galeria de Medalhas e Conquistas</h3>
+            <h3><i class="fa-solid fa-medal text-warning"></i> Medalhas e Conquistas</h3>
           </div>
           <div class="card-body">
             <div class="badges-grid" id="badges-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
@@ -921,7 +921,7 @@
               </div>
               <div class="landing-stat-item">
                 <span class="landing-stat-num">100%</span>
-                <span class="landing-stat-label">Focado no Papiro Real</span>
+                <span class="landing-stat-label">Focado no Edital Real</span>
               </div>
               <div class="landing-stat-item">
                 <span class="landing-stat-num">SM-2</span>
@@ -1118,8 +1118,8 @@
 
           <!-- Banner Final CTA -->
           <section class="landing-final-banner">
-            <h2>"A dor do papiro é passageira, a posse no cargo é eterna."</h2>
-            <p>Assuma seu posto hoje mesmo e comece a construir sua aprovação com método e estratégia.</p>
+            <h2>"A disciplina diária constrói a aprovação que você busca."</h2>
+            <p>Comece a organizar seus estudos com método, inteligência e estratégia.</p>
             <button class="btn btn-primary btn-lg pulse-glow" onclick="openAuthModal('signup')">
               <i class="fa-solid fa-bolt"></i> Criar Minha Conta Gratuita Agora
             </button>
@@ -1132,20 +1132,20 @@
 
   <!-- OVERLAYS E MODAIS -->
 
-  <!-- Modal: Onboarding Tático de Boas-Vindas -->
+  <!-- Modal: Onboarding de Boas-Vindas -->
   <div class="modal-overlay hidden" id="modal-onboarding" style="z-index: 1100;">
     <div class="modal-box" style="max-width: 620px; border-top: 4px solid var(--color-warning);">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-crosshairs text-warning"></i> QG DO CONCURSEIRO • BRIEFING DE CHEGADA</h3>
+        <h3><i class="fa-solid fa-crosshairs text-warning"></i> Bem-vindo ao QG do Concurseiro</h3>
       </div>
       <div class="modal-body" style="padding: 24px;">
         
         <!-- Step 1: Escolha do Concurso Alvo -->
         <div id="onboard-step-1" class="onboard-step">
           <div style="text-align: center; margin-bottom: 20px;">
-            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-warning); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Passo 1 de 2 • Missão Principal</span>
-            <h2 style="font-size: 1.35rem; font-weight: 800; margin-top: 4px;">Selecione o seu Edital de Combate</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Configuraremos automaticamente disciplinas, pesos e ciclo de estudos para o seu alvo.</p>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-warning); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Passo 1 de 2 • Configuração Inicial</span>
+            <h2 style="font-size: 1.35rem; font-weight: 800; margin-top: 4px;">Selecione o seu Concurso Alvo</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Configuraremos automaticamente disciplinas, pesos e ciclo de estudos para a sua preparação.</p>
           </div>
 
           <div class="onboard-concursos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px;">
@@ -1249,7 +1249,7 @@
               <i class="fa-solid fa-arrow-left"></i> Voltar
             </button>
             <button class="btn btn-success" id="onboard-btn-finish">
-              <i class="fa-solid fa-bolt"></i> Iniciar Meu QG Tático
+              <i class="fa-solid fa-bolt"></i> Iniciar Meus Estudos
             </button>
           </div>
         </div>
@@ -1262,8 +1262,8 @@
   <div class="zen-overlay hidden" id="zen-mode-overlay">
     <div class="zen-top">
       <div class="brand-logo">
-        <div class="logo-icon"><i class="fa-solid fa-scroll"></i></div>
-        <div class="brand-text"><h2>FOCO NO PAPIRO</h2></div>
+        <div class="logo-icon"><i class="fa-solid fa-crosshairs"></i></div>
+        <div class="brand-text"><h2>QG DO CONCURSEIRO</h2></div>
       </div>
       <button class="btn btn-secondary btn-sm" id="zen-btn-exit">
         <i class="fa-solid fa-compress"></i> Sair do Modo Zen
@@ -1271,10 +1271,10 @@
     </div>
     <div class="zen-center">
       <div class="zen-digits" id="zen-time-display">25:00</div>
-      <p class="zen-quote">"A dor da disciplina é passageira, o orgulho da posse no cargo é eterno."</p>
+      <p class="zen-quote">"A persistência transforma o esforço diário em aprovação."</p>
     </div>
     <div class="zen-bottom">
-      <span class="pomo-badge status-running">SESSÃO DE CONCENTRAÇÃO MÁXIMA</span>
+      <span class="pomo-badge status-running">Sessão de Foco Total</span>
     </div>
   </div>
 
@@ -1491,23 +1491,23 @@
     </div>
   </div>
 
-  <!-- Modal: Conclusão de Sessão & Próximo Passo Tático -->
+  <!-- Modal: Conclusão de Sessão & Próximo Passo -->
   <div class="modal-overlay hidden" id="modal-post-pomodoro">
     <div class="modal-box" style="text-align: center; max-width: 520px;">
       <div class="modal-header" style="justify-content: center;">
-        <h3><i class="fa-solid fa-circle-check text-success"></i> SESSÃO DE ESTUDO CONCLUÍDA!</h3>
+        <h3><i class="fa-solid fa-circle-check text-success"></i> Sessão de Estudo Concluída!</h3>
       </div>
       <div class="modal-body" style="padding: 24px;">
-        <div style="font-size: 2.8rem; margin-bottom: 8px;">⚔️</div>
-        <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);" id="post-pomo-title">Excelente Combate!</h2>
+        <div style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
+        <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);" id="post-pomo-title">Excelente Trabalho!</h2>
         <p style="color: var(--text-muted); font-size: 0.88rem; margin: 8px 0 20px;" id="post-pomo-summary">
           Você cumpriu <strong id="post-pomo-minutes" class="text-primary">25 minutos</strong> de teoria em <strong id="post-pomo-disc" class="text-warning">Direito Administrativo</strong>.
         </p>
 
         <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px; text-align: left;">
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-warning); font-weight: 700; text-transform: uppercase;">Próxima Ação Tática Recomendada:</span>
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-warning); font-weight: 700; text-transform: uppercase;">Próxima Ação Recomendada:</span>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
-            A neurociência comprova: resolver questões ou revisar flashcards imediatamente após a teoria fixa até 300% mais o conteúdo.
+            Resolver questões ou revisar flashcards logo após a teoria ajuda a fixar o conteúdo na memória de longo prazo.
           </p>
         </div>
 
@@ -1523,7 +1523,7 @@
               <i class="fa-solid fa-mug-hot"></i> Iniciar Descanso
             </button>
             <button class="btn btn-secondary btn-sm modal-close-btn" style="flex: 1; justify-content: center;">
-              <i class="fa-solid fa-house"></i> Voltar ao QG
+              <i class="fa-solid fa-house"></i> Voltar ao Início
             </button>
           </div>
         </div>
@@ -1540,8 +1540,8 @@
       </div>
       <div class="modal-body">
         <div style="font-size: 2.8rem; margin: 10px 0;">🎯</div>
-        <h2>Simulado Finalizado com Honra!</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Confira o seu desempenho tático nesta prova:</p>
+        <h2>Simulado Concluído!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Confira o seu desempenho nesta prova:</p>
 
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
           <div style="background: var(--bg-surface-elevated); padding: 12px; border-radius: var(--radius-md);">
@@ -1574,7 +1574,7 @@
         </div>
       </div>
       <div class="modal-footer" style="justify-content: center;">
-        <button class="btn btn-primary modal-close-btn">Continuar Papiro</button>
+        <button class="btn btn-primary modal-close-btn">Continuar Estudando</button>
       </div>
     </div>
   </div>
@@ -1583,14 +1583,14 @@
   <div class="modal-overlay hidden" id="modal-level-up" role="dialog" aria-modal="true" aria-labelledby="levelup-title">
     <div class="modal-box" style="text-align: center; border: 2px solid var(--color-accent);">
       <div class="modal-body" style="padding: 36px 24px;">
-        <div style="font-size: 3.5rem; margin-bottom: 10px;">⚡</div>
-        <h2 style="font-size: 1.8rem; font-weight: 900; color: var(--color-accent);" id="levelup-title">NOVA PATENTE CONQUISTADA!</h2>
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">⭐</div>
+        <h2 style="font-size: 1.8rem; font-weight: 900; color: var(--color-accent);" id="levelup-title">NOVO NÍVEL ALCANÇADO!</h2>
         <h3 style="font-size: 1.3rem; margin: 10px 0 16px; color: var(--text-main);" id="levelup-rank">Sargento Operacional</h3>
         <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 380px; margin: 0 auto 24px;">
-          Sua constância e disciplina no papiro foram recompensadas. Continue avançando rumo à posse!
+          Sua constância e dedicação nos estudos foram recompensadas. Continue avançando rumo à aprovação!
         </p>
         <button class="btn btn-primary btn-lg modal-close-btn" aria-label="Fechar notificação de nível">
-          <i class="fa-solid fa-fire"></i> Rumo à Aprovação!
+          <i class="fa-solid fa-check"></i> Continuar Estudando
         </button>
       </div>
     </div>

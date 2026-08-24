@@ -42,19 +42,34 @@ class DashboardManager {
     const streakCountEl = document.getElementById("dash-streak-count");
     const concursoSelect = document.getElementById("header-concurso-select");
 
-    if (userNameEl) userNameEl.textContent = profile.name || "Guerreiro(a)";
+    if (userNameEl) userNameEl.textContent = profile.name || "Concurseiro";
     if (userRankEl) userRankEl.textContent = rankTitle;
     if (userXpEl) userXpEl.textContent = `${profile.xp} XP`;
     if (userLevelEl) userLevelEl.textContent = `Nível ${profile.level || 1}`;
     if (streakCountEl) streakCountEl.textContent = `${profile.streak || 0}`;
 
-    // Atualiza o visual progressivo do Streak (Chamas de Combate)
+    // Saudação direta e amigável no Hero do Dashboard
+    const greetingTitle = document.getElementById("dash-greeting-title");
+    const greetingSubtitle = document.getElementById("dash-greeting-subtitle");
+    if (greetingTitle) {
+      greetingTitle.textContent = `Olá, ${profile.name ? profile.name.split(' ')[0] : 'Concurseiro'}! 👋`;
+    }
+    const todayStats = store.getTodayStats();
+    if (greetingSubtitle) {
+      if (todayStats.minutesToday === 0) {
+        greetingSubtitle.textContent = "Você ainda não registrou estudos hoje. Que tal iniciar um bloco de foco agora?";
+      } else {
+        greetingSubtitle.textContent = `Você já acumulou ${todayStats.hoursToday}h de estudos hoje. Mantenha o ritmo!`;
+      }
+    }
+
+    // Atualiza o visual progressivo do Streak
     const streak = profile.streak || 0;
     const streakInfo = this.getStreakTier(streak);
     const streakPill = document.querySelector(".streak-pill");
     if (streakPill) {
       streakPill.className = `streak-pill ${streakInfo.class}`;
-      streakPill.title = `Ofensiva de Estudos: ${streakInfo.label}`;
+      streakPill.title = `Frequência de Estudos: ${streakInfo.label}`;
       const icon = streakPill.querySelector("i");
       if (icon) {
         icon.className = `fa-solid ${streakInfo.icon}`;
@@ -66,7 +81,7 @@ class DashboardManager {
     const sidebarName = document.getElementById("user-profile-name");
     const sidebarRank = document.getElementById("user-profile-rank");
     if (sidebarAvatar) sidebarAvatar.textContent = profile.avatar || (profile.name ? profile.name.substring(0, 2).toUpperCase() : "QG");
-    if (sidebarName) sidebarName.textContent = profile.name || "Guerreiro(a)";
+    if (sidebarName) sidebarName.textContent = profile.name || "Concurseiro";
     if (sidebarRank) sidebarRank.textContent = rankTitle;
 
     // Popula o Seletor de Concurso Ativo no Header
@@ -102,8 +117,8 @@ class DashboardManager {
         insights.push({
           type: diffDays < 30 ? "danger" : "info",
           icon: "fa-hourglass-half",
-          title: `Contagem Regressiva: ${diffDays} Dias até a Prova`,
-          text: `Seu alvo (${concurso.shortTitle || concurso.title}) está se aproximando. Mantenha o padrão operacional nas horas líquidas!`
+          title: `Faltam ${diffDays} Dias até a Prova`,
+          text: `A prova de ${concurso.shortTitle || concurso.title} está se aproximando. Mantenha o ritmo de estudos diário!`
         });
       }
     }
@@ -117,7 +132,7 @@ class DashboardManager {
           type: "danger",
           icon: "fa-triangle-exclamation",
           title: `Disciplina sem Estudo: ${d.name}`,
-          text: `Você ainda não registrou horas em ${d.name} (Peso ${d.weight}). Inicie pelo menos 1 bloco de foco hoje!`
+          text: `Você ainda não registrou horas em ${d.name} (Peso ${d.weight}). Que tal estudar um bloco hoje?`
         });
       } else {
         const lastSession = Math.max(...discSessions.map(s => s.timestamp || 0));
@@ -127,7 +142,7 @@ class DashboardManager {
             type: "danger",
             icon: "fa-clock-rotate-left",
             title: `Atenção: ${d.name} sem Estudo há ${daysSince} Dias`,
-            text: `A curva do esquecimento está agindo. Faça uma sessão de revisão rápida ou bateria de questões hoje.`
+            text: `Revise a matéria ou resolva uma bateria rápida de questões para manter o conteúdo fresco.`
           });
         }
       }
@@ -143,15 +158,15 @@ class DashboardManager {
           insights.push({
             type: "danger",
             icon: "fa-shield-heart",
-            title: `Zona de Risco em ${d.name}: ${acc}% de Acertos`,
-            text: `Seu índice está abaixo do ponto de corte recomendado (70%+). Revise o Caderno de Erros desta matéria!`
+            title: `Atenção em ${d.name}: ${acc}% de Acertos`,
+            text: `Seu aproveitamento está abaixo de 70%. Recomendamos revisar o Caderno de Erros dessa matéria.`
           });
         } else if (acc >= 85 && discQuestions.length >= 10) {
           insights.push({
             type: "success",
             icon: "fa-circle-check",
-            title: `Ponto Forte: ${d.name} com ${acc}% de Domínio!`,
-            text: `Excelente taxa de acerto em ${discQuestions.length} questões resolvidas. Continue na manutenção quinzenal.`
+            title: `Ponto Forte: ${d.name} com ${acc}% de Acertos!`,
+            text: `Excelente aproveitamento em ${discQuestions.length} questões resolvidas. Continue praticando regularmente.`
           });
         }
       }
@@ -161,9 +176,9 @@ class DashboardManager {
     if (insights.length === 0) {
       insights.push({
         type: "success",
-        icon: "fa-shield-halved",
-        title: "QG Operando em Alta Performance",
-        text: "Todas as disciplinas e matérias estão balanceadas. Siga firme no cumprimento do ciclo de estudos!"
+        icon: "fa-circle-check",
+        title: "Planejamento em Dia",
+        text: "Todas as suas disciplinas estão equilibradas. Continue avançando no ciclo de estudos!"
       });
     }
 
@@ -310,7 +325,7 @@ class DashboardManager {
     const completedCount = missions.filter(m => m.completed).length;
 
     if (summaryBadge) {
-      summaryBadge.textContent = `${completedCount}/${missions.length} Missões Cumpridas`;
+      summaryBadge.textContent = `${completedCount}/${missions.length} Concluídas`;
     }
 
     missions.forEach(m => {

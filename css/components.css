@@ -338,7 +338,7 @@
 }
 
 .toast-item {
-  min-width: 280px;
+  min-width: min(280px, 90vw);
   max-width: 420px;
   background-color: var(--bg-surface-elevated);
   border: 1px solid var(--border-color-light);

@@ -816,20 +816,20 @@ const DEFAULT_FLASHCARDS = [
 ];
 
 const DEFAULT_BADGES = [
-  { id: "badge-first-study", title: "Primeiro Papiro", desc: "Completou a primeira sessão de estudos no cronômetro", icon: "fa-fire", unlocked: false, date: null },
-  { id: "badge-streak-7", title: "Guerreiro 7 Dias", desc: "Manteve 7 dias ininterruptos de papiro ativo", icon: "fa-shield-halved", unlocked: false, date: null },
-  { id: "badge-50-questions", title: "Sniper de Questões", desc: "Resolveu mais de 50 questões no banco", icon: "fa-bullseye", unlocked: false, date: null },
-  { id: "badge-edital-25", title: "Marcha Inicial", desc: "Bateu 25% dos tópicos do seu edital verticalizado", icon: "fa-map-location-dot", unlocked: false, date: null },
-  { id: "badge-master-srs", title: "Memória Blindada", desc: "Revisou 20+ flashcards com método espaçado", icon: "fa-brain", unlocked: false, date: null },
-  { id: "badge-simulado-pro", title: "Pronto pro Combate", desc: "Concluiu um simulado completo cronometrado com >80% acertos", icon: "fa-trophy", unlocked: false, date: null },
-  { id: "badge-night-owl", title: "Sentinela Noturna", desc: "Estudou mais de 2 horas no período da madrugada", icon: "fa-moon", unlocked: false, date: null },
-  { id: "badge-centurion", title: "Centurião", desc: "Acumulou 100 horas líquidas registradas no sistema", icon: "fa-medal", unlocked: false, date: null }
+  { id: "badge-first-study", title: "Primeiro Passo", desc: "Completou a primeira sessão de estudos no cronômetro", icon: "fa-fire", unlocked: false, date: null },
+  { id: "badge-streak-7", title: "Foco 7 Dias", desc: "Manteve 7 dias ininterruptos de estudos ativos", icon: "fa-shield-halved", unlocked: false, date: null },
+  { id: "badge-50-questions", title: "50 Questões", desc: "Resolveu mais de 50 questões no banco", icon: "fa-bullseye", unlocked: false, date: null },
+  { id: "badge-edital-25", title: "Avanço no Edital", desc: "Completou 25% dos tópicos do seu edital verticalizado", icon: "fa-map-location-dot", unlocked: false, date: null },
+  { id: "badge-master-srs", title: "Revisão Ativa", desc: "Revisou 20+ flashcards com repetição espaçada", icon: "fa-brain", unlocked: false, date: null },
+  { id: "badge-simulado-pro", title: "Alto Desempenho", desc: "Concluiu um simulado cronometrado com mais de 80% de acertos", icon: "fa-trophy", unlocked: false, date: null },
+  { id: "badge-night-owl", title: "Estudo Noturno", desc: "Estudou mais de 2 horas no período da noite", icon: "fa-moon", unlocked: false, date: null },
+  { id: "badge-centurion", title: "100 Horas Líquidas", desc: "Acumulou 100 horas líquidas registradas no sistema", icon: "fa-medal", unlocked: false, date: null }
 ];
 
 const DEFAULT_LEADERBOARD = [
   { rank: 1, name: "Inspetor Nascimento", avatar: "IN", hoursWeekly: 34.5, questionsWeekly: 310, accuracy: 91, xp: 4850, badge: "Lendário" },
   { rank: 2, name: "Delegada Silva", avatar: "DS", hoursWeekly: 31.0, questionsWeekly: 280, accuracy: 88, xp: 4230, badge: "Veterana" },
-  { rank: 3, name: "Você (QG Operacional)", avatar: "EU", hoursWeekly: 24.2, questionsWeekly: 195, accuracy: 84, xp: 3420, isUser: true, badge: "Sniper" },
+  { rank: 3, name: "Você", avatar: "EU", hoursWeekly: 24.2, questionsWeekly: 195, accuracy: 84, xp: 3420, isUser: true, badge: "Aspirante" },
   { rank: 4, name: "Lucas Federal", avatar: "LF", hoursWeekly: 22.5, questionsWeekly: 170, accuracy: 81, xp: 3010, badge: "Combatente" },
   { rank: 5, name: "Mariana PRF", avatar: "MP", hoursWeekly: 19.8, questionsWeekly: 160, accuracy: 79, xp: 2750, badge: "Tática" },
   { rank: 6, name: "Roberto Civil", avatar: "RC", hoursWeekly: 17.0, questionsWeekly: 120, accuracy: 76, xp: 2320, badge: "Operador" },
@@ -837,10 +837,10 @@ const DEFAULT_LEADERBOARD = [
 ];
 
 const MOTIVATIONAL_QUOTES = [
-  { quote: "Treino difícil, combate fácil. Cada questão resolvida hoje é um ponto na prova de domingo.", author: "Doutrina Policial" },
-  { quote: "A dor do estudo é passageira. A honra de ostentar o distintivo no peito é eterna.", author: "QG do Concurseiro" },
-  { quote: "No combate contra a banca examinadora, quem domina o edital não conta com a sorte.", author: "Manual de Operações" },
-  { quote: "A disciplina é a ponte inegociável entre a vontade de passar e a posse no Diário Oficial.", author: "Estratégia Tática" },
-  { quote: "Não pare quando estiver cansado. Pare apenas quando o seu nome for publicado na lista de aprovados.", author: "Comando QG" },
-  { quote: "Constância bate o talento todos os dias da semana. Um bloco de papiro por vez, até a posse.", author: "Doutrina de Alto Rendimento" }
+  { quote: "Quem não mede, não evolui. Acompanhe suas métricas diariamente.", author: "Gestão de Estudos" },
+  { quote: "A disciplina é a ponte entre a meta de passar e a nomeação no Diário Oficial.", author: "QG do Concurseiro" },
+  { quote: "A constância nos estudos bate o talento todos os dias. Um bloco de cada vez.", author: "Método de Aprovação" },
+  { quote: "O segredo da aprovação é transformar esforço diário em hábito inabalável.", author: "QG do Concurseiro" },
+  { quote: "Cada questão resolvida e analisada hoje é um erro a menos no dia da prova.", author: "Estratégia de Prova" },
+  { quote: "A persistência diária é o caminho mais seguro até a sua posse.", author: "QG do Concurseiro" }
 ];
