@@ -30,12 +30,17 @@ class GamificationManager {
     const userWeeklyHours = weekly.hours.reduce((a, b) => a + b, 0);
     const userWeeklyQuestions = weekly.questions.reduce((a, b) => a + b, 0);
 
+    const userTotalQ = (store.data.questionHistory || []).length;
+    const userCorrectQ = (store.data.questionHistory || []).filter(q => q.isCorrect).length;
+    const userAccuracy = userTotalQ > 0 ? Math.round((userCorrectQ / userTotalQ) * 100) : 85;
+
     let userEntry = lb.find(l => l.isUser);
     if (userEntry) {
       userEntry.name = profile.name ? `${profile.name}` : "Você";
       userEntry.avatar = (profile.name || "VC").substring(0, 2).toUpperCase();
       userEntry.hoursWeekly = Number(userWeeklyHours.toFixed(1));
       userEntry.questionsWeekly = userWeeklyQuestions;
+      userEntry.accuracy = userAccuracy;
       userEntry.xp = profile.xp || 0;
     } else {
       userEntry = {

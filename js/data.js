@@ -699,6 +699,78 @@ const DEFAULT_QUESTIONS = [
     ],
     respostaCorreta: "A",
     explicacao: "Gabarito: **A**. Art. 144, § 5º, da CF: 'Às polícias militares cabem a polícia ostensiva e a preservação da ordem pública; aos corpos de bombeiros militares, além das atribuições definidas em lei, incumbe a execução de atividades de defesa civil'."
+  },
+  {
+    id: "q-17",
+    disciplinaId: "prf-transito",
+    disciplinaName: "Legislação de Trânsito",
+    assunto: "Infrações e Penalidades de Trânsito",
+    banca: "Cebraspe",
+    orgao: "PRF",
+    cargo: "Policial Rodoviário Federal",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O condutor que for flagrado dirigindo sob a influência de álcool comete infração de natureza gravíssima, sujeita a penalidade de multa multiplicada por dez e suspensão do direito de dirigir por doze meses.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Conforme art. 165 do CTB: 'Dirigir sob a influência de álcool ou de qualquer outra substância psicoativa que determine dependência: Infração - gravíssima; Penalidade - multa (dez vezes) e suspensão do direito de dirigir por 12 (doze) meses'."
+  },
+  {
+    id: "q-18",
+    disciplinaId: "prf-fisica",
+    disciplinaName: "Física Mecânica Aplicada",
+    assunto: "Cinemática Escalar e Vetorial",
+    banca: "Cebraspe",
+    orgao: "PRF",
+    cargo: "Policial Rodoviário Federal",
+    ano: 2023,
+    tipo: "certo_errado",
+    enunciado: "Em uma colisão frontal perfeitamente inelástica entre dois veículos em movimento linear, a quantidade de movimento total do sistema se conserva, enquanto a energia cinética total do sistema não se conserva.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Em qualquer choque ou colisão em sistema isolado de forças externas, a quantidade de movimento total sempre se conserva. Porém, no choque perfeitamente inelástico, há máxima perda de energia cinética em forma de calor e deformação mecânica."
+  },
+  {
+    id: "q-19",
+    disciplinaId: "inss-prev",
+    disciplinaName: "Direito Previdenciário",
+    assunto: "Princípios da Seguridade Social",
+    banca: "Cebraspe",
+    orgao: "INSS",
+    cargo: "Técnico do Seguro Social",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O princípio da universalidade da cobertura e do atendimento prescreve que as ações da seguridade social devem alcançar todas as pessoas que delas necessitarem, independentemente de contribuição para a assistência social e saúde.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. O art. 194, parágrafo único, I, da CF/88 consagra o princípio da universalidade da cobertura (riscos sociais cobertos) e do atendimento (pessoas protegidas), sendo a saúde e a assistência social prestadas independentemente de contribuição previdenciária direta."
+  },
+  {
+    id: "q-20",
+    disciplinaId: "inss-prev",
+    disciplinaName: "Direito Previdenciário",
+    assunto: "Beneficiários do RGPS: Segurados e Dependentes",
+    banca: "Cebraspe",
+    orgao: "INSS",
+    cargo: "Técnico do Seguro Social",
+    ano: 2023,
+    tipo: "certo_errado",
+    enunciado: "O cônjuge ou companheiro é considerado dependente de primeira classe no Regime Geral de Previdência Social, cuja dependência econômica em relação ao segurado falecido é presumida por lei, não exigindo comprovação prévia.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Conforme art. 16, I e § 4º, da Lei 8.213/91: o cônjuge, a companheira e o filho não emancipado menor de 21 anos são dependentes de 1ª classe, e a dependência econômica das pessoas indicadas no inciso I é presumida."
   }
 ];
 
@@ -709,6 +781,28 @@ const DEFAULT_FLASHCARDS = [
     disciplinaName: "Português",
     frente: "Qual é a regra geral para a ocorrência da CRASE?",
     verso: "A crase é a fusão da preposição **'a'** (exigida por um termo regente) com o artigo definido feminino **'a(s)'** ou pronome demonstrativo (**aquele, aquela, aquilo**).\n\n💡 **Dica Prática:** Substitua a palavra feminina por uma masculina correspondente; se virar **'ao'**, ocorre crase!",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-11",
+    disciplinaId: "prf-transito",
+    disciplinaName: "Legislação de Trânsito",
+    frente: "Qual a velocidade máxima permitida em rodovias de pista dupla onde não existir sinalização regulamentadora?",
+    verso: "Conforme art. 61 do CTB:\n• **110 km/h** para automóveis, camionetas, caminhonetes e motocicletas.\n• **90 km/h** para os demais veículos (ônibus, caminhões, etc.).",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-12",
+    disciplinaId: "inss-prev",
+    disciplinaName: "Direito Previdenciário",
+    frente: "Quais são as três áreas que compõem o tripé da SEGURIDADE SOCIAL na CF/88?",
+    verso: "Mnemônico **PAS**:\n1. **P**revidência Social (contributiva)\n2. **A**ssistência Social (não contributiva)\n3. **S**aúde (direito de todos e dever do Estado, não contributiva)",
     interval: 1,
     repetitions: 0,
     easeFactor: 2.5,

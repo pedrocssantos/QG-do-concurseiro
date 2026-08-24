@@ -25,7 +25,7 @@ class CadernoErrosManager {
     container.innerHTML = "";
 
     const erros = store.data.cadernoErros || [];
-    const allQuestions = store.data.questions;
+    const allQuestions = store.data.questions || [];
 
     let filtered = erros.filter(err => {
       if (this.filterReason !== "all" && err.reason !== this.filterReason) return false;
@@ -57,30 +57,26 @@ class CadernoErrosManager {
         explicacao: "Sem comentário disponível."
       };
 
-      const reasonLabels = {
-        pegadinha: { label: "⚠️ Pegadinha da Banca", class: "badge-reason-pegadinha" },
-        conteudo: { label: "📖 Desconhecimento Teórico", class: "badge-reason-conteudo" },
-        atencao: { label: "👀 Falta de Atenção", class: "badge-reason-atencao" },
-        desconhecimento: { label: "❓ Não Lembrava a Regra", class: "badge-reason-conteudo" }
-      };
-
-      const reasonInfo = reasonLabels[err.reason] || reasonLabels.conteudo;
-
       const card = document.createElement("div");
       card.className = `caderno-card ${err.resolved ? "resolved-error" : ""}`;
       card.id = `caderno-card-${err.id}`;
 
       card.innerHTML = `
         <div class="caderno-card-header">
-          <div class="caderno-tags">
+          <div class="caderno-tags" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span class="badge-disc">${q.disciplinaName || "Geral"}</span>
             <span class="badge-assunto">${q.assunto || "Assunto"}</span>
-            <span class="badge-reason ${reasonInfo.class}">${reasonInfo.label}</span>
-            <span class="caderno-date"><i class="fa-regular fa-calendar"></i> ${err.date}</span>
+            <select class="form-select" style="padding: 2px 6px; font-size: 0.75rem; width: auto; border-radius: var(--radius-xs); height: 26px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);" onchange="cadernoManager.changeReason('${err.id}', this.value)">
+              <option value="conteudo" ${err.reason === "conteudo" ? "selected" : ""}>📖 Desconhecimento Teórico</option>
+              <option value="pegadinha" ${err.reason === "pegadinha" ? "selected" : ""}>⚠️ Pegadinha da Banca</option>
+              <option value="atencao" ${err.reason === "atencao" ? "selected" : ""}>👀 Falta de Atenção</option>
+              <option value="desconhecimento" ${err.reason === "desconhecimento" ? "selected" : ""}>❓ Não Lembrava a Regra</option>
+            </select>
+            <span class="caderno-date"><i class="fa-regular fa-calendar"></i> ${err.date || ""}</span>
           </div>
           <div class="caderno-header-actions">
-            <button class="btn btn-sm ${err.resolved ? 'btn-success' : 'btn-outline-success'}" onclick="cadernoManager.toggleResolved('${err.id}')">
-              <i class="fa-solid ${err.resolved ? 'fa-circle-check' : 'fa-check'}"></i> ${err.resolved ? 'Superado' : 'Marcar como Dominado'}
+            <button class="btn btn-sm ${err.resolved ? "btn-success" : "btn-outline-success"}" onclick="cadernoManager.toggleResolved('${err.id}')">
+              <i class="fa-solid ${err.resolved ? "fa-circle-check" : "fa-check"}"></i> ${err.resolved ? "Superado" : "Marcar como Dominado"}
             </button>
             <button class="action-btn-icon delete-btn" title="Remover do Caderno" onclick="cadernoManager.removeError('${err.id}')">
               <i class="fa-solid fa-trash-can"></i>
@@ -89,11 +85,11 @@ class CadernoErrosManager {
         </div>
 
         <div class="caderno-card-body">
-          <p class="caderno-enunciado">${q.enunciado}</p>
+          <p class="caderno-enunciado">${q.enunciado || ""}</p>
           
           <div class="caderno-gabarito-snippet">
-            <strong>Gabarito Oficial:</strong> <span class="gabarito-tag">${q.respostaCorreta}</span>
-            <p class="gabarito-exp">${q.explicacao.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</p>
+            <strong>Gabarito Oficial:</strong> <span class="gabarito-tag">${q.respostaCorreta || ""}</span>
+            <p class="gabarito-exp">${(q.explicacao || "").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</p>
           </div>
 
           <div class="caderno-notes-section">
@@ -112,8 +108,13 @@ class CadernoErrosManager {
     });
   }
 
+  changeReason(errorId, newReason) {
+    store.updateCadernoErro(errorId, { reason: newReason });
+    showToast("Motivo do erro atualizado!", "info");
+  }
+
   toggleResolved(errorId) {
-    const item = store.data.cadernoErros.find(e => e.id === errorId);
+    const item = (store.data.cadernoErros || []).find(e => e.id === errorId);
     if (item) {
       store.updateCadernoErro(errorId, { resolved: !item.resolved });
       this.renderErrorsList();

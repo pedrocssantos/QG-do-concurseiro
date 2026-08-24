@@ -209,24 +209,45 @@ class DashboardManager {
     if (!content) return;
     content.innerHTML = "";
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = store.getLocalDateString();
     const cards = store.data.flashcards || [];
     const cardsDue = cards.filter(c => c.dueDate <= today);
 
     const concurso = store.getActiveConcurso();
     const pendingReviewTopics = [];
+    const todayObj = new Date();
 
     (concurso.disciplinas || []).forEach(d => {
       (d.topicos || []).forEach(t => {
-        if (t.teoria && (!t.r24h || !t.r7d || !t.r30d)) {
-          let nextRev = !t.r24h ? "R24h" : (!t.r7d ? "R7d" : "R30d");
-          pendingReviewTopics.push({
-            disciplina: d.name,
-            disciplinaId: d.id,
-            topico: t.title,
-            topicoId: t.id,
-            revType: nextRev
-          });
+        if (t.teoria) {
+          const tDate = t.teoriaDate ? new Date(t.teoriaDate) : todayObj;
+          const diffDays = Math.floor((todayObj - tDate) / (1000 * 60 * 60 * 24));
+
+          if (!t.r24h && diffDays >= 1) {
+            pendingReviewTopics.push({
+              disciplina: d.name,
+              disciplinaId: d.id,
+              topico: t.title,
+              topicoId: t.id,
+              revType: "R24h"
+            });
+          } else if (t.r24h && !t.r7d && diffDays >= 7) {
+            pendingReviewTopics.push({
+              disciplina: d.name,
+              disciplinaId: d.id,
+              topico: t.title,
+              topicoId: t.id,
+              revType: "R7d"
+            });
+          } else if (t.r7d && !t.r30d && diffDays >= 30) {
+            pendingReviewTopics.push({
+              disciplina: d.name,
+              disciplinaId: d.id,
+              topico: t.title,
+              topicoId: t.id,
+              revType: "R30d"
+            });
+          }
         }
       });
     });
@@ -383,12 +404,22 @@ class DashboardManager {
 
   startMissionAction(route, disciplinaId) {
     window.location.hash = route;
-    if (disciplinaId && route === "#pomodoro") {
+    if (disciplinaId) {
       setTimeout(() => {
-        const select = document.getElementById("pomo-subject-select");
-        if (select) {
-          select.value = disciplinaId;
-          pomodoro.selectedDisciplinaId = disciplinaId;
+        if (route === "#pomodoro") {
+          const select = document.getElementById("pomo-subject-select");
+          if (select) {
+            select.value = disciplinaId;
+            if (typeof pomodoro !== "undefined") pomodoro.selectedDisciplinaId = disciplinaId;
+          }
+        } else if (route === "#questoes") {
+          if (typeof questionsManager !== "undefined") {
+            questionsManager.setDisciplinaFilter(disciplinaId);
+          }
+        } else if (route === "#flashcards") {
+          if (typeof flashcardsManager !== "undefined") {
+            flashcardsManager.selectDeck(disciplinaId);
+          }
         }
       }, 100);
     }

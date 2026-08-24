@@ -173,13 +173,14 @@ class PomodoroController {
   constructor() {
     this.mode = "pomodoro_25"; // pomodoro_25, pomodoro_50, stopwatch
     this.state = "idle"; // idle, running, paused, break
+    this.lastActiveState = "running";
     this.secondsRemaining = 25 * 60;
     this.secondsElapsed = 0;
     this.totalSessionSeconds = 0;
     this.timerInterval = null;
+    this.lastTickTime = null;
     this.selectedDisciplinaId = null;
     this.selectedTopicoId = null;
-    this.sessionType = "teoria"; // teoria, questoes, revisao
     this.isZenMode = false;
     this.eventsBound = false;
   }
@@ -200,15 +201,18 @@ class PomodoroController {
     const concurso = store.getActiveConcurso();
     select.innerHTML = `<option value="">-- Selecione a Matéria de Estudo --</option>`;
     
-    (concurso.disciplinas || []).forEach(d => {
+    const discs = (concurso && concurso.disciplinas) || [];
+    discs.forEach(d => {
       const opt = document.createElement("option");
       opt.value = d.id;
-      opt.textContent = `${d.name} (Peso ${d.weight})`;
+      opt.textContent = `${d.name} (Peso ${d.weight || 3})`;
       select.appendChild(opt);
     });
 
-    if (concurso.disciplinas && concurso.disciplinas.length > 0) {
-      this.selectedDisciplinaId = concurso.disciplinas[0].id;
+    if (this.selectedDisciplinaId && discs.some(d => d.id === this.selectedDisciplinaId)) {
+      select.value = this.selectedDisciplinaId;
+    } else if (discs.length > 0) {
+      this.selectedDisciplinaId = discs[0].id;
       select.value = this.selectedDisciplinaId;
     }
   }
@@ -229,6 +233,12 @@ class PomodoroController {
     if (zenBtn) zenBtn.addEventListener("click", () => this.toggleZenMode(true));
     if (exitZenBtn) exitZenBtn.addEventListener("click", () => this.toggleZenMode(false));
 
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && this.isZenMode) {
+        this.toggleZenMode(false);
+      }
+    });
+
     if (subjectSelect) {
       subjectSelect.addEventListener("change", (e) => {
         this.selectedDisciplinaId = e.target.value;
@@ -245,7 +255,7 @@ class PomodoroController {
     }
 
     modeBtns.forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         modeBtns.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         this.setMode(btn.dataset.mode);
@@ -270,20 +280,24 @@ class PomodoroController {
     this.render();
   }
 
-  start(isBreak = false) {
-    if (this.state === "running" && !isBreak) return;
+  start(isBreak = null) {
+    if (this.state === "running" && isBreak !== true) return;
     try {
       audio.initContext();
     } catch (e) {}
 
+    const runningBreak = isBreak === true || (isBreak === null && this.lastActiveState === "break");
+    this.state = runningBreak ? "break" : "running";
+    this.lastActiveState = this.state;
+
     const soundSelect = document.getElementById("pomo-sound-select");
-    if (soundSelect && soundSelect.value !== "none" && !isBreak) {
+    if (soundSelect && soundSelect.value !== "none" && !runningBreak) {
       try {
         audio.startAmbientNoise(soundSelect.value);
       } catch (e) {}
     }
 
-    this.state = isBreak ? "break" : "running";
+    this.lastTickTime = Date.now();
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = setInterval(() => this.tick(), 1000);
     this.render();
@@ -291,6 +305,7 @@ class PomodoroController {
 
   pause() {
     if (this.state !== "running" && this.state !== "break") return;
+    this.lastActiveState = this.state;
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = null;
     this.state = "paused";
@@ -301,14 +316,18 @@ class PomodoroController {
   }
 
   tick() {
+    const now = Date.now();
+    const deltaSeconds = Math.max(1, Math.round((now - (this.lastTickTime || now)) / 1000));
+    this.lastTickTime = now;
+
     if (this.mode === "stopwatch") {
-      this.secondsElapsed++;
-      this.totalSessionSeconds++;
+      this.secondsElapsed += deltaSeconds;
+      this.totalSessionSeconds += deltaSeconds;
     } else {
       if (this.secondsRemaining > 0) {
-        this.secondsRemaining--;
+        this.secondsRemaining = Math.max(0, this.secondsRemaining - deltaSeconds);
         if (this.state !== "break") {
-          this.totalSessionSeconds++;
+          this.totalSessionSeconds += deltaSeconds;
         }
       } else {
         this.completeInterval();
@@ -326,19 +345,13 @@ class PomodoroController {
     } catch (e) {}
 
     if (this.state === "running") {
-      // Salva sessão de estudo líquida no Store
       const minutesStudied = Math.max(1, Math.round(this.totalSessionSeconds / 60));
       this.saveCurrentSession(minutesStudied);
 
-      if (this.mode === "pomodoro_25" || this.mode === "pomodoro_50") {
-        this.state = "break";
-        this.secondsRemaining = this.mode === "pomodoro_25" ? 5 * 60 : 10 * 60;
-        this.totalSessionSeconds = 0;
-        showToast("Intervalo merecido! Descanse a mente por alguns minutos.", "info");
-        this.start(true); // Inicia o intervalo de descanso
-      } else {
-        this.reset(false);
-      }
+      this.state = "idle";
+      this.totalSessionSeconds = 0;
+      this.secondsRemaining = this.mode === "pomodoro_25" ? 5 * 60 : 10 * 60;
+      this.render();
     } else if (this.state === "break") {
       this.state = "idle";
       this.totalSessionSeconds = 0;
@@ -363,46 +376,51 @@ class PomodoroController {
     }
 
     this.state = "idle";
+    this.lastActiveState = "running";
     this.totalSessionSeconds = 0;
 
     if (this.mode === "pomodoro_25") this.secondsRemaining = 25 * 60;
     else if (this.mode === "pomodoro_50") this.secondsRemaining = 50 * 60;
     else if (this.mode === "stopwatch") this.secondsElapsed = 0;
 
+    document.title = "QG do Concurseiro";
     this.render();
   }
 
   saveCurrentSession(minutes) {
     if (!this.selectedDisciplinaId) {
       const active = store.getActiveConcurso();
-      if (active.disciplinas && active.disciplinas[0]) {
+      if (active && active.disciplinas && active.disciplinas[0]) {
         this.selectedDisciplinaId = active.disciplinas[0].id;
       }
     }
 
     const activeConcurso = store.getActiveConcurso();
+    const primaryDiscId = this.selectedDisciplinaId || (activeConcurso && activeConcurso.disciplinas && activeConcurso.disciplinas[0]?.id) || "pf-port";
+
     store.addStudySession({
-      concursoId: activeConcurso.id,
-      disciplinaId: this.selectedDisciplinaId || (activeConcurso.disciplinas[0]?.id || "pf-port"),
+      concursoId: activeConcurso?.id || "pf-agente",
+      disciplinaId: primaryDiscId,
       topicoId: this.selectedTopicoId || null,
       durationMinutes: minutes,
       type: "teoria",
       notes: `Sessão de Foco (${minutes} min)`
     });
 
-    const disc = (activeConcurso.disciplinas || []).find(d => d.id === this.selectedDisciplinaId);
+    const disc = ((activeConcurso && activeConcurso.disciplinas) || []).find(d => d.id === primaryDiscId);
     const discName = disc ? disc.name : "Geral";
 
-    this.showPostPomodoroModal(minutes, discName, this.selectedDisciplinaId);
+    this.showPostPomodoroModal(minutes, discName, primaryDiscId);
   }
 
   showPostPomodoroModal(minutes, discName, disciplinaId) {
     const modal = document.getElementById("modal-post-pomodoro");
     if (!modal) return;
 
-    document.getElementById("post-pomo-minutes").textContent = `${minutes} minutos`;
-    document.getElementById("post-pomo-disc").textContent = discName;
-    modal.classList.remove("hidden");
+    const minEl = document.getElementById("post-pomo-minutes");
+    const discEl = document.getElementById("post-pomo-disc");
+    if (minEl) minEl.textContent = `${minutes} minutos`;
+    if (discEl) discEl.textContent = discName;
 
     // Botão Praticar Questões
     const btnQuestions = document.getElementById("post-pomo-btn-questoes");
@@ -411,11 +429,8 @@ class PomodoroController {
         modal.classList.add("hidden");
         window.location.hash = "#questoes";
         setTimeout(() => {
-          const filterDisc = document.getElementById("filter-disciplina");
-          if (filterDisc) {
-            filterDisc.value = disciplinaId;
-            questionsManager.filterDisciplina = disciplinaId;
-            questionsManager.applyFilters();
+          if (typeof questionsManager !== "undefined") {
+            questionsManager.setDisciplinaFilter(disciplinaId);
           }
           showToast(`Filtrando questões de ${discName}!`, "info");
         }, 150);
@@ -429,7 +444,9 @@ class PomodoroController {
         modal.classList.add("hidden");
         window.location.hash = "#flashcards";
         setTimeout(() => {
-          flashcardsManager.selectDeck(disciplinaId);
+          if (typeof flashcardsManager !== "undefined") {
+            flashcardsManager.selectDeck(disciplinaId);
+          }
           showToast(`Deck selecionado: Flashcards de ${discName}!`, "info");
         }, 150);
       };
@@ -438,13 +455,17 @@ class PomodoroController {
     // Botão Iniciar Descanso
     const btnBreak = document.getElementById("post-pomo-btn-intervalo");
     if (btnBreak) {
+      const breakMins = this.mode === "pomodoro_50" ? 10 : 5;
+      btnBreak.innerHTML = `<i class="fa-solid fa-mug-hot"></i> Iniciar Descanso (${breakMins} min)`;
       btnBreak.onclick = () => {
         modal.classList.add("hidden");
         this.state = "break";
-        this.secondsRemaining = 5 * 60;
+        this.secondsRemaining = breakMins * 60;
         this.start(true);
       };
     }
+
+    modal.classList.remove("hidden");
   }
 
   toggleZenMode(active) {
@@ -482,9 +503,10 @@ class PomodoroController {
     if (timeDisplay) timeDisplay.textContent = formatted;
     if (zenTimeDisplay) zenTimeDisplay.textContent = formatted;
 
-    // Atualiza o título da aba do navegador se estiver rodando
     if (this.state === "running" || this.state === "break") {
       document.title = `(${formatted}) QG do Concurseiro`;
+    } else {
+      document.title = "QG do Concurseiro";
     }
 
     if (progressRing) {
@@ -494,8 +516,8 @@ class PomodoroController {
         progressRing.style.strokeDashoffset = (circumference * (1 - secInMin / 60)).toString();
       } else {
         const totalSecs = this.state === "break"
-          ? (this.mode === "pomodoro_25" ? 5 * 60 : 10 * 60)
-          : (this.mode === "pomodoro_25" ? 25 * 60 : 50 * 60);
+          ? (this.mode === "pomodoro_50" ? 10 * 60 : 5 * 60)
+          : (this.mode === "pomodoro_50" ? 50 * 60 : 25 * 60);
         const percent = Math.max(0, Math.min(1, this.secondsRemaining / totalSecs));
         progressRing.style.strokeDashoffset = (circumference * (1 - percent)).toString();
       }

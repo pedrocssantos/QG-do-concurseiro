@@ -133,7 +133,7 @@ class SupabaseService {
         .eq("user_id", this.currentUser.id);
 
       if (sessions && sessions.length > 0) {
-        store.data.studySessions = sessions.map(s => ({
+        const cloudSessions = sessions.map(s => ({
           id: s.id,
           concursoId: s.concurso_id,
           disciplinaId: s.disciplina_id,
@@ -142,6 +142,8 @@ class SupabaseService {
           date: s.session_date,
           timestamp: new Date(s.created_at).getTime()
         }));
+        const localOnly = (store.data.studySessions || []).filter(ls => !cloudSessions.some(cs => cs.id === ls.id));
+        store.data.studySessions = [...cloudSessions, ...localOnly];
       }
 
       // 2. Carrega Flashcards da Nuvem
@@ -151,7 +153,7 @@ class SupabaseService {
         .eq("user_id", this.currentUser.id);
 
       if (cards && cards.length > 0) {
-        store.data.flashcards = cards.map(c => ({
+        const cloudCards = cards.map(c => ({
           id: c.id,
           disciplinaId: c.disciplina_id,
           frente: c.frente,
@@ -161,6 +163,8 @@ class SupabaseService {
           easeFactor: Number(c.ease_factor),
           dueDate: c.due_date
         }));
+        const localOnly = (store.data.flashcards || []).filter(lc => !cloudCards.some(cc => cc.id === lc.id));
+        store.data.flashcards = [...cloudCards, ...localOnly];
       }
 
       // 3. Carrega Caderno de Erros da Nuvem
@@ -170,7 +174,7 @@ class SupabaseService {
         .eq("user_id", this.currentUser.id);
 
       if (errors && errors.length > 0) {
-        store.data.cadernoErros = errors.map(e => ({
+        const cloudErrors = errors.map(e => ({
           id: e.id,
           questionId: e.question_id,
           reason: e.reason,
@@ -178,6 +182,8 @@ class SupabaseService {
           resolved: e.resolved,
           date: e.created_at.split("T")[0]
         }));
+        const localOnly = (store.data.cadernoErros || []).filter(le => !cloudErrors.some(ce => ce.id === le.id));
+        store.data.cadernoErros = [...cloudErrors, ...localOnly];
       }
 
       store.save();

@@ -601,6 +601,7 @@
               <option value="pegadinha">⚠️ Pegadinha da Banca</option>
               <option value="conteudo">📖 Desconhecimento Teórico</option>
               <option value="atencao">👀 Falta de Atenção</option>
+              <option value="desconhecimento">❓ Não Lembrava a Regra</option>
             </select>
             <select class="filter-select" id="caderno-filter-status">
               <option value="all">Todos os Status</option>
@@ -1305,6 +1306,19 @@
             <option value="#06b6d4">Ciano (#06b6d4)</option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="new-disc-icon">Ícone:</label>
+          <select class="form-select" id="new-disc-icon">
+            <option value="fa-book">📖 Livro / Geral (fa-book)</option>
+            <option value="fa-scale-balanced">⚖️ Balança / Direito (fa-scale-balanced)</option>
+            <option value="fa-landmark">🏛️ Instituição / Constitucional (fa-landmark)</option>
+            <option value="fa-gavel">🔨 Martelo / Penal (fa-gavel)</option>
+            <option value="fa-network-wired">🌐 Rede / TI / Informática (fa-network-wired)</option>
+            <option value="fa-calculator">🧮 Calculadora / RLM / Contabilidade (fa-calculator)</option>
+            <option value="fa-shield-halved">🛡️ Escudo / Segurança Pública (fa-shield-halved)</option>
+            <option value="fa-car">🚗 Trânsito (fa-car)</option>
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary modal-close-btn">Cancelar</button>
@@ -1361,6 +1375,29 @@
       <div class="modal-footer">
         <button class="btn btn-secondary modal-close-btn">Cancelar</button>
         <button class="btn btn-primary" id="btn-save-new-concurso">Criar e Ativar Plano</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Recalibrar Ciclo de Estudos -->
+  <div class="modal-overlay hidden" id="modal-recalibrate-ciclo" role="dialog" aria-modal="true" aria-labelledby="recalibrate-ciclo-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="recalibrate-ciclo-title"><i class="fa-solid fa-arrows-rotate text-primary"></i> Recalibrar Ciclo de Estudos</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 16px; font-size: 0.9rem;">
+          Defina sua meta semanal de estudos. O sistema recalculará a meta em minutos de cada disciplina proporcionalmente ao peso no edital.
+        </p>
+        <div class="form-group">
+          <label for="recalibrate-weekly-hours">Meta Semanal de Horas:</label>
+          <input type="number" class="form-input" id="recalibrate-weekly-hours" min="5" max="80" value="25">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save-recalibrate-ciclo" onclick="cicloManager.recalibrateFromModal()">Recalcular e Salvar Ciclo</button>
       </div>
     </div>
   </div>

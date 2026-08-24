@@ -39,8 +39,10 @@ class App {
 
     window.addEventListener("hashchange", () => this.handleRoute());
     window.addEventListener("resize", () => {
-      if (this.currentRoute === "dashboard" || this.currentRoute === "desempenho") {
+      if (this.currentRoute === "dashboard") {
         dashboardManager.renderCharts();
+      } else if (this.currentRoute === "desempenho") {
+        this.renderDesempenhoView();
       }
     });
 
@@ -61,9 +63,9 @@ class App {
         store.save();
 
         // Se logado no Supabase, sincroniza na nuvem
-        if (typeof db !== "undefined" && db.currentUser) {
-          db.supabase.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id).then(() => {
-            if (db.fetchUserProfile) db.fetchUserProfile();
+        if (typeof db !== "undefined" && db.client && db.currentUser) {
+          db.client.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id).then(() => {
+            if (db.loadUserProfile) db.loadUserProfile(db.currentUser.id);
           }).catch(err => console.warn("Erro ao sincronizar PRO no Supabase:", err));
         }
 
@@ -336,8 +338,9 @@ class App {
   }
 
   saveNewConcurso() {
-    if (!store.isPro() && store.data.concursos.length >= 1) {
-      showToast("Plano Gratuito limitado a 1 concurso ativo. Desbloqueie editais ilimitados com o Caveira PRO!", "warning");
+    const customCount = (store.data.concursos || []).filter(c => c.category === "Personalizado").length;
+    if (!store.isPro() && customCount >= 1) {
+      showToast("Plano Gratuito limitado a 1 concurso personalizado extra. Desbloqueie editais ilimitados com o Caveira PRO!", "warning");
       openUpgradeModal();
       return;
     }
@@ -437,7 +440,10 @@ class App {
         const dailyH = parseInt(document.getElementById("setting-daily-goal").value, 10) || 4;
         const weeklyH = parseInt(document.getElementById("setting-weekly-goal").value, 10) || 25;
 
-        if (name) store.data.profile.name = name;
+        if (name) {
+          store.data.profile.name = name;
+          store.data.profile.avatar = name.substring(0, 2).toUpperCase();
+        }
         store.data.profile.dailyGoalMinutes = dailyH * 60;
         store.data.profile.weeklyGoalHours = weeklyH;
         store.save();
@@ -456,7 +462,7 @@ class App {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `qg-do-concurseiro-backup-${new Date().toISOString().split("T")[0]}.json`;
+        a.download = `qg-do-concurseiro-backup-${store.getLocalDateString()}.json`;
         a.click();
         URL.revokeObjectURL(url);
         showToast("Backup exportado com sucesso!", "success");

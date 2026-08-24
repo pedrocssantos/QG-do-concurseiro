@@ -282,11 +282,11 @@ class EditalManager {
   }
 
   printEdital() {
-    // Abre todos os acordeões antes de imprimir
-    const contents = document.querySelectorAll(".accordion-content");
-    contents.forEach(c => c.classList.remove("hidden"));
-    const icons = document.querySelectorAll(".accordion-header .fa-chevron-down");
-    icons.forEach(i => i.classList.add("rotated"));
+    // Abre todos os corpos do acordeão antes de imprimir
+    const bodies = document.querySelectorAll(".edital-disc-body");
+    bodies.forEach(b => b.classList.remove("hidden"));
+    const cards = document.querySelectorAll(".edital-disc-card");
+    cards.forEach(c => c.classList.add("expanded"));
     setTimeout(() => {
       window.print();
     }, 150);
@@ -308,10 +308,14 @@ class EditalManager {
   }
 
   saveNewDisciplina() {
-    const name = document.getElementById("new-disc-name").value.trim();
-    const weight = parseInt(document.getElementById("new-disc-weight").value, 10) || 3;
-    const color = document.getElementById("new-disc-color").value || "#3b82f6";
-    const icon = document.getElementById("new-disc-icon").value || "fa-book";
+    const nameInput = document.getElementById("new-disc-name");
+    const name = nameInput ? nameInput.value.trim() : "";
+    const weightInput = document.getElementById("new-disc-weight");
+    const weight = weightInput ? (parseInt(weightInput.value, 10) || 3) : 3;
+    const colorSelect = document.getElementById("new-disc-color");
+    const color = colorSelect ? colorSelect.value : "#4D7EA8";
+    const iconSelect = document.getElementById("new-disc-icon");
+    const icon = iconSelect ? iconSelect.value : "fa-book";
 
     if (!name) {
       showToast("Digite o nome da disciplina!", "warning");
@@ -329,6 +333,7 @@ class EditalManager {
 
     const modal = document.getElementById("modal-add-disciplina");
     if (modal) modal.classList.add("hidden");
+    if (nameInput) nameInput.value = "";
 
     this.renderDisciplinasList();
     this.renderHeader();
