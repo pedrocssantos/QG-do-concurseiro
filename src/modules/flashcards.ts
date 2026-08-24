@@ -67,8 +67,8 @@ class FlashcardsManager {
 
   saveNewFlashcard() {
     const discSelect = document.getElementById("new-fc-disciplina") as HTMLSelectElement | null;
-    const frenteInput = document.getElementById("new-fc-frente") as HTMLTextAreaElement | null;
-    const versoInput = document.getElementById("new-fc-verso") as HTMLTextAreaElement | null;
+    const frenteInput = (document.getElementById("new-fc-frente") || document.getElementById("new-fc-front")) as HTMLTextAreaElement | null;
+    const versoInput = (document.getElementById("new-fc-verso") || document.getElementById("new-fc-back")) as HTMLTextAreaElement | null;
 
     if (!discSelect || !frenteInput || !versoInput) return;
 
@@ -103,6 +103,10 @@ class FlashcardsManager {
     frenteInput.value = "";
     versoInput.value = "";
     document.getElementById("modal-new-flashcard")?.classList.add("hidden");
+  }
+
+  saveNewCard() {
+    return this.saveNewFlashcard();
   }
 
   selectDeck(deckId: string) {

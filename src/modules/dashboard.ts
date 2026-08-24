@@ -88,8 +88,8 @@ class DashboardManager {
 
     // Atualiza perfil na barra lateral (Sidebar Footer)
     const sidebarAvatar = document.getElementById("user-avatar-text");
-    const sidebarName = document.getElementById("user-profile-name");
-    const sidebarRank = document.getElementById("user-profile-rank");
+    const sidebarName = document.getElementById("user-profile-name") || document.getElementById("dash-user-name");
+    const sidebarRank = document.getElementById("user-profile-rank") || document.getElementById("dash-user-rank");
     if (sidebarAvatar) sidebarAvatar.textContent = profile.avatar || (profile.name ? profile.name.substring(0, 2).toUpperCase() : "QG");
     if (sidebarName) sidebarName.textContent = profile.name || "Concurseiro";
     if (sidebarRank) sidebarRank.textContent = rankTitle;
