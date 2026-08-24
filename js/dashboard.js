@@ -37,6 +37,14 @@ class DashboardManager {
     if (userLevelEl) userLevelEl.textContent = `Nível ${profile.level || 1}`;
     if (streakCountEl) streakCountEl.textContent = `${profile.streak || 0}`;
 
+    // Atualiza perfil na barra lateral (Sidebar Footer)
+    const sidebarAvatar = document.getElementById("user-avatar-text");
+    const sidebarName = document.getElementById("user-profile-name");
+    const sidebarRank = document.getElementById("user-profile-rank");
+    if (sidebarAvatar) sidebarAvatar.textContent = profile.avatar || (profile.name ? profile.name.substring(0, 2).toUpperCase() : "QG");
+    if (sidebarName) sidebarName.textContent = profile.name || "Guerreiro(a)";
+    if (sidebarRank) sidebarRank.textContent = rankTitle;
+
     // Popula o Seletor de Concurso Ativo no Header
     if (concursoSelect) {
       concursoSelect.innerHTML = "";

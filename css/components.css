@@ -936,3 +936,60 @@
   }
 }
 
+/* ==========================================================================
+   ONBOARDING WIZARD
+   ========================================================================== */
+.onboard-card-option {
+  display: block;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-align: left;
+}
+
+.onboard-card-option:hover {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-color-strong);
+}
+
+.onboard-card-option.selected {
+  background-color: rgba(245, 158, 11, 0.08);
+  border-color: var(--color-warning);
+  box-shadow: 0 0 0 1px var(--color-warning);
+}
+
+.onboard-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.onboard-card-icon {
+  font-size: 1.35rem;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface-inset);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.onboard-card-meta strong {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.onboard-card-meta span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dimmed);
+}
+

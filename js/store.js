@@ -8,6 +8,9 @@ class Store {
   constructor() {
     this.listeners = [];
     this.data = this.loadInitialData();
+    if (!this.data.ciclo || !this.data.ciclo.items || this.data.ciclo.items.length === 0) {
+      this.rebuildCicloForConcurso(this.data.activeConcursoId || "pf-agente");
+    }
     this.checkStreakLiveness();
     this.ensureDailyMissions();
   }
@@ -27,20 +30,20 @@ class Store {
   }
 
   getDefaultState() {
-    const today = new Date().toISOString().split("T")[0];
     return {
       profile: {
-        name: "Max Aldana",
-        title: "Aspirante a Federal",
-        avatar: "MA",
-        xp: 3420,
-        streak: 7,
-        lastStudyDate: today,
+        name: "Concurseiro(a)",
+        title: "Recruta",
+        avatar: "QG",
+        xp: 0,
+        streak: 0,
+        lastStudyDate: null,
         theme: "dark",
-        dailyGoalMinutes: 240,
-        weeklyGoalHours: 25,
+        dailyGoalMinutes: 180,
+        weeklyGoalHours: 20,
         soundEnabled: true,
-        ambientSound: "none"
+        ambientSound: "none",
+        onboardingCompleted: false
       },
       activeConcursoId: "pf-agente",
       concursos: JSON.parse(JSON.stringify(DEFAULT_CONCURSOS)),
@@ -48,37 +51,12 @@ class Store {
       flashcards: JSON.parse(JSON.stringify(DEFAULT_FLASHCARDS)),
       badges: JSON.parse(JSON.stringify(DEFAULT_BADGES)),
       leaderboard: JSON.parse(JSON.stringify(DEFAULT_LEADERBOARD)),
-      studySessions: this.generateSeedSessions(),
-      questionHistory: this.generateSeedQuestionHistory(),
-      cadernoErros: [
-        {
-          id: "err-1",
-          questionId: "q-3",
-          reason: "pegadinha",
-          note: "Lembrar: mandado judicial é EXCLUSIVAMENTE durante o dia! À noite apenas socorro/desastre/flagrante.",
-          date: "2026-08-23",
-          resolved: false
-        },
-        {
-          id: "err-2",
-          questionId: "q-10",
-          reason: "conteudo",
-          note: "Fato misto diminutivo: envolveu permuta de contas + variação do PL com juros.",
-          date: "2026-08-22",
-          resolved: false
-        }
-      ],
+      studySessions: [],
+      questionHistory: [],
+      cadernoErros: [],
       ciclo: {
-        currentSubjectIndex: 1,
-        items: [
-          { disciplinaId: "pf-port", name: "Português", minutesGoal: 60, minutesDone: 60, icon: "fa-book", color: "#3b82f6" },
-          { disciplinaId: "pf-dir-adm", name: "Dir. Administrativo", minutesGoal: 60, minutesDone: 25, icon: "fa-scale-balanced", color: "#10b981" },
-          { disciplinaId: "pf-info", name: "Informática & TI", minutesGoal: 90, minutesDone: 0, icon: "fa-network-wired", color: "#06b6d4" },
-          { disciplinaId: "pf-dir-const", name: "Dir. Constitucional", minutesGoal: 60, minutesDone: 0, icon: "fa-landmark", color: "#f59e0b" },
-          { disciplinaId: "pf-contab", name: "Contabilidade", minutesGoal: 75, minutesDone: 0, icon: "fa-calculator", color: "#8b5cf6" },
-          { disciplinaId: "pf-dir-penal", name: "Dir. Penal", minutesGoal: 60, minutesDone: 0, icon: "fa-gavel", color: "#ef4444" },
-          { disciplinaId: "pf-rlm", name: "Raciocínio Lógico", minutesGoal: 60, minutesDone: 0, icon: "fa-brain", color: "#ec4899" }
-        ]
+        currentSubjectIndex: 0,
+        items: []
       },
       dailyMissions: []
     };
@@ -162,6 +140,9 @@ class Store {
     }
     if (!state.profile) {
       state.profile = this.getDefaultState().profile;
+    }
+    if (state.profile.onboardingCompleted === undefined) {
+      state.profile.onboardingCompleted = false;
     }
     if (!state.ciclo) {
       state.ciclo = this.getDefaultState().ciclo;
@@ -399,9 +380,31 @@ class Store {
     // Atualiza estatísticas no tópico do edital se houver
     const concurso = this.getActiveConcurso();
     if (concurso) {
-      const disc = concurso.disciplinas.find(d => d.id === data.disciplinaId || d.name.toLowerCase().includes(data.disciplinaName?.toLowerCase() || ""));
+      const question = this.data.questions.find(q => q.id === data.questionId);
+      const assunto = (question && question.assunto) || data.assunto || "";
+      const discId = data.disciplinaId || (question && question.disciplinaId);
+
+      const disc = concurso.disciplinas.find(d => 
+        (discId && d.id === discId) || 
+        (data.disciplinaName && d.name.toLowerCase().includes(data.disciplinaName.toLowerCase()))
+      );
+
       if (disc && disc.topicos && disc.topicos.length > 0) {
-        const topico = disc.topicos[0]; // Atualiza o primeiro tópico ou correspondente
+        // Encontra o tópico correspondente ao assunto da questão
+        let topico = null;
+        if (assunto) {
+          const normAssunto = assunto.toLowerCase().trim();
+          topico = disc.topicos.find(t => 
+            t.title.toLowerCase().trim().includes(normAssunto) || 
+            normAssunto.includes(t.title.toLowerCase().trim())
+          );
+        }
+
+        // Se não encontrou por assunto exato, usa o primeiro tópico como fallback
+        if (!topico) {
+          topico = disc.topicos[0];
+        }
+
         topico.questoesFeitas = (topico.questoesFeitas || 0) + 1;
         if (data.isCorrect) {
           topico.questoesAcertos = (topico.questoesAcertos || 0) + 1;
@@ -802,8 +805,45 @@ class Store {
   resetData() {
     localStorage.removeItem(STORAGE_KEY);
     this.data = this.getDefaultState();
+    this.rebuildCicloForConcurso(this.data.activeConcursoId);
     this.save();
     this.notify("data_reset");
+  }
+
+  loadDemoData() {
+    const today = new Date().toISOString().split("T")[0];
+    this.data.profile.name = "Max Aldana";
+    this.data.profile.title = "Aspirante a Federal";
+    this.data.profile.avatar = "MA";
+    this.data.profile.xp = 3420;
+    this.data.profile.streak = 7;
+    this.data.profile.lastStudyDate = today;
+    this.data.profile.dailyGoalMinutes = 240;
+    this.data.profile.weeklyGoalHours = 25;
+    this.data.profile.onboardingCompleted = true;
+    this.data.studySessions = this.generateSeedSessions();
+    this.data.questionHistory = this.generateSeedQuestionHistory();
+    this.data.cadernoErros = [
+      {
+        id: "err-1",
+        questionId: "q-3",
+        reason: "pegadinha",
+        note: "Lembrar: mandado judicial é EXCLUSIVAMENTE durante o dia! À noite apenas socorro/desastre/flagrante.",
+        date: today,
+        resolved: false
+      },
+      {
+        id: "err-2",
+        questionId: "q-10",
+        reason: "conteudo",
+        note: "Fato misto diminutivo: envolveu permuta de contas + variação do PL com juros.",
+        date: today,
+        resolved: false
+      }
+    ];
+    this.rebuildCicloForConcurso(this.data.activeConcursoId || "pf-agente");
+    this.save();
+    this.notify("data_imported");
   }
 }
 

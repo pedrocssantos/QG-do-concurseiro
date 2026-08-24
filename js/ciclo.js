@@ -92,15 +92,44 @@ class CicloManager {
     if (!container) return;
     container.innerHTML = "";
 
-    const days = [
-      { id: "seg", name: "Segunda-feira", targetHours: 4, materias: ["Português (60m)", "Dir. Administrativo (60m)", "Informática (90m)"] },
-      { id: "ter", name: "Terça-feira", targetHours: 4, materias: ["Dir. Constitucional (60m)", "Contabilidade (75m)", "Raciocínio Lógico (60m)"] },
-      { id: "qua", name: "Quarta-feira", targetHours: 4, materias: ["Dir. Penal (60m)", "Português (60m)", "Informática (90m)"] },
-      { id: "qui", name: "Quinta-feira", targetHours: 4, materias: ["Dir. Administrativo (60m)", "Contabilidade (75m)", "Dir. Constitucional (60m)"] },
-      { id: "sex", name: "Sexta-feira", targetHours: 4, materias: ["Raciocínio Lógico (60m)", "Dir. Penal (60m)", "Revisões R7d / Flashcards"] },
-      { id: "sab", name: "Sábado", targetHours: 5, materias: ["Bateria 50 Questões", "Simulado Quinzenal", "Caderno de Erros"] },
-      { id: "dom", name: "Domingo", targetHours: 2, materias: ["Revisão Geral Semanal", "Planejamento da Próxima Semana"] }
+    const concurso = store.getActiveConcurso();
+    const disciplines = (concurso && concurso.disciplinas && concurso.disciplinas.length > 0)
+      ? concurso.disciplinas
+      : [];
+
+    const dayMeta = [
+      { id: "seg", name: "Segunda-feira", targetHours: 4 },
+      { id: "ter", name: "Terça-feira", targetHours: 4 },
+      { id: "qua", name: "Quarta-feira", targetHours: 4 },
+      { id: "qui", name: "Quinta-feira", targetHours: 4 },
+      { id: "sex", name: "Sexta-feira", targetHours: 4 },
+      { id: "sab", name: "Sábado", targetHours: 5 },
+      { id: "dom", name: "Domingo", targetHours: 2 }
     ];
+
+    let discCounter = 0;
+    const days = dayMeta.map((d, index) => {
+      const materias = [];
+      if (index < 5) { // Segunda a Sexta
+        if (disciplines.length > 0) {
+          const subjectsPerDay = disciplines.length >= 5 ? 2 : 1;
+          for (let k = 0; k < subjectsPerDay; k++) {
+            const disc = disciplines[discCounter % disciplines.length];
+            const estMins = (disc.weight || 3) * 15 + 15;
+            materias.push(`${disc.name} (${estMins}m)`);
+            discCounter++;
+          }
+          materias.push(index % 2 === 0 ? "Revisão R24h / Flashcards" : "Bateria de 20 Questões");
+        } else {
+          materias.push("Teoria da Disciplina (60m)", "Exercícios de Fixação (45m)");
+        }
+      } else if (index === 5) { // Sábado
+        materias.push("Bateria 50 Questões", "Simulado Cronometrado", "Caderno de Erros");
+      } else { // Domingo
+        materias.push("Revisão Geral Semanal", "Planejamento da Próxima Semana");
+      }
+      return { ...d, materias };
+    });
 
     days.forEach(day => {
       const col = document.createElement("div");

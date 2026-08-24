@@ -24,8 +24,16 @@ class App {
     this.bindGlobalNavigation();
     this.bindModalHandlers();
     this.bindSettingsHandlers();
+    this.bindOnboardingHandlers();
     this.handleRoute();
     this.listenToStore();
+
+    // Exibe onboarding se for a primeira vez do usuário
+    if (!store.data.profile.onboardingCompleted) {
+      setTimeout(() => {
+        this.openOnboardingModal();
+      }, 300);
+    }
 
     window.addEventListener("hashchange", () => this.handleRoute());
     window.addEventListener("resize", () => {
@@ -34,7 +42,7 @@ class App {
       }
     });
 
-    console.log("🚀 Foco no Papiro SPA inicializado com sucesso!");
+    console.log("🚀 QG do Concurseiro SPA inicializado com sucesso!");
   }
 
   handleRoute() {
@@ -409,6 +417,18 @@ class App {
       });
     }
 
+    // Carregar Dados Demo
+    const loadDemoBtn = document.getElementById("btn-load-demo");
+    if (loadDemoBtn) {
+      loadDemoBtn.addEventListener("click", () => {
+        if (confirm("Deseja carregar os dados de demonstração (histórico simulado, sessões e estatísticas de exemplo)?")) {
+          store.loadDemoData();
+          showToast("Dados de demonstração carregados com sucesso!", "success");
+          location.reload();
+        }
+      });
+    }
+
     // Resetar Dados
     const resetBtn = document.getElementById("btn-reset-data");
     if (resetBtn) {
@@ -418,6 +438,128 @@ class App {
           showToast("Dados reiniciados para o padrão inicial.", "info");
           location.reload();
         }
+      });
+    }
+  }
+
+  openOnboardingModal() {
+    const modal = document.getElementById("modal-onboarding");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+
+    const step1 = document.getElementById("onboard-step-1");
+    const step2 = document.getElementById("onboard-step-2");
+    if (step1) step1.classList.remove("hidden");
+    if (step2) step2.classList.add("hidden");
+  }
+
+  bindOnboardingHandlers() {
+    const options = document.querySelectorAll(".onboard-card-option");
+    const customFields = document.getElementById("onboard-custom-concurso-fields");
+
+    options.forEach(opt => {
+      opt.addEventListener("click", () => {
+        options.forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        const radio = opt.querySelector("input[type='radio']");
+        if (radio) radio.checked = true;
+
+        const concursoId = opt.dataset.concursoId;
+        if (concursoId === "custom") {
+          if (customFields) customFields.classList.remove("hidden");
+        } else {
+          if (customFields) customFields.classList.add("hidden");
+        }
+      });
+    });
+
+    const nextBtn = document.getElementById("onboard-btn-next-1");
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        const selectedOpt = document.querySelector(".onboard-card-option.selected");
+        const concursoId = selectedOpt ? selectedOpt.dataset.concursoId : "pf-agente";
+
+        if (concursoId === "custom") {
+          const title = document.getElementById("onboard-custom-title")?.value.trim();
+          if (!title) {
+            showToast("Informe o nome do concurso personalizado!", "warning");
+            return;
+          }
+        }
+
+        const step1 = document.getElementById("onboard-step-1");
+        const step2 = document.getElementById("onboard-step-2");
+        if (step1) step1.classList.add("hidden");
+        if (step2) step2.classList.remove("hidden");
+      });
+    }
+
+    const backBtn = document.getElementById("onboard-btn-back-2");
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        const step1 = document.getElementById("onboard-step-1");
+        const step2 = document.getElementById("onboard-step-2");
+        if (step2) step2.classList.add("hidden");
+        if (step1) step1.classList.remove("hidden");
+      });
+    }
+
+    const finishBtn = document.getElementById("onboard-btn-finish");
+    if (finishBtn) {
+      finishBtn.addEventListener("click", () => {
+        const name = document.getElementById("onboard-input-name")?.value.trim() || "Concurseiro(a)";
+        const dailyH = parseInt(document.getElementById("onboard-input-daily-hours")?.value, 10) || 3;
+        const weeklyH = parseInt(document.getElementById("onboard-input-weekly-hours")?.value, 10) || 20;
+
+        const selectedOpt = document.querySelector(".onboard-card-option.selected");
+        const concursoId = selectedOpt ? selectedOpt.dataset.concursoId : "pf-agente";
+
+        if (concursoId === "custom") {
+          const title = document.getElementById("onboard-custom-title")?.value.trim() || "Meu Concurso";
+          const banca = document.getElementById("onboard-custom-banca")?.value.trim() || "Cebraspe";
+
+          const newConcurso = {
+            id: `concurso-${Date.now()}`,
+            title,
+            shortTitle: title.substring(0, 16),
+            category: "Personalizado",
+            banca,
+            targetDate: "2026-12-31",
+            totalHoursGoal: 500,
+            dailyGoalMinutes: dailyH * 60,
+            disciplinas: [
+              {
+                id: `disc-${Date.now()}-1`,
+                name: "Língua Portuguesa",
+                color: "#3b82f6",
+                icon: "fa-book",
+                weight: 3,
+                difficulty: 3,
+                topicos: [
+                  { id: `top-${Date.now()}-1`, title: "Interpretação e Compreensão de Texto", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+                ]
+              }
+            ]
+          };
+          store.addConcurso(newConcurso);
+          store.setActiveConcurso(newConcurso.id);
+        } else {
+          store.setActiveConcurso(concursoId);
+        }
+
+        store.data.profile.name = name;
+        store.data.profile.avatar = name.substring(0, 2).toUpperCase();
+        store.data.profile.dailyGoalMinutes = dailyH * 60;
+        store.data.profile.weeklyGoalHours = weeklyH;
+        store.data.profile.onboardingCompleted = true;
+        store.save();
+
+        const modal = document.getElementById("modal-onboarding");
+        if (modal) modal.classList.add("hidden");
+
+        showToast(`Bem-vindo ao QG, ${name}! Plano operacional ativado com sucesso!`, "success");
+        this.handleRoute();
+        dashboardManager.init();
       });
     }
   }

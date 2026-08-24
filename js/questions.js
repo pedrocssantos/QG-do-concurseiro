@@ -174,6 +174,7 @@ class QuestionsManager {
     }
 
     this.renderQuestionsCounter();
+    this.questionStartTime = Date.now();
   }
 
   selectOption(optId) {
@@ -212,6 +213,10 @@ class QuestionsManager {
       audio.playErrorTone();
     }
 
+    const timeSpent = this.questionStartTime 
+      ? Math.max(2, Math.round((Date.now() - this.questionStartTime) / 1000))
+      : 45;
+
     // Registra no Store
     store.recordQuestionAnswer({
       questionId: q.id,
@@ -219,7 +224,7 @@ class QuestionsManager {
       disciplinaName: q.disciplinaName,
       selectedOption: this.selectedOption,
       isCorrect: isCorrect,
-      timeSpentSeconds: 45
+      timeSpentSeconds: timeSpent
     });
 
     // Destaca as opções
@@ -283,6 +288,8 @@ class QuestionsManager {
     this.simuladoMode = true;
     this.simuladoAnswers = {};
     this.simuladoSecondsLeft = totalSeconds;
+    this.simuladoTotalSeconds = totalSeconds;
+    this.simuladoStartTime = Date.now();
 
     // Embaralha questões
     this.filteredQuestions = [...store.data.questions]
@@ -341,6 +348,11 @@ class QuestionsManager {
     clearInterval(this.simuladoTimer);
     this.simuladoMode = false;
 
+    const elapsedSeconds = this.simuladoStartTime
+      ? Math.max(10, Math.round((Date.now() - this.simuladoStartTime) / 1000))
+      : 300;
+    const avgTimePerQuestion = Math.max(5, Math.round(elapsedSeconds / (this.filteredQuestions.length || 1)));
+
     // Calcula Pontuação (Padrão Cespe: Certo +1, Errado -1, Em branco 0)
     let correct = 0;
     let incorrect = 0;
@@ -358,7 +370,7 @@ class QuestionsManager {
           disciplinaName: q.disciplinaName,
           selectedOption: userAns,
           isCorrect: true,
-          timeSpentSeconds: 60
+          timeSpentSeconds: avgTimePerQuestion
         });
       } else {
         incorrect++;
@@ -368,7 +380,7 @@ class QuestionsManager {
           disciplinaName: q.disciplinaName,
           selectedOption: userAns,
           isCorrect: false,
-          timeSpentSeconds: 60
+          timeSpentSeconds: avgTimePerQuestion
         });
       }
     });
