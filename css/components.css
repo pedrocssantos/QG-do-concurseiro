@@ -393,6 +393,46 @@
   gap: 6px;
 }
 
+/* Badges de Plano e Autenticação */
+.badge-plan-pro {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000000;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.badge-plan-free {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.badge-plan-free:hover {
+  background: rgba(245, 158, 11, 0.3);
+  transform: scale(1.04);
+}
+
+.auth-tabs-row .btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+}
+
 /* Utilitários */
 .hidden { display: none !important; }
 .text-center { text-align: center; }

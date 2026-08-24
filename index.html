@@ -96,8 +96,14 @@
             <span id="dash-user-xp">3420 XP</span>
           </div>
 
+          <div id="header-plan-badge"></div>
+
           <button class="btn btn-primary btn-sm" id="header-btn-quick-focus" title="Iniciar Pomodoro Instantâneo">
             <i class="fa-solid fa-stopwatch"></i> Foco Rápido
+          </button>
+
+          <button class="btn btn-primary btn-sm" id="header-auth-btn" onclick="openAuthModal()">
+            <i class="fa-solid fa-user"></i> Entrar
           </button>
 
           <button class="header-icon-btn" id="btn-theme-toggle" title="Alternar Modo Escuro/Claro">
@@ -1077,11 +1083,107 @@
     </div>
   </div>
 
+  <!-- Modal: Autenticação (Login e Cadastro) -->
+  <div class="modal-overlay hidden" id="modal-auth">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="auth-modal-title"><i class="fa-solid fa-user-shield text-primary"></i> Acessar Conta</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Abas Login / Cadastro -->
+        <div class="auth-tabs-row" style="display: flex; gap: 8px; margin-bottom: 20px;">
+          <button class="btn btn-secondary btn-sm active" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1;">Entrar</button>
+          <button class="btn btn-secondary btn-sm" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1;">Criar Conta</button>
+        </div>
+
+        <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <div class="form-group hidden" id="group-auth-name">
+            <label>Seu Nome Completo:</label>
+            <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Santos">
+          </div>
+          <div class="form-group">
+            <label>E-mail:</label>
+            <input type="email" class="form-input" id="auth-email" placeholder="seuemail@exemplo.com" required>
+          </div>
+          <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" class="form-input" id="auth-password" placeholder="Sua senha secreta (min. 6 dígitos)" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 10px;">
+            <i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Planos & Assinatura PRO -->
+  <div class="modal-overlay hidden" id="modal-upgrade-pro">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(37,99,235,0.15));">
+        <h3 style="color: #fbbf24;"><i class="fa-solid fa-crown"></i> Plano Caveira PRO - Acelere sua Aprovação</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 24px;">
+          Desbloqueie todo o poder da inteligência tática de estudos sem nenhuma limitação diária.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <!-- Plano Mensal -->
+          <div class="card" style="border: 2px solid var(--border-color); text-align: center; padding: 20px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase;">Assinatura Mensal</span>
+            <div style="font-size: 2.2rem; font-weight: 900; margin: 10px 0; color: var(--text-main);">
+              R$ 29<span style="font-size: 1rem; color: var(--text-muted);">,90/mês</span>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Cancele quando quiser. Acesso imediato a todas as ferramentas.</p>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="startCheckout('mensal')">
+              Assinar Mensal
+            </button>
+          </div>
+
+          <!-- Plano Anual / Vitalício -->
+          <div class="card" style="border: 2px solid #f59e0b; background: rgba(245,158,11,0.05); text-align: center; padding: 20px; position: relative;">
+            <div style="position: absolute; top: -10px; right: 14px; background: #f59e0b; color: #000; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: var(--radius-full);">
+              ECONOMIZE 45%
+            </div>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Plano Anual Caveira</span>
+            <div style="font-size: 2.2rem; font-weight: 900; margin: 10px 0; color: var(--text-main);">
+              R$ 197<span style="font-size: 1rem; color: var(--text-muted);">/ano</span>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Equivalente a apenas R$ 16,40 por mês no PIX ou Cartão.</p>
+            <button class="btn btn-primary pulse-glow" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="startCheckout('anual')">
+              <i class="fa-solid fa-bolt"></i> Assinar Plano Anual
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de Benefícios -->
+        <div style="background: var(--bg-surface-elevated); padding: 18px; border-radius: var(--radius-md);">
+          <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-main);">O que está incluído no Plano PRO:</h4>
+          <ul style="list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; font-size: 0.88rem; color: var(--text-muted);">
+            <li><i class="fa-solid fa-check text-success"></i> Editais e Concursos Ilimitados</li>
+            <li><i class="fa-solid fa-check text-success"></i> Banco de Questões Ilimitado</li>
+            <li><i class="fa-solid fa-check text-success"></i> Simulados com Nota Líquida Cespe</li>
+            <li><i class="fa-solid fa-check text-success"></i> Flashcards SRS Ilimitados (SM-2)</li>
+            <li><i class="fa-solid fa-check text-success"></i> Caderno de Erros Automatizado</li>
+            <li><i class="fa-solid fa-check text-success"></i> Sincronização em Nuvem (Multi-dispositivos)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container de Toasts -->
   <div id="toast-container"></div>
 
+  <!-- Supabase JS Client via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Scripts da Aplicação SPA (Ordem de Dependência) -->
   <script src="js/data.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/store.js"></script>
   <script src="js/analytics.js"></script>
   <script src="js/pomodoro.js"></script>

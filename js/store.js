@@ -295,6 +295,12 @@ class Store {
 
     this.checkBadges();
     this.notify("session_added", newSession);
+
+    // Sincroniza em nuvem se o usuário estiver autenticado no Supabase
+    if (typeof db !== "undefined" && db.saveSessionToCloud) {
+      db.saveSessionToCloud(newSession);
+    }
+
     return newSession;
   }
 
@@ -392,6 +398,11 @@ class Store {
 
     this.checkBadges();
     this.notify("question_answered", record);
+
+    if (typeof db !== "undefined" && db.saveQuestionAnswerToCloud) {
+      db.saveQuestionAnswerToCloud(record);
+    }
+
     return record;
   }
 
@@ -448,6 +459,11 @@ class Store {
     this.data.flashcards.push(newCard);
     this.addXP(10, "Novo Flashcard Criado");
     this.notify("flashcard_added", newCard);
+
+    if (typeof db !== "undefined" && db.saveFlashcardToCloud) {
+      db.saveFlashcardToCloud(newCard);
+    }
+
     return newCard;
   }
 

@@ -458,6 +458,105 @@ function showToast(message, type = "info") {
   }, 4000);
 }
 
+// Auth Modal & Upgrade Modal Helpers
+let currentAuthTab = "login";
+
+function openAuthModal(tab = "login") {
+  const modal = document.getElementById("modal-auth");
+  if (modal) {
+    switchAuthTab(tab);
+    modal.classList.remove("hidden");
+  }
+}
+
+function switchAuthTab(tab) {
+  currentAuthTab = tab;
+  const tabLogin = document.getElementById("tab-login");
+  const tabSignup = document.getElementById("tab-signup");
+  const groupName = document.getElementById("group-auth-name");
+  const btnSubmit = document.getElementById("btn-auth-submit");
+  const title = document.getElementById("auth-modal-title");
+
+  if (tab === "login") {
+    tabLogin?.classList.add("active");
+    tabSignup?.classList.remove("active");
+    groupName?.classList.add("hidden");
+    if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
+    if (title) title.innerHTML = `<i class="fa-solid fa-user-shield text-primary"></i> Acessar Conta`;
+  } else {
+    tabSignup?.classList.add("active");
+    tabLogin?.classList.remove("active");
+    groupName?.classList.remove("hidden");
+    if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
+    if (title) title.innerHTML = `<i class="fa-solid fa-user-plus text-primary"></i> Criar Conta no QG`;
+  }
+}
+
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById("auth-email").value.trim();
+  const password = document.getElementById("auth-password").value;
+  const name = document.getElementById("auth-name")?.value.trim() || "Concurseiro";
+  const btnSubmit = document.getElementById("btn-auth-submit");
+
+  if (!email || !password) {
+    showToast("Preencha todos os campos obrigatórios!", "warning");
+    return;
+  }
+
+  try {
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
+    }
+
+    if (currentAuthTab === "signup") {
+      await db.signUp(name, email, password);
+      showToast("Conta criada com sucesso! Verifique seu e-mail para confirmar ou faça login.", "success");
+      switchAuthTab("login");
+    } else {
+      await db.signIn(email, password);
+      showToast("Login realizado com sucesso! Seus dados foram sincronizados com a nuvem.", "success");
+      document.getElementById("modal-auth")?.classList.add("hidden");
+    }
+  } catch (err) {
+    showToast(err.message || "Erro na autenticação. Verifique os dados.", "error");
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      if (currentAuthTab === "login") {
+        btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
+      } else {
+        btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
+      }
+    }
+  }
+}
+
+function openUpgradeModal() {
+  const modal = document.getElementById("modal-upgrade-pro");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function startCheckout(planType) {
+  if (!db.currentUser) {
+    showToast("Por favor, crie uma conta ou faça login antes de assinar o plano!", "info");
+    openAuthModal("signup");
+    return;
+  }
+
+  showToast(`Redirecionando para o checkout do Plano ${planType === 'anual' ? 'Anual' : 'Mensal'}... 💳`, "info");
+  
+  // Demonstração da ativação imediata do Plano Pro
+  setTimeout(() => {
+    store.data.profile.plan_tier = "pro";
+    store.save();
+    db.updateAuthUI();
+    document.getElementById("modal-upgrade-pro")?.classList.add("hidden");
+    showToast("Parabéns! Seu Plano Caveira PRO foi ativado com sucesso! 🏆", "success");
+  }, 1200);
+}
+
 // Inicialização Global
 const app = new App();
 document.addEventListener("DOMContentLoaded", () => {
