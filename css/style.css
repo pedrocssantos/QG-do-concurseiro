@@ -28,10 +28,10 @@
   --text-dimmed: #64748b;
   --text-inverse: #090c13;
 
-  /* Acentos de Comando & Status Operacional */
-  --color-primary: #38bdf8;
-  --color-primary-hover: #0284c7;
-  --color-primary-glow: rgba(56, 189, 248, 0.25);
+  /* Acentos de Comando & Status Operacional (Militar / Força Tática) */
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
+  --color-primary-glow: rgba(16, 185, 129, 0.3);
 
   --color-accent: #10b981;
   --color-accent-hover: #059669;

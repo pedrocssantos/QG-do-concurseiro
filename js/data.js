@@ -520,19 +520,20 @@ const DEFAULT_BADGES = [
 ];
 
 const DEFAULT_LEADERBOARD = [
-  { rank: 1, name: "Cap. Nascimento", avatar: "CN", hoursWeekly: 34.5, questionsWeekly: 310, accuracy: 91, xp: 4850, badge: "Lendário" },
-  { rank: 2, name: "Delegada Silva", avatar: "DS", hoursWeekly: 31.0, questionsWeekly: 280, accuracy: 88, xp: 4230, badge: "Veterano" },
-  { rank: 3, name: "Você (Papiroteca)", avatar: "EU", hoursWeekly: 24.2, questionsWeekly: 195, accuracy: 84, xp: 3420, isUser: true, badge: "Focado" },
-  { rank: 4, name: "Lucas Concurseiro", avatar: "LC", hoursWeekly: 22.5, questionsWeekly: 170, accuracy: 81, xp: 3010, badge: "Guerreiro" },
-  { rank: 5, name: "Mariana PRF", avatar: "MP", hoursWeekly: 19.8, questionsWeekly: 160, accuracy: 79, xp: 2750, badge: "Firme" },
-  { rank: 6, name: "Roberto Federal", avatar: "RF", hoursWeekly: 17.0, questionsWeekly: 120, accuracy: 76, xp: 2320, badge: "Combatente" },
-  { rank: 7, name: "Ana Fiscal", avatar: "AF", hoursWeekly: 15.5, questionsWeekly: 95, accuracy: 72, xp: 1980, badge: "Recruta" }
+  { rank: 1, name: "Inspetor Nascimento", avatar: "IN", hoursWeekly: 34.5, questionsWeekly: 310, accuracy: 91, xp: 4850, badge: "Lendário" },
+  { rank: 2, name: "Delegada Silva", avatar: "DS", hoursWeekly: 31.0, questionsWeekly: 280, accuracy: 88, xp: 4230, badge: "Veterana" },
+  { rank: 3, name: "Você (QG Operacional)", avatar: "EU", hoursWeekly: 24.2, questionsWeekly: 195, accuracy: 84, xp: 3420, isUser: true, badge: "Sniper" },
+  { rank: 4, name: "Lucas Federal", avatar: "LF", hoursWeekly: 22.5, questionsWeekly: 170, accuracy: 81, xp: 3010, badge: "Combatente" },
+  { rank: 5, name: "Mariana PRF", avatar: "MP", hoursWeekly: 19.8, questionsWeekly: 160, accuracy: 79, xp: 2750, badge: "Tática" },
+  { rank: 6, name: "Roberto Civil", avatar: "RC", hoursWeekly: 17.0, questionsWeekly: 120, accuracy: 76, xp: 2320, badge: "Operador" },
+  { rank: 7, name: "Ana PM", avatar: "AP", hoursWeekly: 15.5, questionsWeekly: 95, accuracy: 72, xp: 1980, badge: "Recruta" }
 ];
 
 const MOTIVATIONAL_QUOTES = [
-  { quote: "O papiro não perdoa, mas a aprovação recompensa com glória eterna.", author: "Lema dos Concurseiros" },
-  { quote: "Treino difícil, combate fácil. Cada questão resolvida hoje é um ponto na prova amanhã.", author: "Doutrina Operacional" },
-  { quote: "A dor da disciplina é temporária, a dor do arrependimento é para sempre.", author: "Sabedoria de Guerra" },
-  { quote: "Não pare quando estiver cansado, pare quando o seu nome estiver no Diário Oficial.", author: "Foco no Papiro" },
-  { quote: "Constância bate talento todos os dias da semana. Faça o básico bem feito.", author: "Estratégia de Alto Rendimento" }
+  { quote: "Treino difícil, combate fácil. Cada questão resolvida hoje é um ponto na prova de domingo.", author: "Doutrina Policial" },
+  { quote: "A dor do estudo é passageira. A honra de ostentar o distintivo no peito é eterna.", author: "QG do Concurseiro" },
+  { quote: "No combate contra a banca examinadora, quem domina o edital não conta com a sorte.", author: "Manual de Operações" },
+  { quote: "A disciplina é a ponte inegociável entre a vontade de passar e a posse no Diário Oficial.", author: "Estratégia Tática" },
+  { quote: "Não pare quando estiver cansado. Pare apenas quando o seu nome for publicado na lista de aprovados.", author: "Comando QG" },
+  { quote: "Constância bate o talento todos os dias da semana. Um bloco de papiro por vez, até a posse.", author: "Doutrina de Alto Rendimento" }
 ];
