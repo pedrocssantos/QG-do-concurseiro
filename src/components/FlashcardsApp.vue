@@ -295,6 +295,66 @@ onUnmounted(() => {
 <style scoped>
 .flashcards-vue-container {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.flashcards-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.deck-chips-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flashcard-main-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flashcard-stage {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 640px;
+  min-height: 360px;
+  margin: 0 auto;
+}
+
+.flashcard-actions-wrapper {
+  width: 100%;
+  max-width: 640px;
+  margin: 20px auto 0;
+}
+
+.fc-flip-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fc-grade-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .fc-grade-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .fc-tag-success {
