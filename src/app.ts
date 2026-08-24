@@ -40,6 +40,7 @@ class App {
     this.bindGlobalNavigation();
     this.bindModalHandlers();
     this.bindSettingsHandlers();
+    this.bindOnboardingHandlers();
     this.registerServiceWorker();
     this.checkPaymentReturn();
     this.handleRoute();
