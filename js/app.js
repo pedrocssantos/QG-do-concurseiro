@@ -15,7 +15,8 @@ class App {
       "desempenho",
       "ranking",
       "pomodoro",
-      "configuracoes"
+      "configuracoes",
+      "landing"
     ];
   }
 

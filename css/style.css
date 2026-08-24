@@ -677,3 +677,140 @@ button, input, select, textarea {
     display: none;
   }
 }
+
+/* ==========================================================================
+   ESTILOS DE IMPRESSÃO / EXPORTAÇÃO EM PDF (A4)
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+  }
+
+  .app-sidebar,
+  .app-header,
+  .btn,
+  .filter-toolbar,
+  .modal-overlay,
+  .zen-overlay,
+  #toast-container,
+  .edital-hero-right,
+  .sidebar-backdrop,
+  .fc-flip-btn-row,
+  .fc-grade-grid,
+  .pomo-mode-selector,
+  .timer-controls {
+    display: none !important;
+  }
+
+  .app-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+
+  .view-content-wrapper {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .view-section:not(.hidden) {
+    display: block !important;
+  }
+
+  .view-section.hidden {
+    display: none !important;
+  }
+
+  .view-header {
+    border-bottom: 2px solid #333 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .view-title-group h1 {
+    color: #000000 !important;
+    font-size: 1.4rem !important;
+  }
+
+  .view-title-group p {
+    color: #4b5563 !important;
+  }
+
+  /* Edital Verticalizado na Impressão */
+  .edital-hero-banner {
+    background: #f3f4f6 !important;
+    border: 1px solid #d1d5db !important;
+    color: #000000 !important;
+    padding: 12px 16px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .edital-hero-left h2 {
+    color: #000000 !important;
+    font-size: 1.2rem !important;
+  }
+
+  .edital-tag {
+    background: #e5e7eb !important;
+    color: #374151 !important;
+    border: 1px solid #9ca3af !important;
+  }
+
+  .accordion-item {
+    border: 1px solid #d1d5db !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .accordion-header {
+    background: #f9fafb !important;
+    color: #000000 !important;
+    padding: 10px 14px !important;
+  }
+
+  .accordion-content {
+    display: block !important;
+    max-height: none !important;
+    padding: 10px 14px !important;
+    background: #ffffff !important;
+  }
+
+  .topico-row {
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 6px 0 !important;
+    color: #111827 !important;
+  }
+
+  .topico-title {
+    color: #111827 !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Caderno de Erros na Impressão */
+  .caderno-card {
+    border: 1px solid #d1d5db !important;
+    background: #f9fafb !important;
+    color: #111827 !important;
+    padding: 12px 16px !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .caderno-q-text {
+    color: #111827 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .caderno-q-exp {
+    background: #e5e7eb !important;
+    border-left: 3px solid #3b82f6 !important;
+    color: #1f2937 !important;
+    padding: 8px 12px !important;
+  }
+}

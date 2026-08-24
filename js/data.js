@@ -180,6 +180,191 @@ const DEFAULT_CONCURSOS = [
     ]
   },
   {
+    id: "pc-sp-escrivao",
+    title: "Polícia Civil - Escrivão e Investigador de Polícia",
+    shortTitle: "PC-SP - Escrivão / Investigador",
+    category: "Policial",
+    banca: "Vunesp",
+    targetDate: "2026-12-05",
+    totalHoursGoal: 550,
+    dailyGoalMinutes: 240,
+    disciplinas: [
+      {
+        id: "pc-port",
+        name: "Língua Portuguesa",
+        color: "#3b82f6",
+        icon: "fa-book",
+        weight: 4,
+        difficulty: 3,
+        topicos: [
+          { id: "pc-port-1", title: "Interpretação de Textos Literários e Não Literários", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-port-2", title: "Crase, Regência Verbal e Nominal", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-port-3", title: "Pontuação, Concordância e Sintaxe", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pc-penal",
+        name: "Direito Penal & Processual Penal",
+        color: "#ef4444",
+        icon: "fa-gavel",
+        weight: 5,
+        difficulty: 4,
+        topicos: [
+          { id: "pc-pen-1", title: "Aplicação da Lei Penal e Teoria do Crime", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-pen-2", title: "Crimes Contra a Pessoa e Contra o Patrimônio", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-pen-3", title: "Inquérito Policial, Ação Penal e Provas no CPP", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-pen-4", title: "Prisão em Flagrante, Preventiva e Temporária", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pc-leg-esp",
+        name: "Legislação Especial Policial",
+        color: "#f59e0b",
+        icon: "fa-shield",
+        weight: 4,
+        difficulty: 3,
+        topicos: [
+          { id: "pc-leg-1", title: "Lei de Drogas (Lei 11.343/06) e Maria da Penha (Lei 11.340/06)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-leg-2", title: "Estatuto do Desarmamento e Crimes Hediondos (Lei 8.072/90)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-leg-3", title: "Abuso de Autoridade (Lei 13.869/19) e Organizações Criminosas", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pc-criminol",
+        name: "Noções de Criminologia & Direitos Humanos",
+        color: "#8b5cf6",
+        icon: "fa-fingerprint",
+        weight: 3,
+        difficulty: 3,
+        topicos: [
+          { id: "pc-crim-1", title: "Conceito, Método e Objetos da Criminologia (Delito, Delinquente, Vítima)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-crim-2", title: "Modelos Teóricos da Criminologia e Prevenção Criminal", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-crim-3", title: "Declaração Universal dos Direitos Humanos e Pacto de San José", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pc-info",
+        name: "Noções de Informática",
+        color: "#06b6d4",
+        icon: "fa-desktop",
+        weight: 3,
+        difficulty: 2,
+        topicos: [
+          { id: "pc-info-1", title: "Sistemas Operacionais Windows e Linux", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pc-info-2", title: "Segurança da Informação, Golpes Virtuais e Backup", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "pm-sp-soldado",
+    title: "Polícia Militar - Soldado PM de 2ª Classe",
+    shortTitle: "PM-SP - Soldado",
+    category: "Policial",
+    banca: "Vunesp / FGV",
+    targetDate: "2026-09-20",
+    totalHoursGoal: 400,
+    dailyGoalMinutes: 180,
+    disciplinas: [
+      {
+        id: "pm-port",
+        name: "Língua Portuguesa",
+        color: "#3b82f6",
+        icon: "fa-book",
+        weight: 4,
+        difficulty: 3,
+        topicos: [
+          { id: "pm-port-1", title: "Leitura, Interpretação e Sentido Próprio/Figurado", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pm-port-2", title: "Classes de Palavras, Concordância e Regência", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pm-mat",
+        name: "Matemática",
+        color: "#f59e0b",
+        icon: "fa-calculator",
+        weight: 3,
+        difficulty: 4,
+        topicos: [
+          { id: "pm-mat-1", title: "Razão, Proporção, Regra de Três e Porcentagem", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pm-mat-2", title: "Equações de 1º e 2º Graus, Geometria Básica e Áreas", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pm-hist-geo",
+        name: "História e Geografia do Brasil",
+        color: "#10b981",
+        icon: "fa-earth-americas",
+        weight: 3,
+        difficulty: 2,
+        topicos: [
+          { id: "pm-hg-1", title: "História do Brasil: República, Ditadura e Redemocratização", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pm-hg-2", title: "Geografia: Clima, Vegetação, Urbanização e População Brasileira", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "pm-adm-dir",
+        name: "Noções de Adm. Pública e Direitos Humanos",
+        color: "#8b5cf6",
+        icon: "fa-landmark",
+        weight: 3,
+        difficulty: 2,
+        topicos: [
+          { id: "pm-ad-1", title: "Constituição Federal (Art. 5º - Direitos Individuais e Coletivos)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "pm-ad-2", title: "Segurança Pública (Art. 144 da CF) e Polícia Militar", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "depen-penal",
+    title: "Polícia Penal Federal / Estadual - Policial Penal",
+    shortTitle: "Polícia Penal (DEPEN)",
+    category: "Policial",
+    banca: "Cebraspe",
+    targetDate: "2026-11-28",
+    totalHoursGoal: 500,
+    dailyGoalMinutes: 210,
+    disciplinas: [
+      {
+        id: "dep-lep",
+        name: "Lei de Execução Penal (LEP - Lei 7.210/84)",
+        color: "#ef4444",
+        icon: "fa-building-shield",
+        weight: 5,
+        difficulty: 4,
+        topicos: [
+          { id: "dep-lep-1", title: "Do Condenado, Do Internado e Dos Deveres e Direitos", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "dep-lep-2", title: "Regime Disciplinar Diferenciado (RDD) e Faltas Disciplinares", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "dep-lep-3", title: "Progressão de Regime, Remição de Pena e Livramento Condicional", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "dep-penal",
+        name: "Direito Penal & Processo Penal",
+        color: "#f59e0b",
+        icon: "fa-gavel",
+        weight: 4,
+        difficulty: 3,
+        topicos: [
+          { id: "dep-pen-1", title: "Crimes Praticados por Funcionário Público Contra a Adm. Pública", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 },
+          { id: "dep-pen-2", title: "Tortura (Lei 9.455/97) e Abuso de Autoridade (Lei 13.869/19)", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      },
+      {
+        id: "dep-port",
+        name: "Língua Portuguesa & Redação Oficial",
+        color: "#3b82f6",
+        icon: "fa-book",
+        weight: 3,
+        difficulty: 3,
+        topicos: [
+          { id: "dep-port-1", title: "Interpretação de Textos, Gramática e Sintaxe", teoria: false, resumo: false, questoesFeitas: 0, questoesAcertos: 0, r24h: false, r7d: false, r30d: false, dominio: 1 }
+        ]
+      }
+    ]
+  },
+  {
     id: "inss-tecnico",
     title: "INSS - Técnico do Seguro Social",
     shortTitle: "INSS - Técnico",
@@ -436,6 +621,84 @@ const DEFAULT_QUESTIONS = [
     ],
     respostaCorreta: "C",
     explicacao: "Gabarito: **CERTO**. Conforme art. 37, § 6º, da CF/88, o Brasil adota a Teoria do Risco Administrativo para condutas comissivas: a responsabilidade é objetiva, mas admite excludentes do nexo causal (culpa exclusiva da vítima, fato de terceiro, caso fortuito ou força maior)."
+  },
+  {
+    id: "q-13",
+    disciplinaId: "pc-penal",
+    disciplinaName: "Direito Penal",
+    assunto: "Aplicação da Lei Penal no Tempo",
+    banca: "Vunesp",
+    orgao: "Polícia Civil - SP",
+    cargo: "Investigador de Polícia",
+    ano: 2024,
+    tipo: "multipla_escolha",
+    enunciado: "A respeito da aplicação da lei penal no tempo, assinale a alternativa correta conforme o Código Penal e a jurisprudência sumulada do STF:",
+    alternativas: [
+      { id: "A", text: "A lei penal mais grave aplica-se ao crime continuado ou permanente, se a sua vigência é anterior à cessação da continuidade ou da permanência." },
+      { id: "B", text: "A lei posterior que de qualquer modo favorecer o agente não retroage para fatos já decididos por sentença condenatória transitada em julgado." },
+      { id: "C", text: "Considera-se praticado o crime no momento do resultado, ainda que outro seja o momento da ação ou da omissão." },
+      { id: "D", text: "A lei excepcional ou temporária não se aplica ao fato praticado durante sua vigência após decorrido o período de sua duração." }
+    ],
+    respostaCorreta: "A",
+    explicacao: "Gabarito: **A**. Aplicação literal da Súmula 711 do STF: 'A lei penal mais grave aplica-se ao crime continuado ou ao crime permanente, se a sua vigência é anterior à cessação da continuidade ou da permanência'. O art. 4º adota a Teoria da Atividade (tempo do crime = momento da conduta)."
+  },
+  {
+    id: "q-14",
+    disciplinaId: "pc-penal",
+    disciplinaName: "Processo Penal",
+    assunto: "Prisão em Flagrante",
+    banca: "Vunesp",
+    orgao: "Polícia Civil - SP",
+    cargo: "Escrivão de Polícia",
+    ano: 2023,
+    tipo: "multipla_escolha",
+    enunciado: "O agente que é perseguido, logo após a prática do delito, pela autoridade, pelo ofendido ou por qualquer pessoa, em situação que faça presumir ser ele autor da infração, encontra-se em flagrante:",
+    alternativas: [
+      { id: "A", text: "Próprio (perfeito)." },
+      { id: "B", text: "Impróprio (quase-flagrante)." },
+      { id: "C", text: "Presumido (ficto)." },
+      { id: "D", text: "Preparado (provocado)." }
+    ],
+    respostaCorreta: "B",
+    explicacao: "Gabarito: **B**. Conforme art. 302, III, do CPP: considera-se em flagrante impróprio quem 'é perseguido, logo após, pela autoridade, pelo ofendido ou por qualquer pessoa, em situação que faça presumir ser autor da infração'."
+  },
+  {
+    id: "q-15",
+    disciplinaId: "dep-lep",
+    disciplinaName: "Lei de Execução Penal",
+    assunto: "Faltas Disciplinares e RDD",
+    banca: "Cebraspe",
+    orgao: "DEPEN / SENAPPEN",
+    cargo: "Policial Penal Federal",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O Regime Disciplinar Diferenciado (RDD) terá duração máxima de até dois anos, sem prejuízo de repetição da sanção por nova falta grave de mesma espécie, até o limite de um sexto da pena aplicada.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Conforme art. 52, I, da Lei 7.210/84 (redação dada pelo Pacote Anticrime - Lei 13.964/19): 'duração máxima de até 2 (dois) anos, sem prejuízo de repetição da sanção por nova falta grave de mesma espécie, até o limite de um sexto da pena aplicada'."
+  },
+  {
+    id: "q-16",
+    disciplinaId: "pm-adm-dir",
+    disciplinaName: "Direito Constitucional",
+    assunto: "Segurança Pública e Forças Policiais",
+    banca: "FGV",
+    orgao: "Polícia Militar",
+    cargo: "Soldado PM",
+    ano: 2024,
+    tipo: "multipla_escolha",
+    enunciado: "De acordo com o art. 144 da Constituição Federal de 1988, às Polícias Militares cabem a:",
+    alternativas: [
+      { id: "A", text: "Polícia ostensiva e a preservação da ordem pública." },
+      { id: "B", text: "Apuração das infrações penais comuns e militares." },
+      { id: "C", text: "Execução com exclusividade da polícia judiciária estadual." },
+      { id: "D", text: "Guarda externa dos presídios federais e estaduais privativamente." }
+    ],
+    respostaCorreta: "A",
+    explicacao: "Gabarito: **A**. Art. 144, § 5º, da CF: 'Às polícias militares cabem a polícia ostensiva e a preservação da ordem pública; aos corpos de bombeiros militares, além das atribuições definidas em lei, incumbe a execução de atividades de defesa civil'."
   }
 ];
 
@@ -501,6 +764,50 @@ const DEFAULT_FLASHCARDS = [
     disciplinaName: "Raciocínio Lógico",
     frente: "Como fazer a NEGAÇÃO de uma proposição condicional (P → Q)?",
     verso: "Regra do **MANÉ**:\n• **MA**ntém a primeira parte (P)\n• **E** (Conjunção ^)\n• **NE**ga a segunda parte (~Q)\n\n~(P → Q) ≡ P ^ ~Q",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-7",
+    disciplinaId: "pf-dir-adm",
+    disciplinaName: "Direito Administrativo",
+    frente: "Quais são os Princípios Expressos da Administração Pública na CF/88?",
+    verso: "Mnemônico **LIMPE** (Art. 37, caput CF):\n• **L**egalidade\n• **I**mpessoalidade\n• **M**oralidade\n• **P**ublicidade\n• **E**ficiência (incluída pela EC 19/98)",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-8",
+    disciplinaId: "pf-dir-penal",
+    disciplinaName: "Direito Penal",
+    frente: "Quais são as Excludentes de Ilicitude / Antijuridicidade (Art. 23 CP)?",
+    verso: "Mnemônico **B.R.E.E.L.** (ou C.L.E.E.):\n• **E**stado de Necessidade (Art. 24)\n• **L**egítima Defesa (Art. 25)\n• **E**strito Cumprimento do Dever Legal\n• **E**xercício Regular de Direito",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-9",
+    disciplinaId: "pf-dir-penal",
+    disciplinaName: "Direito Penal",
+    frente: "Tempo do Crime vs Lugar do Crime: quais teorias o Código Penal adota?",
+    verso: "Mnemônico **LUTA**:\n• **L**ugar do Crime = Teoria da **U**biquidade (Art. 6º CP - tanto conduta quanto resultado)\n• **T**empo do Crime = Teoria da **A**tividade (Art. 4º CP - momento da ação ou omissão)",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-10",
+    disciplinaId: "pf-dir-const",
+    disciplinaName: "Direito Constitucional",
+    frente: "Quais são os Fundamentos da República Federativa do Brasil (Art. 1º CF)?",
+    verso: "Mnemônico **SO-CI-DI-VA-PLU**:\n• **SO**berania\n• **CI**dadania\n• **DI**gnidade da Pessoa Humana\n• **VA**lores Sociais do Trabalho e da Livre Iniciativa\n• **PLU**ralismo Político",
     interval: 1,
     repetitions: 0,
     easeFactor: 2.5,

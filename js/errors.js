@@ -138,7 +138,16 @@ class CadernoErrosManager {
     }
   }
 
+  printCaderno() {
+    window.print();
+  }
+
   bindEvents() {
+    const printBtn = document.getElementById("btn-print-erros");
+    if (printBtn) {
+      printBtn.addEventListener("click", () => this.printCaderno());
+    }
+
     const reasonFilter = document.getElementById("caderno-filter-reason");
     const statusFilter = document.getElementById("caderno-filter-status");
 

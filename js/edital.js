@@ -281,7 +281,23 @@ class EditalManager {
     showToast("Novo tópico adicionado ao seu edital!", "success");
   }
 
+  printEdital() {
+    // Abre todos os acordeões antes de imprimir
+    const contents = document.querySelectorAll(".accordion-content");
+    contents.forEach(c => c.classList.remove("hidden"));
+    const icons = document.querySelectorAll(".accordion-header .fa-chevron-down");
+    icons.forEach(i => i.classList.add("rotated"));
+    setTimeout(() => {
+      window.print();
+    }, 150);
+  }
+
   bindEvents() {
+    const printBtn = document.getElementById("btn-print-edital");
+    if (printBtn) {
+      printBtn.addEventListener("click", () => this.printEdital());
+    }
+
     const addDiscBtn = document.getElementById("btn-open-add-disc-modal");
     if (addDiscBtn) {
       addDiscBtn.addEventListener("click", () => {
