@@ -25,6 +25,7 @@ class App {
     this.bindModalHandlers();
     this.bindSettingsHandlers();
     this.bindOnboardingHandlers();
+    this.checkPaymentReturn();
     this.handleRoute();
     this.listenToStore();
 
@@ -43,6 +44,45 @@ class App {
     });
 
     console.log("🚀 QG do Concurseiro SPA inicializado com sucesso!");
+  }
+
+  checkPaymentReturn() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isSuccess = urlParams.get("payment") === "success" || 
+                        urlParams.get("status") === "success" || 
+                        urlParams.get("checkout") === "success" ||
+                        urlParams.get("session_id");
+
+      if (isSuccess) {
+        // Ativa o plano PRO no Store local
+        store.data.profile.plan_tier = "pro";
+        store.save();
+
+        // Se logado no Supabase, sincroniza na nuvem
+        if (typeof db !== "undefined" && db.currentUser) {
+          db.supabase.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id).then(() => {
+            if (db.fetchUserProfile) db.fetchUserProfile();
+          }).catch(err => console.warn("Erro ao sincronizar PRO no Supabase:", err));
+        }
+
+        if (typeof db !== "undefined" && db.updateAuthUI) {
+          db.updateAuthUI();
+        }
+
+        // Limpa os parâmetros da URL sem recarregar a página
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        // Recompensa e celebração tática
+        store.addXP(500, "Ativação do Plano Caveira PRO! 🏆");
+        setTimeout(() => {
+          showToast("🎖️ PARABÉNS GUERREIRO(A)! Seu Plano Caveira PRO foi ativado com sucesso! Todas as ferramentas foram desbloqueadas.", "success", 8000);
+        }, 500);
+      }
+    } catch (e) {
+      console.warn("Erro ao verificar retorno de pagamento:", e);
+    }
   }
 
   handleRoute() {
@@ -721,28 +761,43 @@ async function handleAuthSubmit(e) {
   }
 }
 
+// Links Oficiais de Pagamento da Stripe
+const STRIPE_CHECKOUT_LINKS = {
+  mensal: "https://buy.stripe.com/6oUaEW4Wc1uG6WE8kzgjC01",
+  anual: "https://buy.stripe.com/8x228qbkA0qCdl258ngjC00"
+};
+
 function openUpgradeModal() {
   const modal = document.getElementById("modal-upgrade-pro");
   if (modal) modal.classList.remove("hidden");
 }
 
 function startCheckout(planType) {
-  if (!db.currentUser) {
-    showToast("Por favor, crie uma conta ou faça login antes de assinar o plano!", "info");
-    openAuthModal("signup");
-    return;
-  }
+  const baseLink = STRIPE_CHECKOUT_LINKS[planType] || STRIPE_CHECKOUT_LINKS.mensal;
+  const userEmail = (typeof db !== "undefined" && db.currentUser?.email) || store.data.profile?.email || "";
+  const userId = (typeof db !== "undefined" && db.currentUser?.id) || store.data.profile?.id || "";
 
-  showToast(`Redirecionando para o checkout do Plano ${planType === 'anual' ? 'Anual' : 'Mensal'}... 💳`, "info");
-  
-  // Demonstração da ativação imediata do Plano Pro
-  setTimeout(() => {
-    store.data.profile.plan_tier = "pro";
-    store.save();
-    db.updateAuthUI();
+  try {
+    const url = new URL(baseLink);
+    if (userEmail) {
+      url.searchParams.set("prefilled_email", userEmail);
+    }
+    if (userId) {
+      url.searchParams.set("client_reference_id", userId);
+    }
+
+    showToast(`Redirecionando para o checkout seguro da Stripe (${planType === 'anual' ? 'Plano Anual' : 'Plano Mensal'})... 💳`, "info");
+    
+    // Fecha o modal antes do redirecionamento
     document.getElementById("modal-upgrade-pro")?.classList.add("hidden");
-    showToast("Parabéns! Seu Plano Caveira PRO foi ativado com sucesso! 🏆", "success");
-  }, 1200);
+
+    setTimeout(() => {
+      window.location.href = url.toString();
+    }, 600);
+  } catch (e) {
+    // Fallback direto se houver problema ao instanciar URL
+    window.location.href = baseLink;
+  }
 }
 
 // Inicialização Global
