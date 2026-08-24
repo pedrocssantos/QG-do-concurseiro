@@ -43,7 +43,8 @@ class Store {
         weeklyGoalHours: 20,
         soundEnabled: true,
         ambientSound: "none",
-        onboardingCompleted: false
+        onboardingCompleted: false,
+        plan_tier: "free"
       },
       activeConcursoId: "pf-agente",
       concursos: JSON.parse(JSON.stringify(DEFAULT_CONCURSOS)),
@@ -174,6 +175,16 @@ class Store {
         console.error("Erro no listener do store:", err);
       }
     });
+  }
+
+  isPro() {
+    return this.data.profile && (this.data.profile.plan_tier === "pro" || this.data.profile.plan_tier === "vip");
+  }
+
+  getSimuladosThisWeek() {
+    const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const recentSimulados = (this.data.studySessions || []).filter(s => s.type === "simulado" && (s.timestamp || 0) >= oneWeekAgo);
+    return recentSimulados.length;
   }
 
   // ================= CONCURSO ATIVO =================

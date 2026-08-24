@@ -213,6 +213,12 @@ class FlashcardsManager {
       return;
     }
 
+    if (!store.isPro() && store.data.flashcards.length >= 30) {
+      showToast("Limite de 30 flashcards no Plano Gratuito atingido. Desbloqueie ilimitados no Plano Caveira PRO!", "warning");
+      if (typeof openUpgradeModal === "function") openUpgradeModal();
+      return;
+    }
+
     const discName = discSelect.options[discSelect.selectedIndex].text;
 
     store.addFlashcard({

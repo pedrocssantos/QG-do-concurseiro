@@ -245,10 +245,30 @@ class App {
       });
     });
 
+    // Fechamento de qualquer modal ou tela zen com a tecla Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => m.classList.add("hidden"));
+        const zenOverlay = document.getElementById("zen-mode-overlay");
+        if (zenOverlay && !zenOverlay.classList.contains("hidden")) {
+          if (typeof pomodoroManager !== "undefined" && pomodoroManager.toggleZenMode) {
+            pomodoroManager.toggleZenMode(false);
+          } else {
+            zenOverlay.classList.add("hidden");
+          }
+        }
+      }
+    });
+
     // Modal de Novo Concurso
     const openNewConcursoBtn = document.getElementById("btn-open-new-concurso-modal");
     if (openNewConcursoBtn) {
       openNewConcursoBtn.addEventListener("click", () => {
+        if (!store.isPro() && store.data.concursos.length >= 1) {
+          showToast("Plano Gratuito limitado a 1 concurso ativo. Desbloqueie editais ilimitados com o Caveira PRO!", "warning");
+          openUpgradeModal();
+          return;
+        }
         const m = document.getElementById("modal-new-concurso");
         if (m) m.classList.remove("hidden");
       });
@@ -275,6 +295,12 @@ class App {
   }
 
   saveNewConcurso() {
+    if (!store.isPro() && store.data.concursos.length >= 1) {
+      showToast("Plano Gratuito limitado a 1 concurso ativo. Desbloqueie editais ilimitados com o Caveira PRO!", "warning");
+      openUpgradeModal();
+      return;
+    }
+
     const title = document.getElementById("new-concurso-title").value.trim();
     const shortTitle = document.getElementById("new-concurso-short").value.trim() || title;
     const banca = document.getElementById("new-concurso-banca").value.trim() || "Cebraspe";

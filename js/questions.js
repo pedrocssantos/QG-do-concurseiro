@@ -15,6 +15,7 @@ class QuestionsManager {
     this.filters = {
       disciplinaId: "all",
       banca: "all",
+      ano: "all",
       status: "all", // all, nao_feitas, erradas
       search: ""
     };
@@ -33,6 +34,7 @@ class QuestionsManager {
   populateFilterDropdowns() {
     const discSelect = document.getElementById("q-filter-disciplina");
     const bancaSelect = document.getElementById("q-filter-banca");
+    const anoSelect = document.getElementById("q-filter-ano");
     if (!discSelect) return;
 
     const concurso = store.getActiveConcurso();
@@ -54,11 +56,23 @@ class QuestionsManager {
         bancaSelect.appendChild(opt);
       });
     }
+
+    if (anoSelect) {
+      const anos = [...new Set(store.data.questions.map(q => q.ano).filter(Boolean))].sort((a, b) => b - a);
+      anoSelect.innerHTML = `<option value="all">Todos os Anos</option>`;
+      anos.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.toString();
+        opt.textContent = `Ano ${a}`;
+        anoSelect.appendChild(opt);
+      });
+    }
   }
 
   bindEvents() {
     const discSelect = document.getElementById("q-filter-disciplina");
     const bancaSelect = document.getElementById("q-filter-banca");
+    const anoSelect = document.getElementById("q-filter-ano");
     const statusSelect = document.getElementById("q-filter-status");
     const searchInput = document.getElementById("q-filter-search");
     const prevBtn = document.getElementById("q-btn-prev");
@@ -69,6 +83,7 @@ class QuestionsManager {
 
     if (discSelect) discSelect.addEventListener("change", (e) => { this.filters.disciplinaId = e.target.value; this.applyFilters(); });
     if (bancaSelect) bancaSelect.addEventListener("change", (e) => { this.filters.banca = e.target.value; this.applyFilters(); });
+    if (anoSelect) anoSelect.addEventListener("change", (e) => { this.filters.ano = e.target.value; this.applyFilters(); });
     if (statusSelect) statusSelect.addEventListener("change", (e) => { this.filters.status = e.target.value; this.applyFilters(); });
     if (searchInput) searchInput.addEventListener("input", (e) => { this.filters.search = e.target.value.toLowerCase(); this.applyFilters(); });
 
@@ -92,6 +107,10 @@ class QuestionsManager {
       }
       // Filtro por banca
       if (this.filters.banca !== "all" && q.banca !== this.filters.banca) {
+        return false;
+      }
+      // Filtro por ano
+      if (this.filters.ano !== "all" && q.ano && q.ano.toString() !== this.filters.ano) {
         return false;
       }
       // Filtro por busca de texto
@@ -286,6 +305,27 @@ class QuestionsManager {
     const modal = document.getElementById("modal-config-simulado");
     if (!modal) return;
 
+    const isPro = store.isPro();
+    const weeklySimulados = store.getSimuladosThisWeek();
+
+    // Se houver banner de uso, renderiza ou remove
+    let usageBanner = document.getElementById("sim-free-usage-banner");
+    const modalBody = modal.querySelector(".modal-body");
+    if (!isPro && modalBody) {
+      if (!usageBanner) {
+        usageBanner = document.createElement("div");
+        usageBanner.id = "sim-free-usage-banner";
+        usageBanner.style.cssText = "font-size: 0.78rem; color: var(--color-warning); background: rgba(245, 158, 11, 0.08); padding: 8px 12px; border-radius: var(--radius-xs); margin-bottom: 14px; border: 1px solid rgba(245, 158, 11, 0.25); display: flex; justify-content: space-between; align-items: center;";
+        modalBody.prepend(usageBanner);
+      }
+      usageBanner.innerHTML = `
+        <span><i class="fa-solid fa-crown text-warning"></i> Plano Gratuito: <strong>${weeklySimulados}/3 simulados</strong> esta semana</span>
+        <button type="button" onclick="if(typeof openUpgradeModal==='function')openUpgradeModal();" class="btn btn-primary btn-xs" style="padding: 2px 8px; font-size: 0.72rem;">Seja PRO</button>
+      `;
+    } else if (usageBanner) {
+      usageBanner.remove();
+    }
+
     // Popula checkboxes das disciplinas
     const container = document.getElementById("sim-disciplinas-checkboxes");
     const concurso = store.getActiveConcurso();
@@ -350,6 +390,14 @@ class QuestionsManager {
     const confirmBtn = document.getElementById("btn-confirm-start-simulado");
     if (confirmBtn) {
       confirmBtn.onclick = () => {
+        if (!store.isPro() && store.getSimuladosThisWeek() >= 3) {
+          showToast("Você atingiu o limite de 3 simulados semanais no Plano Gratuito. Assine o Caveira PRO para simulados ilimitados!", "warning");
+          const modal = document.getElementById("modal-config-simulado");
+          if (modal) modal.classList.add("hidden");
+          if (typeof openUpgradeModal === "function") openUpgradeModal();
+          return;
+        }
+
         const activeCountBtn = document.querySelector(".sim-btn-count.active");
         const count = activeCountBtn ? parseInt(activeCountBtn.dataset.count, 10) : 10;
 

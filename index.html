@@ -408,18 +408,21 @@
         <!-- Filtros de Questões -->
         <div class="filter-toolbar" id="questions-filter-toolbar">
           <div class="filters-group">
-            <select class="filter-select" id="q-filter-disciplina">
+            <select class="filter-select" id="q-filter-disciplina" aria-label="Filtrar por Disciplina">
               <option value="all">Todas as Disciplinas</option>
             </select>
-            <select class="filter-select" id="q-filter-banca">
+            <select class="filter-select" id="q-filter-banca" aria-label="Filtrar por Banca">
               <option value="all">Todas as Bancas</option>
             </select>
-            <select class="filter-select" id="q-filter-status">
+            <select class="filter-select" id="q-filter-ano" aria-label="Filtrar por Ano da Prova">
+              <option value="all">Todos os Anos</option>
+            </select>
+            <select class="filter-select" id="q-filter-status" aria-label="Filtrar por Status da Questão">
               <option value="all">Todas as Questões</option>
               <option value="nao_feitas">Não Resolvidas</option>
               <option value="erradas">Apenas Erradas</option>
             </select>
-            <input type="text" class="search-input" id="q-filter-search" placeholder="Buscar no enunciado ou assunto...">
+            <input type="text" class="search-input" id="q-filter-search" placeholder="Buscar no enunciado ou assunto..." aria-label="Buscar no enunciado ou assunto">
           </div>
         </div>
 
@@ -1022,23 +1025,23 @@
   </div>
 
   <!-- Modal: Nova Disciplina -->
-  <div class="modal-overlay hidden" id="modal-add-disciplina">
+  <div class="modal-overlay hidden" id="modal-add-disciplina" role="dialog" aria-modal="true" aria-labelledby="add-disc-title">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-book text-primary"></i> Nova Disciplina</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="add-disc-title"><i class="fa-solid fa-book text-primary"></i> Nova Disciplina</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Nome da Disciplina:</label>
+          <label for="new-disc-name">Nome da Disciplina:</label>
           <input type="text" class="form-input" id="new-disc-name" placeholder="Ex: Direito Penal Especial">
         </div>
         <div class="form-group">
-          <label>Peso no Edital (1 a 5):</label>
+          <label for="new-disc-weight">Peso no Edital (1 a 5):</label>
           <input type="number" class="form-input" id="new-disc-weight" min="1" max="5" value="3">
         </div>
         <div class="form-group">
-          <label>Cor de Destaque:</label>
+          <label for="new-disc-color">Cor de Destaque:</label>
           <select class="form-select" id="new-disc-color">
             <option value="#3b82f6">Azul Tático (#3b82f6)</option>
             <option value="#10b981">Verde Floresta (#10b981)</option>
@@ -1057,15 +1060,15 @@
   </div>
 
   <!-- Modal: Novo Tópico -->
-  <div class="modal-overlay hidden" id="modal-add-topico">
+  <div class="modal-overlay hidden" id="modal-add-topico" role="dialog" aria-modal="true" aria-labelledby="add-topico-title">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-list text-primary"></i> Adicionar Tópico ao Edital</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="add-topico-title"><i class="fa-solid fa-list text-primary"></i> Adicionar Tópico ao Edital</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Título do Tópico ou Conteúdo:</label>
+          <label for="new-topico-title">Título do Tópico ou Conteúdo:</label>
           <input type="text" class="form-input" id="new-topico-title" placeholder="Ex: Da Prisão em Flagrante (Art. 301 a 310)">
         </div>
       </div>
@@ -1077,27 +1080,27 @@
   </div>
 
   <!-- Modal: Novo Concurso -->
-  <div class="modal-overlay hidden" id="modal-new-concurso">
+  <div class="modal-overlay hidden" id="modal-new-concurso" role="dialog" aria-modal="true" aria-labelledby="new-concurso-title-header">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-trophy text-primary"></i> Criar Novo Plano de Concurso</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="new-concurso-title-header"><i class="fa-solid fa-trophy text-primary"></i> Criar Novo Plano de Concurso</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Título Completo do Cargo:</label>
+          <label for="new-concurso-title">Título Completo do Cargo:</label>
           <input type="text" class="form-input" id="new-concurso-title" placeholder="Ex: Auditor Fiscal da Receita Federal">
         </div>
         <div class="form-group">
-          <label>Sigla / Nome Curto:</label>
+          <label for="new-concurso-short">Sigla / Nome Curto:</label>
           <input type="text" class="form-input" id="new-concurso-short" placeholder="Ex: Receita Federal - Auditor">
         </div>
         <div class="form-group">
-          <label>Banca Organizadora:</label>
+          <label for="new-concurso-banca">Banca Organizadora:</label>
           <input type="text" class="form-input" id="new-concurso-banca" placeholder="Ex: FGV, Cebraspe, FCC">
         </div>
         <div class="form-group">
-          <label>Data Prevista da Prova:</label>
+          <label for="new-concurso-date">Data Prevista da Prova:</label>
           <input type="date" class="form-input" id="new-concurso-date" value="2026-12-31">
         </div>
       </div>
@@ -1109,23 +1112,23 @@
   </div>
 
   <!-- Modal: Novo Flashcard -->
-  <div class="modal-overlay hidden" id="modal-new-flashcard">
+  <div class="modal-overlay hidden" id="modal-new-flashcard" role="dialog" aria-modal="true" aria-labelledby="new-fc-title">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-layer-group text-primary"></i> Criar Flashcard</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="new-fc-title"><i class="fa-solid fa-layer-group text-primary"></i> Criar Flashcard</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Disciplina:</label>
+          <label for="new-fc-disciplina">Disciplina:</label>
           <select class="form-select" id="new-fc-disciplina"></select>
         </div>
         <div class="form-group">
-          <label>Frente do Cartão (Pergunta / Conceito / Pergunta Chave):</label>
+          <label for="new-fc-front">Frente do Cartão (Pergunta / Conceito / Pergunta Chave):</label>
           <textarea class="form-textarea" id="new-fc-front" placeholder="Ex: Qual é o prazo decadencial para impetrar Mandado de Segurança?"></textarea>
         </div>
         <div class="form-group">
-          <label>Verso do Cartão (Resposta / Mnemônico / Fundamento):</label>
+          <label for="new-fc-back">Verso do Cartão (Resposta / Mnemônico / Fundamento):</label>
           <textarea class="form-textarea" id="new-fc-back" placeholder="Ex: 120 dias, contados da ciência do ato impugnado (Lei 12.016/09)."></textarea>
         </div>
       </div>
@@ -1137,34 +1140,34 @@
   </div>
 
   <!-- Modal: Nova Questão -->
-  <div class="modal-overlay hidden" id="modal-new-question">
+  <div class="modal-overlay hidden" id="modal-new-question" role="dialog" aria-modal="true" aria-labelledby="new-q-title">
     <div class="modal-box">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-circle-question text-primary"></i> Adicionar Questão ao Banco</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="new-q-title"><i class="fa-solid fa-circle-question text-primary"></i> Adicionar Questão ao Banco</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Disciplina:</label>
+          <label for="new-q-disciplina">Disciplina:</label>
           <input type="text" class="form-input" id="new-q-disciplina" placeholder="Ex: Direito Administrativo">
         </div>
         <div class="form-group">
-          <label>Assunto:</label>
+          <label for="new-q-assunto">Assunto:</label>
           <input type="text" class="form-input" id="new-q-assunto" placeholder="Ex: Atos Administrativos">
         </div>
         <div class="form-group">
-          <label>Enunciado da Questão:</label>
+          <label for="new-q-enunciado">Enunciado da Questão:</label>
           <textarea class="form-textarea" id="new-q-enunciado" placeholder="Digite o texto da assertiva..."></textarea>
         </div>
         <div class="form-group">
-          <label>Gabarito Correto:</label>
+          <label for="new-q-resposta">Gabarito Correto:</label>
           <select class="form-select" id="new-q-resposta">
             <option value="C">Certo</option>
             <option value="E">Errado</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Explicação / Fundamento do Gabarito:</label>
+          <label for="new-q-explicacao">Explicação / Fundamento do Gabarito:</label>
           <textarea class="form-textarea" id="new-q-explicacao" placeholder="Justificativa com artigo de lei ou jurisprudência..."></textarea>
         </div>
       </div>
@@ -1275,11 +1278,11 @@
   </div>
 
   <!-- Modal: Resultado do Simulado -->
-  <div class="modal-overlay hidden" id="modal-simulado-result">
+  <div class="modal-overlay hidden" id="modal-simulado-result" role="dialog" aria-modal="true" aria-labelledby="sim-res-title">
     <div class="modal-box" style="text-align: center;">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-award text-warning"></i> Relatório do Simulado</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="sim-res-title"><i class="fa-solid fa-award text-warning"></i> Relatório do Simulado</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <div style="font-size: 2.8rem; margin: 10px 0;">🎯</div>
@@ -1323,7 +1326,7 @@
   </div>
 
   <!-- Modal: Level Up -->
-  <div class="modal-overlay hidden" id="modal-level-up">
+  <div class="modal-overlay hidden" id="modal-level-up" role="dialog" aria-modal="true" aria-labelledby="levelup-title">
     <div class="modal-box" style="text-align: center; border: 2px solid var(--color-accent);">
       <div class="modal-body" style="padding: 36px 24px;">
         <div style="font-size: 3.5rem; margin-bottom: 10px;">⚡</div>
@@ -1332,7 +1335,7 @@
         <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 380px; margin: 0 auto 24px;">
           Sua constância e disciplina no papiro foram recompensadas. Continue avançando rumo à posse!
         </p>
-        <button class="btn btn-primary btn-lg modal-close-btn">
+        <button class="btn btn-primary btn-lg modal-close-btn" aria-label="Fechar notificação de nível">
           <i class="fa-solid fa-fire"></i> Rumo à Aprovação!
         </button>
       </div>
@@ -1340,11 +1343,11 @@
   </div>
 
   <!-- Modal: Autenticação (Login e Cadastro) -->
-  <div class="modal-overlay hidden" id="modal-auth">
+  <div class="modal-overlay hidden" id="modal-auth" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
     <div class="modal-box" style="max-width: 440px;">
       <div class="modal-header">
         <h3 id="auth-modal-title"><i class="fa-solid fa-user-shield text-primary"></i> Acessar Conta</h3>
-        <button class="modal-close-btn">&times;</button>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <!-- Abas Login / Cadastro -->
@@ -1355,15 +1358,15 @@
 
         <form id="auth-form" onsubmit="handleAuthSubmit(event)">
           <div class="form-group hidden" id="group-auth-name">
-            <label>Seu Nome Completo:</label>
+            <label for="auth-name">Seu Nome Completo:</label>
             <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Santos">
           </div>
           <div class="form-group">
-            <label>E-mail:</label>
+            <label for="auth-email">E-mail:</label>
             <input type="email" class="form-input" id="auth-email" placeholder="seuemail@exemplo.com" required>
           </div>
           <div class="form-group">
-            <label>Senha:</label>
+            <label for="auth-password">Senha:</label>
             <input type="password" class="form-input" id="auth-password" placeholder="Sua senha secreta (min. 6 dígitos)" minlength="6" required>
           </div>
           <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 10px;">
@@ -1375,11 +1378,11 @@
   </div>
 
   <!-- Modal: Planos & Assinatura PRO -->
-  <div class="modal-overlay hidden" id="modal-upgrade-pro">
+  <div class="modal-overlay hidden" id="modal-upgrade-pro" role="dialog" aria-modal="true" aria-labelledby="upgrade-modal-title">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(37,99,235,0.15));">
-        <h3 style="color: #fbbf24;"><i class="fa-solid fa-crown"></i> Plano Caveira PRO - Acelere sua Aprovação</h3>
-        <button class="modal-close-btn">&times;</button>
+        <h3 id="upgrade-modal-title" style="color: #fbbf24;"><i class="fa-solid fa-crown"></i> Plano Caveira PRO - Acelere sua Aprovação</h3>
+        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
       </div>
       <div class="modal-body">
         <p style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 24px;">
