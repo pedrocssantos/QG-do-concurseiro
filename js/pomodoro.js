@@ -11,14 +11,18 @@ class AudioEngine {
   }
 
   initContext() {
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+    try {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
       }
-    }
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume();
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume().catch(() => {});
+      }
+    } catch (e) {
+      console.warn("Audio Context init warning:", e);
     }
   }
 
@@ -253,7 +257,7 @@ class PomodoroController {
     if (this.state === "running" || this.state === "break") {
       if (!confirm("O cronômetro está rodando. Deseja reiniciar no novo modo?")) return;
     }
-    this.reset();
+    this.reset(false);
     this.mode = mode;
     if (mode === "pomodoro_25") {
       this.secondsRemaining = 25 * 60;
@@ -268,25 +272,32 @@ class PomodoroController {
 
   start(isBreak = false) {
     if (this.state === "running" && !isBreak) return;
-    audio.initContext();
+    try {
+      audio.initContext();
+    } catch (e) {}
 
     const soundSelect = document.getElementById("pomo-sound-select");
     if (soundSelect && soundSelect.value !== "none" && !isBreak) {
-      audio.startAmbientNoise(soundSelect.value);
+      try {
+        audio.startAmbientNoise(soundSelect.value);
+      } catch (e) {}
     }
 
     this.state = isBreak ? "break" : "running";
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = setInterval(() => this.tick(), 1000);
-    this.renderControls();
+    this.render();
   }
 
   pause() {
     if (this.state !== "running" && this.state !== "break") return;
-    clearInterval(this.timerInterval);
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = null;
     this.state = "paused";
-    audio.stopAmbientNoise();
-    this.renderControls();
+    try {
+      audio.stopAmbientNoise();
+    } catch (e) {}
+    this.render();
   }
 
   tick() {
@@ -307,9 +318,12 @@ class PomodoroController {
   }
 
   completeInterval() {
-    clearInterval(this.timerInterval);
-    audio.stopAmbientNoise();
-    audio.playCompletionChime();
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    try {
+      audio.stopAmbientNoise();
+      audio.playCompletionChime();
+    } catch (e) {}
 
     if (this.state === "running") {
       // Salva sessão de estudo líquida no Store
@@ -323,7 +337,7 @@ class PomodoroController {
         showToast("Intervalo merecido! Descanse a mente por alguns minutos.", "info");
         this.start(true); // Inicia o intervalo de descanso
       } else {
-        this.reset();
+        this.reset(false);
       }
     } else if (this.state === "break") {
       this.state = "idle";
@@ -334,11 +348,14 @@ class PomodoroController {
     }
   }
 
-  reset() {
-    clearInterval(this.timerInterval);
-    audio.stopAmbientNoise();
+  reset(askToSave = true) {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    try {
+      audio.stopAmbientNoise();
+    } catch (e) {}
 
-    if (this.totalSessionSeconds >= 60 && this.state !== "break") {
+    if (askToSave && this.totalSessionSeconds >= 60 && this.state !== "break") {
       const minutesStudied = Math.round(this.totalSessionSeconds / 60);
       if (confirm(`Deseja registrar os ${minutesStudied} minutos estudados no seu histórico?`)) {
         this.saveCurrentSession(minutesStudied);
@@ -447,8 +464,9 @@ class PomodoroController {
   }
 
   formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const s = Math.max(0, Math.floor(Number(seconds) || 0));
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
 
@@ -464,14 +482,23 @@ class PomodoroController {
     if (timeDisplay) timeDisplay.textContent = formatted;
     if (zenTimeDisplay) zenTimeDisplay.textContent = formatted;
 
-    // Atualiza o título da aba do navegador para o aluno ver o timer mesmo em outra aba
-    document.title = `${formatted} | Foco no Papiro`;
+    // Atualiza o título da aba do navegador se estiver rodando
+    if (this.state === "running" || this.state === "break") {
+      document.title = `(${formatted}) QG do Concurseiro`;
+    }
 
-    if (progressRing && this.mode !== "stopwatch") {
-      const totalSecs = this.mode === "pomodoro_25" ? 25 * 60 : 50 * 60;
-      const percent = (this.secondsRemaining / totalSecs);
-      const circumference = 2 * Math.PI * 130; // r=130
-      progressRing.style.strokeDashoffset = (circumference * (1 - percent)).toString();
+    if (progressRing) {
+      const circumference = 2 * Math.PI * 130; // 816.814
+      if (this.mode === "stopwatch") {
+        const secInMin = this.secondsElapsed % 60;
+        progressRing.style.strokeDashoffset = (circumference * (1 - secInMin / 60)).toString();
+      } else {
+        const totalSecs = this.state === "break"
+          ? (this.mode === "pomodoro_25" ? 5 * 60 : 10 * 60)
+          : (this.mode === "pomodoro_25" ? 25 * 60 : 50 * 60);
+        const percent = Math.max(0, Math.min(1, this.secondsRemaining / totalSecs));
+        progressRing.style.strokeDashoffset = (circumference * (1 - percent)).toString();
+      }
     }
 
     if (statusText) {
@@ -498,7 +525,7 @@ class PomodoroController {
     const pauseBtn = document.getElementById("pomo-btn-pause");
 
     if (startBtn && pauseBtn) {
-      if (this.state === "running") {
+      if (this.state === "running" || this.state === "break") {
         startBtn.classList.add("hidden");
         pauseBtn.classList.remove("hidden");
       } else {
@@ -511,3 +538,9 @@ class PomodoroController {
 
 const pomodoro = new PomodoroController();
 const pomodoroManager = pomodoro;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof pomodoro !== "undefined") {
+    pomodoro.init();
+  }
+});

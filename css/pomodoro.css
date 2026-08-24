@@ -1,21 +1,14 @@
 /* ==========================================================================
-   QG DO CONCURSEIRO - POMODORO TÁTICO & CRONÔMETRO LÍQUIDO (CSS PURO)
+   QG DO CONCURSEIRO - POMODORO TÁTICO & CRONÔMETRO LÍQUIDO
    ========================================================================== */
 
-.pomodoro-view-layout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 24px;
-}
-
-/* ==========================================================================
-   PAINEL PRINCIPAL DO RADAR POMODORO
-   ========================================================================== */
-.pomodoro-main-card {
+.pomodoro-wrapper {
+  max-width: 620px;
+  margin: 0 auto;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 30px;
+  border-radius: var(--radius-lg, 16px);
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,74 +16,100 @@
   box-shadow: var(--shadow-hud);
 }
 
+/* ==========================================================================
+   SELETOR DE MODO (25/5, 50/10, CRONÔMETRO LIVRE)
+   ========================================================================== */
 .pomo-mode-selector {
   display: flex;
-  background-color: var(--bg-surface-inset);
+  background-color: var(--bg-surface-inset, #0c1017);
   border: 1px solid var(--border-color);
-  padding: 3px;
-  border-radius: var(--radius-xs);
-  gap: 3px;
-  margin-bottom: 24px;
+  padding: 4px;
+  border-radius: 999px;
+  gap: 4px;
+  margin-bottom: 20px;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .pomo-mode-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
   font-weight: 700;
-  padding: 6px 14px;
-  border-radius: var(--radius-xs);
+  padding: 8px 16px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: all 0.2s ease;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .pomo-mode-btn:hover {
   color: var(--text-main);
+  background-color: var(--bg-surface-hover, rgba(255, 255, 255, 0.05));
 }
 
 .pomo-mode-btn.active {
-  background-color: var(--color-warning);
-  color: #000000;
+  background-color: var(--color-primary);
+  color: #ffffff;
   font-weight: 800;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35);
 }
 
 /* ==========================================================================
-   ANEL CIRCULAR HUD (RETÍCULO DE FOCO)
+   ESTÁGIO CIRCULAR DO RELÓGIO (TAMANHO COMPACTO E PERFEITO)
    ========================================================================== */
+.timer-stage,
 .timer-ring-container {
   position: relative;
-  width: 280px;
-  height: 280px;
-  margin: 10px 0 24px;
+  width: 270px;
+  height: 270px;
+  min-width: 270px;
+  min-height: 270px;
+  max-width: 270px;
+  max-height: 270px;
+  margin: 10px auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .timer-svg {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 270px;
+  height: 270px;
+  max-width: 270px;
+  max-height: 270px;
   transform: rotate(-90deg);
+  display: block;
 }
 
 .timer-circle-bg {
   fill: none;
-  stroke: var(--bg-surface-inset);
-  stroke-width: 8;
+  stroke: var(--bg-surface-inset, rgba(255, 255, 255, 0.06));
+  stroke-width: 10;
 }
 
 .timer-circle-progress {
   fill: none;
-  stroke: var(--color-warning);
-  stroke-width: 8;
-  stroke-linecap: square;
-  stroke-dasharray: 816;
+  stroke: var(--color-primary, #3b82f6);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 816.8;
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
-  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
+  transition: stroke-dashoffset 0.8s ease, stroke 0.3s ease;
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.45));
 }
 
+/* ==========================================================================
+   DÍGITOS E STATUS CENTRALIZADOS DENTRO DO ANEL
+   ========================================================================== */
+.timer-display-box,
 .timer-center-content {
   position: absolute;
   inset: 0;
@@ -98,199 +117,205 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
 }
 
+.pomo-badge,
+.timer-status-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.pomo-badge.status-idle {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted, #94a3b8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.pomo-badge.status-running {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.pomo-badge.status-paused {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.pomo-badge.status-break {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.timer-digits,
 .timer-display {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, monospace);
   font-size: 3.4rem;
-  font-weight: 800;
-  color: var(--text-main);
+  font-weight: 900;
+  color: var(--text-main, #ffffff);
   line-height: 1;
   letter-spacing: -0.04em;
   font-feature-settings: "tnum";
-}
-
-.timer-status-text {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--color-warning);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-top: 6px;
+  margin: 2px 0;
+  user-select: none;
 }
 
 /* ==========================================================================
-   CONTROLES DO CRONÔMETRO
+   BOTÕES DE CONTROLE
    ========================================================================== */
+.timer-controls,
 .timer-controls-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
-.btn-timer-primary {
-  width: 130px;
-  font-family: var(--font-display);
-  font-size: 1rem;
+.timer-controls .btn-lg {
+  min-width: 150px;
+  padding: 12px 20px;
+  font-size: 0.95rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.pomo-ambient-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-}
-
-.ambient-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--text-muted);
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-fast);
-}
-
-.ambient-btn:hover {
-  color: var(--text-main);
-  background: var(--bg-surface-hover);
-}
-
-.ambient-btn.active {
-  color: var(--color-cyan);
-  border-color: rgba(6, 182, 212, 0.4);
-  background: rgba(6, 182, 212, 0.1);
-}
-
-/* ==========================================================================
-   COLUNA LATERAL: REGISTRO DA SESSÃO
-   ========================================================================== */
-.pomo-side-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.recent-sessions-list {
-  display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
-.session-history-item {
-  background-color: var(--bg-surface-elevated);
+/* ==========================================================================
+   CONFIGURAÇÕES DA SESSÃO (DISCIPLINA E SOM)
+   ========================================================================== */
+.timer-settings-card {
+  width: 100%;
+  background-color: var(--bg-surface-elevated, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-xs);
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  border-radius: var(--radius-md, 10px);
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  text-align: left;
 }
 
-.session-hist-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.session-hist-disc {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.session-hist-type {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--text-dimmed);
-  text-transform: uppercase;
-}
-
-.session-hist-mins {
-  font-family: var(--font-mono);
+.timer-settings-card label {
   font-size: 0.82rem;
-  font-weight: 700;
-  color: #38bdf8;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ==========================================================================
-   MODO ZEN EM TELA CHEIA (COCKPIT TÁTICO)
+   MODO ZEN EM TELA CHEIA
    ========================================================================== */
+.zen-overlay,
 .zen-mode-overlay {
   position: fixed;
   inset: 0;
-  background-color: #05070c;
+  background-color: #060911;
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 70%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 70%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 100% 100%, 40px 40px, 40px 40px;
-  z-index: 9999;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 24px;
+}
+
+.zen-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 900px;
+}
+
+.zen-center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  max-width: 100vw;
-  max-height: 100vh;
-  overflow: hidden;
+  text-align: center;
 }
 
-.zen-close-btn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  padding: 8px 16px;
-  border-radius: var(--radius-xs);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.zen-close-btn:hover {
-  color: #fff;
-  border-color: var(--color-danger);
-}
-
-.zen-timer-display {
-  font-family: var(--font-mono);
-  font-size: clamp(3.2rem, 16vw, 7rem);
-  font-weight: 800;
+.zen-digits {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(4rem, 16vw, 8.5rem);
+  font-weight: 900;
   color: #ffffff;
   line-height: 1;
   letter-spacing: -0.05em;
-  margin: 14px 0;
-  text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
-  text-align: center;
+  text-shadow: 0 0 40px rgba(59, 130, 246, 0.35);
+  font-feature-settings: "tnum";
 }
 
-.zen-discipline-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.1rem, 4vw, 1.5rem);
-  font-weight: 700;
-  color: var(--color-warning);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  text-align: center;
+.zen-quote {
+  color: var(--text-muted, #94a3b8);
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+  max-width: 540px;
+  margin-top: 20px;
+  font-style: italic;
+  line-height: 1.5;
 }
 
-@media (max-width: 900px) {
-  .pomodoro-view-layout {
+.zen-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE MOBILE
+   ========================================================================== */
+@media (max-width: 640px) {
+  .pomodoro-wrapper {
+    padding: 24px 16px;
+  }
+  .timer-stage,
+  .timer-ring-container,
+  .timer-svg {
+    width: 240px;
+    height: 240px;
+    min-width: 240px;
+    min-height: 240px;
+    max-width: 240px;
+    max-height: 240px;
+  }
+  .timer-digits,
+  .timer-display {
+    font-size: 2.8rem;
+  }
+  .timer-controls .btn-lg {
+    min-width: 100%;
+  }
+  .timer-settings-card {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
