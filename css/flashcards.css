@@ -156,6 +156,10 @@
   color: var(--text-main);
   padding: 16px 0;
   text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+  max-height: 220px;
 }
 
 .flashcard-back .fc-card-content {
@@ -166,7 +170,7 @@
 }
 
 .flashcard-back .fc-card-content strong {
-  color: #34d399;
+  color: var(--color-accent);
 }
 
 .fc-card-footer {
@@ -257,4 +261,10 @@
 @keyframes gradeFade {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 560px) {
+  .fc-grade-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

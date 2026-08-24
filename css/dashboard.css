@@ -307,7 +307,8 @@
   top: 14px;
   right: 18px;
   font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.03);
+  color: var(--border-color);
+  opacity: 0.3;
 }
 
 .quote-card blockquote {
@@ -343,6 +344,7 @@
   width: 100%;
   height: 250px;
   position: relative;
+  overflow: hidden;
 }
 
 .canvas-container canvas {
@@ -358,6 +360,7 @@
   grid-auto-flow: column;
   gap: 4px;
   padding: 8px 0;
+  overflow-x: auto;
 }
 
 .heatmap-cell {
@@ -365,21 +368,21 @@
   aspect-ratio: 1;
   border-radius: var(--radius-xs);
   background-color: var(--bg-surface-inset);
-  border: 1px solid rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
   transition: var(--transition-fast);
   cursor: pointer;
 }
 
 .heatmap-cell:hover {
-  border-color: #ffffff;
+  border-color: var(--text-main);
   transform: scale(1.15);
   z-index: 5;
 }
 
-.heatmap-cell.level-0 { background-color: rgba(255, 255, 255, 0.03); }
-.heatmap-cell.level-1 { background-color: #064e3b; border-color: rgba(16, 185, 129, 0.2); }
-.heatmap-cell.level-2 { background-color: #047857; border-color: rgba(16, 185, 129, 0.4); }
-.heatmap-cell.level-3 { background-color: #10b981; border-color: rgba(16, 185, 129, 0.6); }
+.heatmap-cell.level-0 { background-color: var(--bg-surface-inset); }
+.heatmap-cell.level-1 { background-color: #064e3b; border-color: rgba(16, 185, 129, 0.3); }
+.heatmap-cell.level-2 { background-color: #047857; border-color: rgba(16, 185, 129, 0.5); }
+.heatmap-cell.level-3 { background-color: #10b981; border-color: rgba(16, 185, 129, 0.7); }
 .heatmap-cell.level-4 { 
   background-color: #34d399; 
   border-color: #6ee7b7; 
@@ -406,5 +409,36 @@
 @media (max-width: 1000px) {
   .dash-main-grid, .charts-grid-2col {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .hero-quick-actions {
+    width: 100%;
+  }
+
+  .hero-quick-actions .btn {
+    flex: 1;
+  }
+
+  .mission-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .mission-right {
+    width: 100%;
+    justify-content: space-between;
   }
 }

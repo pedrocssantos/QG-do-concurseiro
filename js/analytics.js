@@ -3,6 +3,21 @@
 // ==========================================================================
 
 class PapiroCharts {
+  static getThemeColors() {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    return {
+      isLight,
+      gridLine: isLight ? "rgba(100, 116, 139, 0.18)" : "rgba(255, 255, 255, 0.07)",
+      textMain: isLight ? "#0f172a" : "#ffffff",
+      textMuted: isLight ? "#475569" : "rgba(255, 255, 255, 0.7)",
+      textDimmed: isLight ? "#64748b" : "rgba(255, 255, 255, 0.4)",
+      textContrast: "#ffffff",
+      emptyDonut: isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.1)",
+      radarGrid: isLight ? "rgba(100, 116, 139, 0.22)" : "rgba(255, 255, 255, 0.1)",
+      pointBorder: "#ffffff"
+    };
+  }
+
   static setupCanvas(canvas) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
@@ -18,6 +33,7 @@ class PapiroCharts {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const { ctx, width, height } = this.setupCanvas(canvas);
+    const theme = this.getThemeColors();
 
     const padding = { top: 25, right: 25, bottom: 40, left: 45 };
     const chartW = width - padding.left - padding.right;
@@ -33,7 +49,7 @@ class PapiroCharts {
     });
 
     // Grid horizontal suave
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+    ctx.strokeStyle = theme.gridLine;
     ctx.lineWidth = 1;
     const gridLines = 4;
     for (let i = 0; i <= gridLines; i++) {
@@ -44,7 +60,7 @@ class PapiroCharts {
       ctx.stroke();
 
       const labelVal = (maxValue * (1 - i / gridLines)).toFixed(1);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillStyle = theme.textDimmed;
       ctx.font = "11px Inter, sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(`${labelVal}h`, padding.left - 8, y + 4);
@@ -91,12 +107,12 @@ class PapiroCharts {
       ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
       ctx.fillStyle = "#3b82f6";
       ctx.fill();
-      ctx.strokeStyle = "#ffffff";
+      ctx.strokeStyle = theme.pointBorder;
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // Label X
-      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.fillStyle = theme.textMuted;
       ctx.font = "11px Inter, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(pt.label, pt.x, height - 12);
@@ -108,6 +124,7 @@ class PapiroCharts {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const { ctx, width, height } = this.setupCanvas(canvas);
+    const theme = this.getThemeColors();
 
     const padding = { top: 25, right: 20, bottom: 45, left: 45 };
     const chartW = width - padding.left - padding.right;
@@ -121,7 +138,7 @@ class PapiroCharts {
     const spacing = chartW / items.length;
 
     // Linhas horizontais
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+    ctx.strokeStyle = theme.gridLine;
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
       const y = padding.top + (chartH / 4) * i;
@@ -131,7 +148,7 @@ class PapiroCharts {
       ctx.stroke();
 
       const labelVal = Math.round(maxVal * (1 - i / 4));
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillStyle = theme.textDimmed;
       ctx.font = "11px Inter, sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(`${labelVal}`, padding.left - 8, y + 4);
@@ -148,14 +165,14 @@ class PapiroCharts {
       ctx.fill();
 
       // Valor no topo da barra
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = theme.textMain;
       ctx.font = "bold 11px Inter, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(`${it.value}`, x + barWidth / 2, y - 6);
 
       // Nome da matéria truncado
       const shortName = it.label.length > 8 ? it.label.substring(0, 7) + "…" : it.label;
-      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.fillStyle = theme.textMuted;
       ctx.font = "11px Inter, sans-serif";
       ctx.fillText(shortName, x + barWidth / 2, height - 12);
     });
@@ -166,6 +183,7 @@ class PapiroCharts {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const { ctx, width, height } = this.setupCanvas(canvas);
+    const theme = this.getThemeColors();
 
     ctx.clearRect(0, 0, width, height);
     if (!items || items.length === 0) return;
@@ -183,7 +201,7 @@ class PapiroCharts {
       ctx.beginPath();
       ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2);
       ctx.arc(centerX, centerY, innerRadius, Math.PI * 2, 0, true);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+      ctx.fillStyle = theme.emptyDonut;
       ctx.fill();
     } else {
       items.forEach(it => {
@@ -203,13 +221,13 @@ class PapiroCharts {
 
     // Texto no Centro
     const totalHours = (total / 60).toFixed(1);
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = theme.textMain;
     ctx.font = "bold 16px Inter, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(centerText || `${totalHours}h Total`, centerX, centerY - 6);
 
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillStyle = theme.textMuted;
     ctx.font = "11px Inter, sans-serif";
     ctx.fillText("Horas no Papiro", centerX, centerY + 14);
   }
@@ -219,10 +237,11 @@ class PapiroCharts {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const { ctx, width, height } = this.setupCanvas(canvas);
+    const theme = this.getThemeColors();
 
     ctx.clearRect(0, 0, width, height);
     if (!items || items.length < 3) {
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillStyle = theme.textDimmed;
       ctx.font = "12px Inter, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -238,7 +257,7 @@ class PapiroCharts {
 
     // Polígonos de Fundo (Grades)
     const levels = 4;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.strokeStyle = theme.radarGrid;
     ctx.lineWidth = 1;
 
     for (let lvl = 1; lvl <= levels; lvl++) {
@@ -268,7 +287,7 @@ class PapiroCharts {
       // Rótulos nos vértices
       const labelX = centerX + Math.cos(angle) * (radius + 18);
       const labelY = centerY + Math.sin(angle) * (radius + 18);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.fillStyle = theme.textMain;
       ctx.font = "10px Inter, sans-serif";
       ctx.textAlign = Math.abs(Math.cos(angle)) < 0.3 ? "center" : (Math.cos(angle) > 0 ? "left" : "right");
       ctx.textBaseline = "middle";
@@ -305,7 +324,7 @@ class PapiroCharts {
       ctx.arc(x, y, 4, 0, Math.PI * 2);
       ctx.fillStyle = "#10b981";
       ctx.fill();
-      ctx.strokeStyle = "#ffffff";
+      ctx.strokeStyle = theme.pointBorder;
       ctx.lineWidth = 1.5;
       ctx.stroke();
     });

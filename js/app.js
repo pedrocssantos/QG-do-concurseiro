@@ -212,6 +212,12 @@ class App {
     if (themeIcon) {
       themeIcon.className = theme === "dark" ? "fa-solid fa-sun" : "fa-solid fa-moon";
     }
+
+    if (this.currentRoute === "dashboard") {
+      dashboardManager.renderCharts();
+    } else if (this.currentRoute === "desempenho") {
+      this.renderDesempenhoView();
+    }
   }
 
   bindModalHandlers() {

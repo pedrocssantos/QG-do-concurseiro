@@ -54,7 +54,7 @@
 .btn-secondary:hover {
   background-color: var(--bg-surface-hover);
   border-color: var(--border-color-strong);
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .btn-success {
@@ -142,7 +142,7 @@
 
 .card-header {
   padding: 14px 18px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-header-tint);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -193,12 +193,12 @@
   font-size: 0.9rem;
   outline: none;
   transition: var(--transition-fast);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
   border-color: var(--color-warning);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-warning-glow);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--color-warning-glow);
 }
 
 .form-textarea {
@@ -264,6 +264,8 @@
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   position: relative;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .modal-header {
@@ -272,7 +274,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-header-tint);
 }
 
 .modal-header h3 {
@@ -313,7 +315,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--bg-header-tint);
 }
 
 @keyframes modalFade {
@@ -436,7 +438,7 @@
 
 .q-high { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
 .q-med { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
-.q-zero { background: rgba(255, 255, 255, 0.04); color: var(--text-dimmed); border: 1px solid var(--border-color); }
+.q-zero { background: var(--bg-surface-inset); color: var(--text-dimmed); border: 1px solid var(--border-color); }
 
 .action-btn-icon {
   background: var(--bg-surface-elevated);
@@ -677,6 +679,12 @@
 /* ==========================================================================
    RANKING TÁTICO, PATENTES & MEDALHAS
    ========================================================================== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
@@ -690,7 +698,7 @@
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-dimmed);
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-header-tint);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -762,7 +770,7 @@
 }
 
 .acc-high { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-.acc-normal { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+.acc-normal { background: var(--bg-surface-inset); color: var(--text-muted); border: 1px solid var(--border-color); }
 
 .xp-val {
   font-family: var(--font-mono);
@@ -895,4 +903,36 @@
 .text-warning { color: var(--color-warning); }
 .text-success { color: var(--color-accent); }
 .text-danger { color: var(--color-danger); }
+
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: 8px;
+  }
+
+  .modal-box {
+    max-height: 94vh;
+  }
+
+  .modal-body {
+    padding: 14px;
+  }
+
+  .modal-header {
+    padding: 12px 14px;
+  }
+
+  .modal-footer {
+    padding: 10px 14px;
+  }
+
+  .badges-grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .level-progress-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
 
