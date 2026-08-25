@@ -216,13 +216,22 @@ class SupabaseService {
         session_type: s.type || "pomodoro",
         duration_minutes: s.durationMinutes,
         date: s.date,
-        timestamp: s.timestamp || Date.now()
+        timestamp: s.timestamp || Date.now(),
+        updated_at: s.updated_at || new Date().toISOString()
       }));
 
       // Mescla com sessões da nuvem
       (cloudSessions || []).forEach(cs => {
-        if (!sessionMap.has(cs.id)) {
+        const local = sessionMap.get(cs.id);
+        if (!local) {
           sessionMap.set(cs.id, cs);
+        } else {
+          // Cloud wins if it has a more recent update
+          const cloudTime = cs.updated_at ? new Date(cs.updated_at).getTime() : 0;
+          const localTime = local.updated_at ? new Date(local.updated_at).getTime() : 0;
+          if (cloudTime > localTime) {
+            sessionMap.set(cs.id, cs);
+          }
         }
       });
 
@@ -233,15 +242,21 @@ class SupabaseService {
         type: s.session_type,
         durationMinutes: s.duration_minutes,
         date: s.date,
-        timestamp: Number(s.timestamp)
+        timestamp: Number(s.timestamp),
+        updated_at: s.updated_at
       }));
 
       store.data.studySessions = mergedSessions;
 
-      // Envia sessões locais que não estavam na nuvem
-      const newSessionsToUpload = Array.from(sessionMap.values()).filter(s => 
-        !(cloudSessions || []).some(cs => cs.id === s.id)
-      );
+      // Envia sessões locais que não estavam na nuvem ou foram atualizadas
+      const cloudSessionMap = new Map((cloudSessions || []).map(cs => [cs.id, cs]));
+      const newSessionsToUpload = Array.from(sessionMap.values()).filter(s => {
+        const cloud = cloudSessionMap.get(s.id);
+        if (!cloud) return true; // New record
+        const cloudTime = cloud.updated_at ? new Date(cloud.updated_at).getTime() : 0;
+        const localTime = s.updated_at ? new Date(s.updated_at).getTime() : 0;
+        return localTime > cloudTime; // Updated locally
+      });
       if (newSessionsToUpload.length > 0) {
         await this.client.from("study_sessions").upsert(newSessionsToUpload);
       }
@@ -260,13 +275,21 @@ class SupabaseService {
           selected_answer: h.selectedAnswer || h.userAnswer || "",
           is_correct: !!h.isCorrect,
           mode: h.mode || "treino",
-          timestamp: h.timestamp || Date.now()
+          timestamp: h.timestamp || Date.now(),
+          updated_at: h.updated_at || new Date().toISOString()
         });
       });
 
       (cloudAttempts || []).forEach(ca => {
-        if (!attemptMap.has(ca.id)) {
+        const local = attemptMap.get(ca.id);
+        if (!local) {
           attemptMap.set(ca.id, ca);
+        } else {
+          const cloudTime = ca.updated_at ? new Date(ca.updated_at).getTime() : 0;
+          const localTime = local.updated_at ? new Date(local.updated_at).getTime() : 0;
+          if (cloudTime > localTime) {
+            attemptMap.set(ca.id, ca);
+          }
         }
       });
 
@@ -277,12 +300,18 @@ class SupabaseService {
         isCorrect: a.is_correct,
         mode: a.mode,
         timestamp: Number(a.timestamp),
-        date: new Date(Number(a.timestamp)).toISOString().split("T")[0]
+        date: new Date(Number(a.timestamp)).toISOString().split("T")[0],
+        updated_at: a.updated_at
       }));
 
-      const newAttemptsToUpload = Array.from(attemptMap.values()).filter(a => 
-        !(cloudAttempts || []).some(ca => ca.id === a.id)
-      );
+      const cloudAttemptMap = new Map((cloudAttempts || []).map(ca => [ca.id, ca]));
+      const newAttemptsToUpload = Array.from(attemptMap.values()).filter(a => {
+        const cloud = cloudAttemptMap.get(a.id);
+        if (!cloud) return true;
+        const cloudTime = cloud.updated_at ? new Date(cloud.updated_at).getTime() : 0;
+        const localTime = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+        return localTime > cloudTime;
+      });
       if (newAttemptsToUpload.length > 0) {
         await this.client.from("question_attempts").upsert(newAttemptsToUpload.slice(0, 100)); // Lotes de 100
       }
@@ -299,12 +328,20 @@ class SupabaseService {
         reason: e.reason || "conteudo",
         notes: e.note || e.notes || "",
         resolved: !!e.resolved,
-        created_at: e.date ? new Date(e.date).toISOString() : new Date().toISOString()
+        created_at: e.date ? new Date(e.date).toISOString() : new Date().toISOString(),
+        updated_at: e.updated_at || new Date().toISOString()
       }));
 
       (cloudErrors || []).forEach(ce => {
-        if (!errorMap.has(ce.id)) {
+        const local = errorMap.get(ce.id);
+        if (!local) {
           errorMap.set(ce.id, ce);
+        } else {
+          const cloudTime = ce.updated_at ? new Date(ce.updated_at).getTime() : 0;
+          const localTime = local.updated_at ? new Date(local.updated_at).getTime() : 0;
+          if (cloudTime > localTime) {
+            errorMap.set(ce.id, ce);
+          }
         }
       });
 
@@ -314,12 +351,18 @@ class SupabaseService {
         reason: e.reason,
         note: e.notes,
         resolved: e.resolved,
-        date: e.created_at ? e.created_at.split("T")[0] : new Date().toISOString().split("T")[0]
+        date: e.created_at ? e.created_at.split("T")[0] : new Date().toISOString().split("T")[0],
+        updated_at: e.updated_at
       }));
 
-      const newErrorsToUpload = Array.from(errorMap.values()).filter(e => 
-        !(cloudErrors || []).some(ce => ce.id === e.id)
-      );
+      const cloudErrorMap = new Map((cloudErrors || []).map(ce => [ce.id, ce]));
+      const newErrorsToUpload = Array.from(errorMap.values()).filter(e => {
+        const cloud = cloudErrorMap.get(e.id);
+        if (!cloud) return true;
+        const cloudTime = cloud.updated_at ? new Date(cloud.updated_at).getTime() : 0;
+        const localTime = e.updated_at ? new Date(e.updated_at).getTime() : 0;
+        return localTime > cloudTime;
+      });
       if (newErrorsToUpload.length > 0) {
         await this.client.from("user_errors").upsert(newErrorsToUpload);
       }
@@ -352,7 +395,8 @@ class SupabaseService {
         session_type: session.type || "pomodoro",
         duration_minutes: session.durationMinutes,
         date: session.date,
-        timestamp: session.timestamp || Date.now()
+        timestamp: session.timestamp || Date.now(),
+        updated_at: new Date().toISOString()
       });
       this.scheduleSync(3000);
     } catch (e) {
@@ -370,7 +414,8 @@ class SupabaseService {
         selected_answer: answer.selectedAnswer || "",
         is_correct: answer.isCorrect,
         mode: answer.mode || "treino",
-        timestamp: answer.timestamp || Date.now()
+        timestamp: answer.timestamp || Date.now(),
+        updated_at: new Date().toISOString()
       });
       this.scheduleSync(3000);
     } catch (e) {
@@ -387,7 +432,8 @@ class SupabaseService {
         question_id: errItem.questionId,
         reason: errItem.reason || "conteudo",
         notes: errItem.note || "",
-        resolved: !!errItem.resolved
+        resolved: !!errItem.resolved,
+        updated_at: new Date().toISOString()
       });
     } catch (e) {
       console.warn("Erro ao salvar erro na nuvem:", e);

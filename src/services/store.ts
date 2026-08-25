@@ -4,6 +4,7 @@
 import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGES, DEFAULT_LEADERBOARD } from "../data/data";
 import { db } from "./supabase";
 import { localDB } from "./dexie";
+import { showToast } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)
@@ -14,12 +15,30 @@ const STORAGE_KEY = "foco_no_papiro_v1";
 class Store {
   constructor() {
     this.listeners = [];
+    this._isSaving = false;
     this.data = this.loadInitialData();
     if (!this.data.ciclo || !this.data.ciclo.items || this.data.ciclo.items.length === 0) {
       this.rebuildCicloForConcurso(this.data.activeConcursoId || "pf-agente");
     }
     this.checkStreakLiveness();
     this.ensureDailyMissions();
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === STORAGE_KEY && event.newValue && !this._isSaving) {
+        try {
+          this.data = this.sanitizeState(JSON.parse(event.newValue));
+          this.listeners.forEach(cb => {
+            try {
+              cb("external_sync", {});
+            } catch (err) {
+              console.error("Erro no listener do store (external_sync):", err);
+            }
+          });
+        } catch (e) {
+          console.error("Erro ao sincronizar dados da aba:", e);
+        }
+      }
+    });
   }
 
   // Helper para obter a data local no formato YYYY-MM-DD (Horário de Brasília / Local)
@@ -45,6 +64,7 @@ class Store {
 
   getDefaultState() {
     return {
+      _schemaVersion: 2,
       profile: {
         name: "Concurseiro(a)",
         title: "Recruta",
@@ -140,6 +160,24 @@ class Store {
   sanitizeState(state) {
     if (!state || typeof state !== "object") return this.getDefaultState();
 
+    if (state._schemaVersion === undefined || state._schemaVersion < 2) {
+      if (Array.isArray(state.concursos)) {
+        state.concursos.forEach(c => {
+          if (Array.isArray(c.disciplinas)) {
+            c.disciplinas.forEach(d => {
+              if (Array.isArray(d.topicos)) {
+                d.topicos.forEach(t => {
+                  if (t.r24h && !t.r24hDate) t.r24hDate = this.getLocalDateString();
+                  if (t.r7d && !t.r7dDate) t.r7dDate = this.getLocalDateString();
+                });
+              }
+            });
+          }
+        });
+      }
+      state._schemaVersion = 2;
+    }
+
     if (!Array.isArray(state.concursos) || state.concursos.length === 0) {
       state.concursos = JSON.parse(JSON.stringify(DEFAULT_CONCURSOS));
     }
@@ -196,16 +234,38 @@ class Store {
   }
 
   save() {
+    this._isSaving = true;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+      } catch (e) {
+        if (e instanceof DOMException && e.name === "QuotaExceededError") {
+          if (this.data.studySessions) {
+            const ninetyDaysAgo = Date.now() - 90 * 24 * 60 * 60 * 1000;
+            this.data.studySessions = this.data.studySessions.filter(s => (s.timestamp || 0) >= ninetyDaysAgo);
+          }
+          if (this.data.questionHistory && this.data.questionHistory.length > 500) {
+            this.data.questionHistory.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            this.data.questionHistory = this.data.questionHistory.slice(0, 500);
+          }
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+          } catch (e2) {
+            console.error("Erro após trim:", e2);
+            showToast("Aviso: Limite de armazenamento excedido. Tente apagar dados antigos.", "warning");
+          }
+        } else {
+          console.error("Erro ao salvar no LocalStorage:", e);
+        }
+      }
       if (typeof localDB !== "undefined" && localDB.saveAppState) {
         localDB.saveAppState(this.data);
       }
       if (typeof db !== "undefined" && db.scheduleSync) {
         db.scheduleSync();
       }
-    } catch (e) {
-      console.error("Erro ao salvar no LocalStorage:", e);
+    } finally {
+      this._isSaving = false;
     }
   }
 

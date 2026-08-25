@@ -17,6 +17,56 @@ class QGDatabase extends Dexie {
       custom_flashcards: "id, disciplinaId"
     });
 
+    this.version(2).stores({
+      state: "key",
+      study_sessions: null,
+      question_attempts: null,
+      user_errors: null,
+      flashcards_progress: null,
+      custom_questions: null,
+      custom_flashcards: null
+    }).upgrade(async tx => {
+      console.log("📦 Dexie V2: Consolidando tabelas relacionais em state blob...");
+      
+      const stateRecord = await tx.table("state").get("app_state");
+      const appState = stateRecord ? stateRecord.data : {};
+      let stateModified = false;
+
+      // Migrate any relational data into the state blob before tables are dropped
+      try {
+        const studySessions = await tx.table("study_sessions").toArray();
+        if (studySessions && studySessions.length > 0 && !appState.studySessions) {
+          appState.studySessions = studySessions;
+          stateModified = true;
+        }
+      } catch (e) {}
+
+      try {
+        const questionHistory = await tx.table("question_attempts").toArray();
+        if (questionHistory && questionHistory.length > 0 && !appState.questionHistory) {
+          appState.questionHistory = questionHistory;
+          stateModified = true;
+        }
+      } catch (e) {}
+
+      try {
+        const cadernoErros = await tx.table("user_errors").toArray();
+        if (cadernoErros && cadernoErros.length > 0 && !appState.cadernoErros) {
+          appState.cadernoErros = cadernoErros;
+          stateModified = true;
+        }
+      } catch (e) {}
+      
+      if (stateModified) {
+        await tx.table("state").put({
+          key: "app_state",
+          data: appState,
+          updated_at: Date.now()
+        });
+        console.log("✅ Dados das tabelas antigas integrados ao state blob.");
+      }
+    });
+
     this.isMigrated = false;
   }
 
@@ -34,21 +84,13 @@ class QGDatabase extends Dexie {
           try {
             const legacyData = JSON.parse(legacyRaw);
 
-            // 1. Salva snapshot completo no store 'state'
-            await this.state.put({ key: "app_state", data: legacyData, updated_at: Date.now() });
-
-            // 2. Popula tabelas relacionais locais
-            if (Array.isArray(legacyData.studySessions)) {
-              await this.study_sessions.bulkPut(legacyData.studySessions);
+            if (legacyData && typeof legacyData === "object" && !Array.isArray(legacyData)) {
+              // 1. Salva snapshot completo no store 'state'
+              await this.table('state').put({ key: "app_state", data: legacyData, updated_at: Date.now() });
+              console.log("✅ Migração concluída: Dados copiados para IndexedDB.");
+            } else {
+              console.warn("Estrutura do LocalStorage inválida. Migração abortada.");
             }
-            if (Array.isArray(legacyData.questionHistory)) {
-              await this.question_attempts.bulkPut(legacyData.questionHistory);
-            }
-            if (Array.isArray(legacyData.cadernoErros)) {
-              await this.user_errors.bulkPut(legacyData.cadernoErros);
-            }
-
-            console.log(`✅ Migração concluída: ${legacyData.studySessions?.length || 0} sessões, ${legacyData.questionHistory?.length || 0} questões copiadas para IndexedDB.`);
           } catch (parseErr) {
             console.warn("Aviso ao ler dados legados do LocalStorage:", parseErr);
           }
@@ -68,7 +110,7 @@ class QGDatabase extends Dexie {
   async saveAppState(stateData) {
     if (!this.isOpen()) return;
     try {
-      await this.state.put({
+      await this.table('state').put({
         key: "app_state",
         data: stateData,
         updated_at: Date.now()
@@ -82,11 +124,29 @@ class QGDatabase extends Dexie {
   async loadAppState() {
     if (!this.isOpen()) return null;
     try {
-      const record = await this.state.get("app_state");
+      const record = await this.table('state').get("app_state");
       return record ? record.data : null;
     } catch (e) {
       console.warn("Aviso ao carregar do IndexedDB:", e);
       return null;
+    }
+  }
+
+  // Retorna tamanho aproximado armazenado (útil para gerenciamento de quota)
+  async getStorageStats() {
+    if (!this.isOpen()) return { sizeBytes: 0, sizeMB: "0.00" };
+    try {
+      const record = await this.table('state').get("app_state");
+      if (!record || !record.data) return { sizeBytes: 0, sizeMB: "0.00" };
+      
+      const sizeBytes = new Blob([JSON.stringify(record.data)]).size;
+      return {
+        sizeBytes,
+        sizeMB: (sizeBytes / (1024 * 1024)).toFixed(2)
+      };
+    } catch (e) {
+      console.warn("Erro ao calcular stats de storage:", e);
+      return { sizeBytes: 0, sizeMB: "0.00" };
     }
   }
 }
@@ -95,5 +155,6 @@ const localDB = new QGDatabase();
 export { QGDatabase, localDB };
 
 if (typeof window !== "undefined") {
+  // @ts-ignore
   window.localDB = localDB;
 }
