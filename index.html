@@ -55,9 +55,12 @@
         <a href="#questoes" class="nav-link"><i class="fa-solid fa-circle-question"></i> Questões & Simulado</a>
         <a href="#flashcards" class="nav-link"><i class="fa-solid fa-layer-group"></i> Flashcards SRS</a>
         <a href="#erros" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Caderno de Erros</a>
+        <a href="#leis" class="nav-link"><i class="fa-solid fa-scale-balanced"></i> Vade Mecum & Leis</a>
 
         <span class="nav-section-title">Ferramentas & Evolução</span>
         <a href="#pomodoro" class="nav-link"><i class="fa-solid fa-stopwatch"></i> Foco Pomodoro</a>
+        <a href="#discursiva" class="nav-link"><i class="fa-solid fa-pen-nib"></i> Redação Discursiva</a>
+        <a href="#taf" class="nav-link"><i class="fa-solid fa-person-running"></i> Treino TAF</a>
         <a href="#desempenho" class="nav-link"><i class="fa-solid fa-chart-line"></i> Estatísticas & Métricas</a>
         <a href="#ranking" class="nav-link"><i class="fa-solid fa-trophy"></i> Ranking & Conquistas</a>
         <a href="#configuracoes" class="nav-link"><i class="fa-solid fa-gear"></i> Configurações</a>
@@ -497,7 +500,10 @@
             <h1>Caderno de Erros Automatizado</h1>
             <p>O segredo da aprovação é blindar os seus erros. Toda questão errada é arquivada aqui para reestudo.</p>
           </div>
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-warning btn-sm" id="btn-treinar-erros" title="Iniciar sessão prática exclusiva com os erros pendentes">
+              <i class="fa-solid fa-crosshairs"></i> Treinar Erros
+            </button>
             <button class="btn btn-secondary btn-sm" id="btn-print-erros" title="Exportar e Imprimir Caderno de Erros">
               <i class="fa-solid fa-print"></i> Imprimir / PDF
             </button>
@@ -530,6 +536,282 @@
           <i class="fa-solid fa-shield-halved empty-state-icon text-success"></i>
           <h3>Nenhum erro registrado neste filtro!</h3>
           <p>Você está com o conteúdo blindado ou sem questões pendentes de correção.</p>
+        </div>
+      </div>
+
+      <!-- VIEW: VADE MECUM & LEGISLAÇÃO SECA -->
+      <div class="view-content-wrapper view-section hidden" id="view-leis">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1><i class="fa-solid fa-scale-balanced text-primary"></i> Vade Mecum & Legislação Seca Tática</h1>
+            <p>Leitura ativa e grifada dos artigos mais cobrados em concursos policiais (CF/88, CP, CPP, Leis Especiais).</p>
+          </div>
+          <div class="leis-header-stats">
+            <div class="stat-pill">
+              <span>Progresso:</span>
+              <strong id="lei-progress-percent">0%</strong>
+            </div>
+            <span class="text-dimmed" id="lei-progress-count">0 artigos lidos</span>
+          </div>
+        </div>
+
+        <!-- Seletor de Diplomas / Leis -->
+        <div class="leis-diplomas-scroll" id="leis-diplomas-tabs">
+          <!-- Popula dinamicamente -->
+        </div>
+
+        <!-- Informações do Diploma Ativo & Toolbar -->
+        <div class="lei-active-card">
+          <div class="lei-active-meta">
+            <h2 id="lei-active-title">CF/88 - Constituição Federal</h2>
+            <p id="lei-active-desc">Artigos fundamentais de Direitos e Garantias e Segurança Pública.</p>
+          </div>
+          <div class="filter-toolbar" style="margin-top: 12px;">
+            <div class="search-input-wrapper" style="flex: 1; max-width: 400px;">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" class="search-input" id="lei-search-input" placeholder="Buscar artigo ou palavra-chave (ex: prisão, flagrante)...">
+            </div>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; cursor: pointer; color: var(--text-muted);">
+              <input type="checkbox" id="lei-filter-unread"> Apenas não lidos
+            </label>
+          </div>
+        </div>
+
+        <!-- Lista de Artigos -->
+        <div class="leis-artigos-list" id="leis-artigos-container">
+          <!-- Renderizado via LeisManager -->
+        </div>
+      </div>
+
+      <!-- VIEW: REDAÇÃO DISCURSIVA -->
+      <div class="view-content-wrapper view-section hidden" id="view-discursiva">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1><i class="fa-solid fa-pen-nib text-primary"></i> Laboratório de Prova Discursiva & Redação</h1>
+            <p>Treine temas quentes de Carreiras Policiais na folha oficial de 30 linhas com temporizador de prova.</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select class="filter-select" id="discursiva-tema-select" style="max-width: 320px;">
+              <!-- Temas populados dinamicamente -->
+            </select>
+          </div>
+        </div>
+
+        <div class="discursiva-main-grid">
+          <!-- Coluna da Esquerda: Tema e Padrão da Banca -->
+          <div class="discursiva-prompt-panel">
+            <div class="discursiva-meta-badges">
+              <span class="badge-disc" id="discursiva-tema-orgao">Polícia Federal</span>
+              <span class="badge-assunto" id="discursiva-tema-banca">Cebraspe</span>
+            </div>
+            <h2 class="discursiva-theme-title" id="discursiva-tema-titulo">Tema da Redação</h2>
+            
+            <div class="discursiva-box">
+              <h4><i class="fa-solid fa-quote-left"></i> Texto Motivador:</h4>
+              <p id="discursiva-texto-motivador">Texto motivador da banca...</p>
+            </div>
+
+            <div class="discursiva-box">
+              <h4><i class="fa-solid fa-list-check"></i> Tópicos Obrigatórios a Abordar:</h4>
+              <ul class="discursiva-topicos" id="discursiva-topicos-list">
+                <!-- Tópicos -->
+              </ul>
+            </div>
+
+            <div class="discursiva-box" style="border-left: 3px solid var(--color-warning);">
+              <h4><i class="fa-solid fa-lightbulb"></i> Dicas Estruturais do QG:</h4>
+              <p id="discursiva-dicas-estruturais">Dicas de conectivos e divisão de parágrafos.</p>
+            </div>
+          </div>
+
+          <!-- Coluna da Direita: Folha de Redação Padrão 30 Linhas -->
+          <div class="discursiva-editor-panel">
+            <div class="discursiva-timer-bar">
+              <div class="timer-badge">
+                <i class="fa-solid fa-stopwatch"></i>
+                <span id="discursiva-timer-display">90:00</span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn btn-secondary btn-sm" id="btn-discursiva-timer-toggle">
+                  <i class="fa-solid fa-play"></i> Iniciar Cronômetro (90 min)
+                </button>
+                <button class="btn btn-outline-danger btn-sm" id="btn-discursiva-timer-reset" title="Reiniciar Cronômetro">
+                  <i class="fa-solid fa-rotate-left"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Folha Pautada com Linhas Numeradas 1 a 30 -->
+            <div class="discursiva-paper-wrapper">
+              <div class="discursiva-gutter" id="discursiva-line-gutter">
+                <!-- 01 a 30 gerados via JS -->
+              </div>
+              <textarea 
+                class="discursiva-textarea" 
+                id="discursiva-textarea" 
+                placeholder="Digite sua dissertação aqui respeitando a margem e a estrutura dos tópicos... (máximo 30 linhas)"
+                spellcheck="true"
+              ></textarea>
+            </div>
+
+            <div class="discursiva-statusbar">
+              <div class="status-counters">
+                <span id="discursiva-line-count">1 / 30 linhas</span>
+                <span id="discursiva-word-count">0 palavras</span>
+                <span id="discursiva-char-count">0 caracteres</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" id="btn-ver-espelho">
+                  <i class="fa-solid fa-eye"></i> Espelho da Banca
+                </button>
+                <button class="btn btn-primary btn-sm" id="btn-finalizar-redacao">
+                  <i class="fa-solid fa-paper-plane"></i> Finalizar & Avaliar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico de Redações -->
+        <div class="discursiva-history-section" style="margin-top: 30px;">
+          <h3 style="margin-bottom: 12px;"><i class="fa-solid fa-clock-rotate-left"></i> Minhas Redações Realizadas</h3>
+          <div class="discursiva-history-grid" id="discursiva-history-list">
+            <!-- Cards de redações anteriores -->
+          </div>
+          <div class="empty-state-box hidden" id="discursiva-history-empty">
+            <p>Nenhuma redação realizada ainda. Escolha um tema acima e comece a treinar!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: TREINO TAF (TESTE DE APTIDÃO FÍSICA) -->
+      <div class="view-content-wrapper view-section hidden" id="view-taf">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1><i class="fa-solid fa-person-running text-primary"></i> Central Tática de TAF (Aptidão Física)</h1>
+            <p>Simule e monitore seus índices físicos de acordo com os editais da Polícia Federal, PRF, PC e PM.</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select class="filter-select" id="taf-select-orgao">
+              <option value="pf">Polícia Federal (PF)</option>
+              <option value="prf">Polícia Rodoviária Federal (PRF)</option>
+              <option value="pc">Polícia Civil (PC)</option>
+              <option value="pm">Polícia Militar (PM)</option>
+            </select>
+            <select class="filter-select" id="taf-select-gender">
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Banner de Resultado Geral -->
+        <div class="taf-banner taf-banner-inapto" id="taf-overall-result">
+          <div id="taf-overall-status">
+            <i class="fa-solid fa-triangle-exclamation"></i> RESULTADO: <strong>INAPTO (Índices a Evoluir)</strong>
+          </div>
+          <div id="taf-overall-score">
+            Pontuação Geral: 0.0 / 20.0 pts (Atingir todos os mínimos)
+          </div>
+        </div>
+
+        <!-- Grid de Provas do TAF -->
+        <div class="taf-tests-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px;">
+          
+          <!-- Teste 1: Barra Fixa -->
+          <div class="taf-card" id="taf-card-barra">
+            <div class="taf-card-header">
+              <div class="taf-icon-circle"><i class="fa-solid fa-dumbbell"></i></div>
+              <div>
+                <h3 id="taf-label-barra">Barra Fixa (Repetições)</h3>
+                <span class="taf-min-badge" id="taf-min-barra">Mínimo: ≥ 2 reps</span>
+              </div>
+            </div>
+            <div class="taf-input-row">
+              <input type="number" step="0.5" class="form-input" id="taf-input-barra" value="0" min="0">
+              <span class="taf-status-pill inapto" id="taf-score-barra">Inapto (0 pts)</span>
+            </div>
+          </div>
+
+          <!-- Teste 2: Corrida 12 min -->
+          <div class="taf-card" id="taf-card-corrida">
+            <div class="taf-card-header">
+              <div class="taf-icon-circle"><i class="fa-solid fa-person-running"></i></div>
+              <div>
+                <h3 id="taf-label-corrida">Corrida 12min (Metros)</h3>
+                <span class="taf-min-badge" id="taf-min-corrida">Mínimo: ≥ 2000m</span>
+              </div>
+            </div>
+            <div class="taf-input-row">
+              <input type="number" step="50" class="form-input" id="taf-input-corrida" value="0" min="0" placeholder="Metros (ex: 2400)">
+              <span class="taf-status-pill inapto" id="taf-score-corrida">Inapto (0 pts)</span>
+            </div>
+          </div>
+
+          <!-- Teste 3: Abdominal Remador -->
+          <div class="taf-card" id="taf-card-abdominal">
+            <div class="taf-card-header">
+              <div class="taf-icon-circle"><i class="fa-solid fa-child-reaching"></i></div>
+              <div>
+                <h3 id="taf-label-abdominal">Abdominal (1 min)</h3>
+                <span class="taf-min-badge" id="taf-min-abdominal">Mínimo: ≥ 30 reps</span>
+              </div>
+            </div>
+            <div class="taf-input-row">
+              <input type="number" step="1" class="form-input" id="taf-input-abdominal" value="0" min="0">
+              <span class="taf-status-pill inapto" id="taf-score-abdominal">Inapto (0 pts)</span>
+            </div>
+          </div>
+
+          <!-- Teste 4: Impulsão Horizontal / Salto -->
+          <div class="taf-card" id="taf-card-salto">
+            <div class="taf-card-header">
+              <div class="taf-icon-circle"><i class="fa-solid fa-arrows-left-right"></i></div>
+              <div>
+                <h3 id="taf-label-salto">Impulsão Horizontal (Metros)</h3>
+                <span class="taf-min-badge" id="taf-min-salto">Mínimo: ≥ 1.70m</span>
+              </div>
+            </div>
+            <div class="taf-input-row">
+              <input type="number" step="0.05" class="form-input" id="taf-input-salto" value="0" min="0" placeholder="Metros (ex: 2.10)">
+              <span class="taf-status-pill inapto" id="taf-score-salto">Inapto (0 pts)</span>
+            </div>
+          </div>
+
+          <!-- Teste 5: Natação 50m (PF) -->
+          <div class="taf-card" id="taf-card-natacao">
+            <div class="taf-card-header">
+              <div class="taf-icon-circle"><i class="fa-solid fa-person-swimming"></i></div>
+              <div>
+                <h3 id="taf-label-natacao">Natação 50m (Segundos)</h3>
+                <span class="taf-min-badge" id="taf-min-natacao">Mínimo: ≤ 56s</span>
+              </div>
+            </div>
+            <div class="taf-input-row">
+              <input type="number" step="1" class="form-input" id="taf-input-natacao" value="0" min="0" placeholder="Segundos (ex: 45)">
+              <span class="taf-status-pill inapto" id="taf-score-natacao">Inapto (0 pts)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Registro de Simulado TAF -->
+        <div class="taf-save-bar" style="margin-top: 20px; display: flex; gap: 12px; align-items: center; background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <input type="text" class="form-input" id="taf-input-notes" placeholder="Anotações do treino (ex: Treino na pista com tênis leve, 32°C)..." style="flex: 1;">
+          <button class="btn btn-primary" id="btn-taf-save">
+            <i class="fa-solid fa-floppy-disk"></i> Registrar Simulado TAF (+40 XP)
+          </button>
+        </div>
+
+        <!-- Histórico de Treinos Físicos -->
+        <div class="taf-history-section" style="margin-top: 30px;">
+          <h3 style="margin-bottom: 12px;"><i class="fa-solid fa-chart-simple"></i> Histórico de Treinos e Evolução TAF</h3>
+          <div class="taf-history-list" id="taf-history-list">
+            <!-- Cards de histórico de TAF -->
+          </div>
+          <div class="empty-state-box hidden" id="taf-history-empty">
+            <p>Nenhum treino TAF registrado ainda. Preencha seus índices acima e registre seu primeiro simulado físico!</p>
+          </div>
         </div>
       </div>
 
@@ -1338,6 +1620,88 @@
       <div class="modal-footer">
         <button class="btn btn-secondary modal-close-btn">Cancelar</button>
         <button class="btn btn-primary" onclick="flashcardsManager.saveNewCard()">Salvar Cartão</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Importar Flashcards em Lote (Anki / CSV / Texto) -->
+  <dialog class="modal-dialog" id="modal-import-flashcards" aria-labelledby="import-fc-title">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 id="import-fc-title"><i class="fa-solid fa-file-import text-primary"></i> Importar Flashcards em Lote</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <form id="form-import-flashcards">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="import-fc-disciplina">Disciplina de Destino:</label>
+            <select class="form-select" id="import-fc-disciplina"></select>
+          </div>
+          <div class="form-group">
+            <label for="import-fc-file">Carregar Arquivo CSV ou TXT exportado do Anki (Opcional):</label>
+            <input type="file" class="form-input" id="import-fc-file" accept=".csv,.txt,.tsv">
+          </div>
+          <div class="form-group">
+            <label for="import-fc-text">Ou Cole o Texto dos Cartões (Frente e Verso separados por <code>;</code> ou <code>TAB</code>):</label>
+            <textarea class="form-textarea" id="import-fc-text" style="height: 180px; font-family: var(--font-mono); font-size: 0.85rem;" placeholder="Exemplo de formato:
+O que é soberania?;Poder político supremo e independente
+Quais as excludentes de ilicitude?;Estado de necessidade, legítima defesa, estrito cumprimento de dever legal e exercício regular de direito.
+Art. 5º, XI CF - Casa asilo inviolável;Salvo flagrante, desastre, socorro ou ordem judicial durante o dia"></textarea>
+          </div>
+          <p class="text-dimmed" style="font-size: 0.8rem;"><i class="fa-solid fa-circle-info"></i> Cada linha gerará 1 cartão. Separadores aceitos: <code>;</code>, <code>TAB</code>, <code>|</code> ou <code>::</code>.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-btn">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-upload"></i> Processar & Importar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: Espelho de Correção da Banca (Discursiva) -->
+  <dialog class="modal-dialog" id="modal-discursiva-espelho" aria-labelledby="espelho-title">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="espelho-title"><i class="fa-solid fa-stamp text-primary"></i> Padrão de Resposta Oficial da Banca</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <div class="discursiva-espelho-box" style="background: var(--bg-surface-inset); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); white-space: pre-line; line-height: 1.6; font-size: 0.92rem; max-height: 400px; overflow-y: auto;" id="discursiva-espelho-conteudo">
+          <!-- Conteúdo do padrão da resposta -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary modal-close-btn">Entendido</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Autoavaliação da Redação -->
+  <dialog class="modal-dialog" id="modal-discursiva-avaliacao" aria-labelledby="eval-title">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 id="eval-title"><i class="fa-solid fa-calculator text-primary"></i> Avaliação da Redação (Critérios Oficiais)</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 14px;">Atribua suas notas comparando seu rascunho com o espelho da banca. O sistema calculará a nota líquida com o rigor da fórmula Cebraspe.</p>
+        <div class="form-group">
+          <label>Apresentação, Legibilidade e Estrutura (0 a 2,0 pts):</label>
+          <input type="number" step="0.25" min="0" max="2" class="form-input" id="eval-apresentacao" value="2.0">
+        </div>
+        <div class="form-group">
+          <label>Desenvolvimento do Tema e Tópicos Obrigatórios (0 a 10,0 pts):</label>
+          <input type="number" step="0.5" min="0" max="10" class="form-input" id="eval-tema" value="8.0">
+        </div>
+        <div class="form-group">
+          <label>Total de Desvios Gramaticais / Ortografia detectados (Quantidade de erros):</label>
+          <input type="number" min="0" class="form-input" id="eval-erros" value="2">
+          <small class="text-dimmed">Fórmula Cebraspe: Penalidade = (2 × Erros) ÷ Linhas Escritas (<span id="grade-lines-count">30 linhas</span>).</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close-btn">Voltar</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-grade"><i class="fa-solid fa-check"></i> Calcular Nota & Salvar</button>
       </div>
     </div>
   </dialog>

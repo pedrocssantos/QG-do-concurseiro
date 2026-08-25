@@ -930,6 +930,299 @@ const DEFAULT_LEADERBOARD = [
   { rank: 7, name: "Ana PM", avatar: "AP", hoursWeekly: 15.5, questionsWeekly: 95, accuracy: 72, xp: 1980, badge: "Recruta" }
 ];
 
+const DEFAULT_TAF_CRITERIA = {
+  pf: {
+    nome: "Polícia Federal (Agente/Escrivão)",
+    genero: {
+      M: {
+        barra: { nome: "Barra Fixa (Repetições)", min: 2, max: 15, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.70, max: 2.14, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: { nome: "Natação 50m (Segundos)", min: 56, max: 38, pesoMin: 2, pesoMax: 5, tipo: "tempo_menor" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 2000, max: 2710, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: null
+      },
+      F: {
+        barra: { nome: "Barra Fixa - Isometria (Segundos)", min: 15, max: 30, pesoMin: 2, pesoMax: 5, tipo: "tempo_maior" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.30, max: 1.64, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: { nome: "Natação 50m (Segundos)", min: 64, max: 41, pesoMin: 2, pesoMax: 5, tipo: "tempo_menor" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 1600, max: 2310, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: null
+      }
+    }
+  },
+  prf: {
+    nome: "Polícia Rodoviária Federal (Policial)",
+    genero: {
+      M: {
+        barra: { nome: "Barra Fixa (Repetições)", min: 3, max: 9, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 2.00, max: 2.40, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: { nome: "Abdominal Remador (1 min)", min: 31, max: 45, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 2300, max: 2800, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: null
+      },
+      F: {
+        barra: { nome: "Barra Fixa - Isometria (Segundos)", min: 10, max: 25, pesoMin: 2, pesoMax: 5, tipo: "tempo_maior" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.60, max: 1.95, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: { nome: "Abdominal Remador (1 min)", min: 25, max: 37, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 2000, max: 2400, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: null
+      }
+    }
+  },
+  pc: {
+    nome: "Polícia Civil (Agente / Investigador)",
+    genero: {
+      M: {
+        barra: { nome: "Barra Fixa (Repetições)", min: 3, max: 10, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.80, max: 2.20, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: { nome: "Abdominal Remador (1 min)", min: 30, max: 42, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 2200, max: 2700, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: null
+      },
+      F: {
+        barra: { nome: "Barra Fixa - Isometria (Segundos)", min: 12, max: 26, pesoMin: 2, pesoMax: 5, tipo: "tempo_maior" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.40, max: 1.75, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        abdominal: { nome: "Abdominal Remador (1 min)", min: 24, max: 35, pesoMin: 2, pesoMax: 5, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 1800, max: 2300, pesoMin: 2, pesoMax: 5, tipo: "metros" },
+        natacao: null
+      }
+    }
+  },
+  pm: {
+    nome: "Polícia Militar (Soldado / Oficial)",
+    genero: {
+      M: {
+        barra: { nome: "Barra Fixa / Flexão", min: 3, max: 11, pesoMin: 20, pesoMax: 100, tipo: "reps" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.70, max: 2.10, pesoMin: 20, pesoMax: 100, tipo: "metros" },
+        abdominal: { nome: "Abdominal (1 min)", min: 30, max: 46, pesoMin: 20, pesoMax: 100, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 2100, max: 2800, pesoMin: 20, pesoMax: 100, tipo: "metros" },
+        natacao: null
+      },
+      F: {
+        barra: { nome: "Barra Fixa - Isometria", min: 10, max: 28, pesoMin: 20, pesoMax: 100, tipo: "tempo_maior" },
+        salto: { nome: "Impulsão Horizontal (Metros)", min: 1.30, max: 1.70, pesoMin: 20, pesoMax: 100, tipo: "metros" },
+        abdominal: { nome: "Abdominal (1 min)", min: 22, max: 36, pesoMin: 20, pesoMax: 100, tipo: "reps" },
+        corrida: { nome: "Corrida 12min (Metros)", min: 1700, max: 2300, pesoMin: 20, pesoMax: 100, tipo: "metros" },
+        natacao: null
+      }
+    }
+  }
+};
+
+const DEFAULT_DISCURSIVA_TEMAS = [
+  {
+    id: "tema-pf-ciber",
+    title: "O Papel da Polícia Federal no Combate a Cibercrimes e Crime Organizado",
+    orgao: "Polícia Federal",
+    banca: "Cebraspe",
+    ano: 2026,
+    tema: "O papel estratégico da Polícia Federal na investigação de crimes cibernéticos, desarticulação financeira de facções criminosas e cooperação internacional.",
+    textoMotivador: "O avanço das tecnologias de informação transformou o modus operandi do crime organizado, com lavagem de capitais via criptoativos, ataques ransomware e tráfico em canais digitais criptografados. Nesse cenário, as forças federais de segurança pública desempenham papel central na repressão qualificada.",
+    topicosObrigatorios: [
+      "1. A relevância da inteligência policial e da perícia forense digital nas investigações modernas (4,0 pts);",
+      "2. O asfixiamento financeiro e o confisco de bens como principal vetor de neutralização das organizações criminosas (4,0 pts);",
+      "3. A cooperação policial internacional (ex: Interpol, acordos bilaterais) na persecução de delitos transfronteiriços (2,0 pts)."
+    ],
+    padraoResposta: "O candidato deve redigir um texto dissertativo-argumentativo claro e coeso, estruturado em introdução, desenvolvimento de cada um dos tópicos indicados e conclusão.\n\nNo Tópico 1, deve destacar ferramentas forenses, cadeia de custódia da prova digital (Art. 158-A do CPP) e interceptações telemáticas.\nNo Tópico 2, enfatizar o desmantelamento patrimonial através da Lei de Lavagem de Dinheiro (Lei 9.613/98) e Lei das Organizações Criminosas (Lei 12.850/13).\nNo Tópico 3, citar a atuação da PF como representante da Interpol no Brasil, cooperação jurídica e extradição.",
+    dicasEstruturais: "Utilize conectivos interparágrafos (Ademais, Outrossim, Nesse prisma), mantenha letra legível e distribua em média 7 a 8 linhas por parágrafo, totalizando entre 27 e 30 linhas.",
+    maxLinhas: 30
+  },
+  {
+    id: "tema-prf-transito",
+    title: "Segurança Viária e Redução da Violência no Trânsito Brasileiro",
+    orgao: "Polícia Rodoviária Federal",
+    banca: "Cebraspe",
+    ano: 2025,
+    tema: "Tecnologia, fiscalização tática e educação no trânsito como pilares da PRF para a preservação de vidas nas rodovias federais.",
+    textoMotivador: "As mortes e lesões no trânsito constituem grave problema de saúde pública e geram bilhões de prejuízos econômicos anuais ao Brasil. A atuação da PRF combina fiscalização ostensiva com dados de inteligência geoespacial.",
+    topicosObrigatorios: [
+      "1. A importância da fiscalização com etilômetros e radares no enfrentamento das infrações graves (3,5 pts);",
+      "2. O uso de videomonitoramento inteligente e leitura de placas na repressão ao roubo de cargas e contrabando (3,5 pts);",
+      "3. Ações educativas continuadas da PRF e conscientização cívica da sociedade (3,0 pts)."
+    ],
+    padraoResposta: "O texto deve demonstrar o papel multifacetado da PRF: além de fiscalizatória, atua na segurança pública preventiva e na garantia do direito constitucional à segurança viária (Art. 144, § 10 da CF/88).",
+    dicasEstruturais: "Apresente dados técnicos do PNATRANS e conceitos do Código de Trânsito Brasileiro (CTB). Evite gírias e construções na primeira pessoa.",
+    maxLinhas: 30
+  },
+  {
+    id: "tema-pc-mulher",
+    title: "Eficácia da Lei Maria da Penha e Atuação da Polícia Civil",
+    orgao: "Polícia Civil",
+    banca: "Cebraspe / FGV",
+    ano: 2025,
+    tema: "A atuação da Polícia Judiciária na proteção integral da mulher vítima de violência doméstica e familiar e a concessão de medidas protetivas de urgência.",
+    textoMotivador: "A Lei nº 11.340/2006 (Lei Maria da Penha) e as recentes alterações legislativas ampliaram os poderes cautelares da autoridade policial na concessão imediata de medidas protetivas.",
+    topicosObrigatorios: [
+      "1. As formas de violência previstas na Lei Maria da Penha (física, psicológica, sexual, patrimonial e moral) (3,0 pts);",
+      "2. A atribuição do Delegado de Polícia no afastamento do agressor do lar nos municípios que não são sede de comarca (4,0 pts);",
+      "3. O atendimento especializado da DEAM (Delegacia Especializada de Atendimento à Mulher) e a não revitimização (3,0 pts)."
+    ],
+    padraoResposta: "O candidato deve articular os aspectos materiais e processuais da Lei 11.340/06, citando o Art. 12-C da Lei Maria da Penha e a relevância da oitiva qualificada em ambiente humanizado.",
+    dicasEstruturais: "Garanta uma divisão clara em 4 parágrafos: Introdução (contextualização), D1 (formas de violência), D2 (atuação cautelar da polícia), Conclusão (DEAM e acolhimento).",
+    maxLinhas: 30
+  }
+];
+
+const DEFAULT_LEIS = [
+  {
+    id: "lei-cf88",
+    sigla: "CF/88",
+    nome: "Constituição da República Federativa do Brasil",
+    categoria: "Direito Constitucional",
+    descricao: "Artigos fundamentais de Direitos e Garantias (Art. 5º) e Segurança Pública (Art. 144).",
+    artigos: [
+      {
+        id: "cf88-art5-caput",
+        numero: "Art. 5º",
+        caput: "Todos são iguais perante a lei, sem distinção de qualquer natureza, garantindo-se aos brasileiros e aos estrangeiros residentes no País a inviolabilidade do direito à vida, à liberdade, à igualdade, à segurança e à propriedade.",
+        incisos: [
+          "II - ninguém será obrigado a fazer ou deixar de fazer alguma coisa senão em virtude de lei (Princípio da Legalidade);",
+          "XI - a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial;",
+          "XII - é inviolável o sigilo da correspondência e das comunicações telegráficas, de dados e das comunicações telefônicas, salvo, no último caso, por ordem judicial, nas hipóteses e na forma que a lei estabelecer para fins de investigação criminal ou instrução processual penal;",
+          "LVII - ninguém será considerado culpado até o trânsito em julgado de sentença penal condenatória (Presunção de Inocência);"
+        ],
+        destaque: true,
+        tema: "Direitos e Garantias Fundamentais"
+      },
+      {
+        id: "cf88-art144",
+        numero: "Art. 144",
+        caput: "A segurança pública, dever do Estado, direito e responsabilidade de todos, é exercida para a preservação da ordem pública e da incolumidade das pessoas e do patrimônio, através dos seguintes órgãos:",
+        incisos: [
+          "I - polícia federal;",
+          "II - polícia rodoviária federal;",
+          "III - polícia ferroviária federal;",
+          "IV - polícias civis;",
+          "V - polícias militares e corpos de bombeiros militares;",
+          "VI - polícias penais federal, estaduais e distrital."
+        ],
+        destaque: true,
+        tema: "Da Segurança Pública"
+      }
+    ]
+  },
+  {
+    id: "lei-cp",
+    sigla: "CP",
+    nome: "Código Penal Brasileiro (Decreto-Lei nº 2.848/1940)",
+    categoria: "Direito Penal",
+    descricao: "Princípios penais, Teoria do Crime, Ilicitude e Crimes contra a Administração Pública.",
+    artigos: [
+      {
+        id: "cp-art1",
+        numero: "Art. 1º",
+        caput: "Não há crime sem lei anterior que o defina. Não há pena sem prévia cominação legal.",
+        destaque: true,
+        tema: "Anterioridade e Legalidade Penal"
+      },
+      {
+        id: "cp-art23",
+        numero: "Art. 23",
+        caput: "Não há crime quando o agente pratica o fato em estado de necessidade, em legítima defesa, em estrito cumprimento de dever legal ou no exercício regular de direito.",
+        destaque: true,
+        tema: "Excludentes de Ilicitude"
+      },
+      {
+        id: "cp-art312",
+        numero: "Art. 312",
+        caput: "Apropriar-se o funcionário público de dinheiro, valor ou qualquer outro bem móvel, público ou particular, de que tem a posse em razão do cargo, ou desviá-lo, em proveito próprio ou alheio (Peculato). Pena - reclusão, de 2 a 12 anos, e multa.",
+        destaque: true,
+        tema: "Crimes Praticados por Funcionário Público"
+      },
+      {
+        id: "cp-art317",
+        numero: "Art. 317",
+        caput: "Solicitar ou receber, para si ou para outrem, direta ou indiretamente, ainda que fora da função ou antes de assumi-la, mas em razão dela, vantagem indevida, ou aceitar promessa de tal vantagem (Corrupção Passiva). Pena - reclusão, de 2 a 12 anos, e multa.",
+        destaque: true,
+        tema: "Corrupção Passiva"
+      }
+    ]
+  },
+  {
+    id: "lei-cpp",
+    sigla: "CPP",
+    nome: "Código de Processo Penal (Decreto-Lei nº 3.689/1941)",
+    categoria: "Direito Processual Penal",
+    descricao: "Inquérito policial, flagrante delito, prisão preventiva e provas.",
+    artigos: [
+      {
+        id: "cpp-art4",
+        numero: "Art. 4º",
+        caput: "A polícia judiciária será exercida pelas autoridades policiais no território de suas respectivas circunscrições e terá por fim a apuração das infrações penais e da sua autoria.",
+        destaque: true,
+        tema: "Inquérito Policial"
+      },
+      {
+        id: "cpp-art301",
+        numero: "Art. 301",
+        caput: "Qualquer do povo poderá e as autoridades policiais e seus agentes deverão prender quem quer que seja encontrado em flagrante delito.",
+        destaque: true,
+        tema: "Prisão em Flagrante"
+      },
+      {
+        id: "cpp-art312",
+        numero: "Art. 312",
+        caput: "A prisão preventiva poderá ser decretada como garantia da ordem pública, da ordem econômica, por conveniência da instrução criminal ou para assegurar a aplicação da lei penal, quando houver prova da existência do crime e indício suficiente de autoria e de perigo gerado pelo estado de liberdade do imputado.",
+        destaque: true,
+        tema: "Prisão Preventiva"
+      }
+    ]
+  },
+  {
+    id: "lei-8112",
+    sigla: "Lei 8.112/90",
+    nome: "Regime Jurídico dos Servidores Públicos Civis da União",
+    categoria: "Direito Administrativo",
+    descricao: "Deveres, proibições, responsabilidades e penalidades disciplinares dos servidores federais.",
+    artigos: [
+      {
+        id: "lei8112-art116",
+        numero: "Art. 116",
+        caput: "São deveres do servidor: exercer com zelo e dedicação as atribuições do cargo; ser leal às instituições a que servir; observar as normas legais e regulamentares; cumprir as ordens superiores, exceto quando manifestamente ilegais; atender com presteza ao público...",
+        destaque: true,
+        tema: "Deveres do Servidor Público"
+      },
+      {
+        id: "lei8112-art117",
+        numero: "Art. 117",
+        caput: "Ao servidor é proibido: ausentar-se do serviço durante o expediente, sem prévia autorização; retirar, sem prévia anuência, qualquer documento ou objeto; recusar fé a documentos públicos; valer-se do cargo para lograr proveito pessoal ou de outrem...",
+        destaque: true,
+        tema: "Proibições do Servidor"
+      },
+      {
+        id: "lei8112-art132",
+        numero: "Art. 132",
+        caput: "A demissão será aplicada nos seguintes casos: crime contra a administração pública; abandono de cargo; inassiduidade habitual; improbidade administrativa; aplicação irregular de dinheiros públicos; corrupção; insubordinação grave em serviço...",
+        destaque: true,
+        tema: "Demissão e Penalidades"
+      }
+    ]
+  },
+  {
+    id: "lei-drogas",
+    sigla: "Lei 11.343/06",
+    nome: "Lei de Drogas (Sistema Nacional de Políticas sobre Drogas)",
+    categoria: "Legislação Penal Especial",
+    descricao: "Crimes de tráfico, posse para consumo pessoal, associação e procedimentos.",
+    artigos: [
+      {
+        id: "drogas-art28",
+        numero: "Art. 28",
+        caput: "Quem adquirir, guardar, tiver em depósito, transportar ou trouxer consigo, para consumo pessoal, drogas sem autorização ou em desacordo com determinação legal será submetido às seguintes penas: I - advertência; II - prestação de serviços à comunidade; III - medida educativa de comparecimento a programa ou curso educativo (Não há pena privativa de liberdade).",
+        destaque: true,
+        tema: "Posse para Uso Pessoal"
+      },
+      {
+        id: "drogas-art33",
+        numero: "Art. 33",
+        caput: "Importar, exportar, remeter, preparar, produzir, fabricar, adquirir, vender, expor à venda, oferecer, ter em depósito, transportar, trazer consigo, guardar, prescrever, ministrar, entregar a consumo ou fornecer drogas, ainda que gratuitamente, sem autorização ou em desacordo com determinação legal. Pena - reclusão de 5 a 15 anos e pagamento de 500 a 1.500 dias-multa.",
+        destaque: true,
+        tema: "Tráfico Ilícito de Drogas"
+      }
+    ]
+  }
+];
+
 const MOTIVATIONAL_QUOTES = [
   { quote: "Quem não mede, não evolui. Acompanhe suas métricas diariamente.", author: "Gestão de Estudos" },
   { quote: "A disciplina é a ponte entre a meta de passar e a nomeação no Diário Oficial.", author: "QG do Concurseiro" },
@@ -945,7 +1238,10 @@ export {
   DEFAULT_FLASHCARDS,
   DEFAULT_BADGES,
   DEFAULT_LEADERBOARD,
-  MOTIVATIONAL_QUOTES
+  MOTIVATIONAL_QUOTES,
+  DEFAULT_TAF_CRITERIA,
+  DEFAULT_DISCURSIVA_TEMAS,
+  DEFAULT_LEIS
 };
 
 if (typeof window !== "undefined") {
@@ -955,4 +1251,7 @@ if (typeof window !== "undefined") {
   window.DEFAULT_BADGES = DEFAULT_BADGES;
   window.DEFAULT_LEADERBOARD = DEFAULT_LEADERBOARD;
   window.MOTIVATIONAL_QUOTES = MOTIVATIONAL_QUOTES;
+  window.DEFAULT_TAF_CRITERIA = DEFAULT_TAF_CRITERIA;
+  window.DEFAULT_DISCURSIVA_TEMAS = DEFAULT_DISCURSIVA_TEMAS;
+  window.DEFAULT_LEIS = DEFAULT_LEIS;
 }

@@ -862,3 +862,533 @@ button, input, select, textarea {
     padding: 8px 12px !important;
   }
 }
+
+/* ==========================================================================
+   MÓDULO: VADE MECUM & LEGISLAÇÃO SECA TÁTICA
+   ========================================================================== */
+.leis-diplomas-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.lei-tab-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 140px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.lei-tab-btn strong {
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+.lei-tab-btn span {
+  font-size: 0.75rem;
+  color: var(--text-dimmed);
+}
+
+.lei-tab-btn:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--color-primary-light);
+}
+
+.lei-tab-btn.active {
+  background: var(--color-primary-tint);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary-glow);
+}
+
+.lei-tab-btn.active strong {
+  color: var(--color-primary-light);
+}
+
+.lei-active-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.lei-active-meta h2 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.lei-active-meta p {
+  color: var(--text-dimmed);
+  font-size: 0.88rem;
+}
+
+.leis-artigos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lei-artigo-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  transition: all 0.2s ease;
+}
+
+.lei-artigo-card:hover {
+  border-color: var(--border-color-light);
+}
+
+.lei-artigo-card.artigo-lido {
+  border-color: var(--color-accent);
+  background: rgba(126, 161, 114, 0.05);
+}
+
+.lei-artigo-card.artigo-destaque {
+  border-left: 4px solid var(--color-warning);
+}
+
+.lei-artigo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.lei-artigo-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lei-badge-num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  background: var(--bg-surface-elevated);
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  color: var(--color-primary-light);
+  font-size: 0.9rem;
+}
+
+.lei-badge-tema {
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+}
+
+.lei-badge-destaque {
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.lei-artigo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.lei-caput-text {
+  line-height: 1.65;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.lei-incisos-list {
+  list-style: none;
+  padding-left: 14px;
+  border-left: 2px solid var(--border-color);
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   MÓDULO: REDAÇÃO DISCURSIVA TÁTICA
+   ========================================================================== */
+.discursiva-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .discursiva-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.discursiva-prompt-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.discursiva-theme-title {
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--text-main);
+}
+
+.discursiva-box {
+  background: var(--bg-surface-inset);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.discursiva-box h4 {
+  font-size: 0.85rem;
+  color: var(--color-primary-light);
+  margin-bottom: 8px;
+}
+
+.discursiva-box p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.discursiva-topicos {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.discursiva-editor-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.discursiva-timer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface-inset);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+}
+
+.timer-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary-light);
+}
+
+.discursiva-paper-wrapper {
+  display: flex;
+  background: var(--bg-surface-inset);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  min-height: 520px;
+  overflow: hidden;
+}
+
+.discursiva-gutter {
+  width: 44px;
+  background: var(--bg-canvas-subtle);
+  border-right: 1px solid var(--border-color);
+  padding: 10px 0;
+  text-align: center;
+  user-select: none;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+  display: flex;
+  flex-direction: column;
+  line-height: 24px;
+}
+
+.discursiva-line-number.over-limit {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.discursiva-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 24px;
+  padding: 10px 14px;
+  resize: none;
+  outline: none;
+  min-height: 520px;
+}
+
+.discursiva-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-dimmed);
+}
+
+.status-counters {
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+}
+
+.discursiva-history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.discursiva-history-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+
+.discursiva-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.discursiva-history-date {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-dimmed);
+  margin-top: 2px;
+}
+
+.discursiva-history-score-badge {
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary-light);
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+}
+
+.discursiva-history-preview {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.discursiva-history-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+}
+
+/* ==========================================================================
+   MÓDULO: TREINO TAF (TESTE DE APTIDÃO FÍSICA)
+   ========================================================================== */
+.taf-banner {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.taf-banner-apto {
+  background: rgba(126, 161, 114, 0.15);
+  border-color: var(--color-accent);
+  color: var(--color-accent-light);
+}
+
+.taf-banner-inapto {
+  background: rgba(217, 83, 79, 0.15);
+  border-color: var(--color-danger);
+  color: #f87171;
+}
+
+.taf-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taf-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.taf-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-primary-tint);
+  color: var(--color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+}
+
+.taf-card-header h3 {
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.taf-min-badge {
+  font-size: 0.75rem;
+  color: var(--text-dimmed);
+  background: var(--bg-surface-elevated);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.taf-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.taf-status-pill {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+}
+
+.taf-status-pill.apto {
+  background: rgba(126, 161, 114, 0.2);
+  color: var(--color-accent-light);
+  border: 1px solid var(--color-accent);
+}
+
+.taf-status-pill.inapto {
+  background: rgba(217, 83, 79, 0.2);
+  color: #f87171;
+  border: 1px solid var(--color-danger);
+}
+
+.taf-status-pill.n-a {
+  background: var(--bg-surface-elevated);
+  color: var(--text-dimmed);
+}
+
+.taf-history-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.taf-history-card.apto {
+  border-left: 4px solid var(--color-accent);
+}
+
+.taf-history-card.inapto {
+  border-left: 4px solid var(--color-danger);
+}
+
+.taf-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.taf-history-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.taf-history-date {
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+}
+
+.taf-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.taf-history-metrics-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.taf-mini-metric {
+  background: var(--bg-surface-elevated);
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+}
+
+.taf-mini-metric span {
+  color: var(--text-dimmed);
+}
+
+.taf-history-notes {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+

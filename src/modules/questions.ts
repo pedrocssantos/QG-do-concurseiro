@@ -119,6 +119,26 @@ class QuestionsManager {
     this.applyFilters();
   }
 
+  startTreinoCadernoErros() {
+    const errorIds = (store.data.cadernoErros || []).filter(e => !e.resolved).map(e => e.questionId);
+    if (errorIds.length === 0) {
+      showToast("Você não possui erros pendentes no momento! Parabéns!", "success");
+      return;
+    }
+    const all = store.data.questions || [];
+    this.filteredQuestions = all.filter(q => errorIds.includes(q.id));
+    if (this.filteredQuestions.length === 0) {
+      showToast("As questões do caderno não foram encontradas no banco ativo.", "warning");
+      return;
+    }
+    this.currentIndex = 0;
+    this.isAnswered = false;
+    this.selectedOption = null;
+    this.simuladoMode = false;
+    this.renderCurrentQuestion();
+    showToast(`🎯 Modo Treino de Erros ativado: ${this.filteredQuestions.length} questões para superar!`, "info");
+  }
+
   bindEvents() {
     const discSelect = document.getElementById("q-filter-disciplina");
     const bancaSelect = document.getElementById("q-filter-banca");

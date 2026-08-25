@@ -12,12 +12,19 @@ import { cadernoManager } from "./modules/errors";
 import { gamificationManager } from "./modules/gamification";
 import { pomodoro } from "./modules/pomodoro";
 import { PapiroCharts } from "./modules/analytics";
+import { tafManager } from "./modules/taf";
+import { discursivaManager } from "./modules/discursiva";
+import { leisManager } from "./modules/leis";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL
 // ==========================================================================
 
 class App {
+  currentRoute: string;
+  previousRoute: string | null;
+  routes: string[];
+
   constructor() {
     this.currentRoute = "dashboard";
     this.previousRoute = null;
@@ -28,6 +35,9 @@ class App {
       "questoes",
       "flashcards",
       "erros",
+      "leis",
+      "discursiva",
+      "taf",
       "desempenho",
       "ranking",
       "pomodoro",
@@ -200,6 +210,9 @@ class App {
       case 'ciclo': cicloManager.destroy?.(); break;
       case 'questoes': questionsManager.destroy?.(); break;
       case 'erros': cadernoManager.destroy?.(); break;
+      case 'leis': leisManager.destroy?.(); break;
+      case 'discursiva': discursivaManager.destroy?.(); break;
+      case 'taf': tafManager.destroy?.(); break;
       case 'desempenho': break; // Static render
       case 'ranking': gamificationManager.destroy?.(); break;
       case 'pomodoro': break; // Pomodoro keeps running in background
@@ -226,6 +239,15 @@ class App {
         break;
       case "erros":
         cadernoManager.init();
+        break;
+      case "leis":
+        leisManager.init();
+        break;
+      case "discursiva":
+        discursivaManager.init();
+        break;
+      case "taf":
+        tafManager.init();
         break;
       case "desempenho":
         this.renderDesempenhoView();

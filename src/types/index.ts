@@ -168,6 +168,69 @@ export interface MotivationalQuote {
   author: string;
 }
 
+export interface TafRecord {
+  id: string;
+  date: string;
+  gender: 'M' | 'F';
+  orgao: 'pf' | 'prf' | 'pc' | 'pm';
+  barra: number;       // Repetições (Masc) ou Segundos Isometria (Fem)
+  corrida: number;     // Metros em 12 minutos
+  abdominal: number;   // Repetições em 1 minuto
+  salto: number;       // Metros (Impulsão Horizontal)
+  natacao: number;     // Segundos em 50 metros (0 se não aplicável)
+  totalScore: number;  // 0 a 100 ou soma de pontos
+  isApto: boolean;
+  notes?: string;
+}
+
+export interface DiscursivaTema {
+  id: string;
+  title: string;
+  orgao: string;
+  banca: string;
+  ano: number;
+  tema: string;
+  textoMotivador: string;
+  topicosObrigatorios: string[];
+  padraoResposta: string;
+  dicasEstruturais: string;
+  maxLinhas: number;
+}
+
+export interface DiscursivaAttempt {
+  id: string;
+  temaId: string;
+  temaTitulo: string;
+  texto: string;
+  data: string;
+  tempoGastoSegundos: number;
+  totalLinhas: number;
+  autoAvaliacao: {
+    apresentacao: number; // Max 2
+    tema: number;         // Max 10
+    gramatica: number;    // Penalidades / nota
+    total: number;        // Nota final
+  };
+}
+
+export interface LeiArtigo {
+  id: string;
+  numero: string;
+  caput: string;
+  incisos?: string[];
+  destaque?: boolean;
+  tema?: string;
+}
+
+export interface LeiItem {
+  id: string;
+  sigla: string;
+  nome: string;
+  categoria: string;
+  descricao: string;
+  artigos: LeiArtigo[];
+}
+
 export interface StoreData {
   profile: UserProfile;
   activeConcursoId: string;
@@ -185,4 +248,7 @@ export interface StoreData {
   };
   cicloWeeklyChecks?: Record<string, boolean>;
   lastStreakCheckDate?: string;
+  tafRecords?: TafRecord[];
+  discursivaAttempts?: DiscursivaAttempt[];
+  leisReadState?: Record<string, boolean>;
 }

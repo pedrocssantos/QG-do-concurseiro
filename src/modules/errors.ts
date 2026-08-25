@@ -149,7 +149,26 @@ class CadernoErrosManager {
     window.print();
   }
 
+  startTreinoErros() {
+    const pending = (store.data.cadernoErros || []).filter(e => !e.resolved);
+    if (pending.length === 0) {
+      showToast("Nenhum erro pendente para treinar!", "success");
+      return;
+    }
+    window.location.hash = "#questoes";
+    setTimeout(() => {
+      if ((window as any).questionsManager && (window as any).questionsManager.startTreinoCadernoErros) {
+        (window as any).questionsManager.startTreinoCadernoErros();
+      }
+    }, 150);
+  }
+
   bindEvents() {
+    const treinarBtn = document.getElementById("btn-treinar-erros");
+    if (treinarBtn) {
+      treinarBtn.addEventListener("click", () => this.startTreinoErros());
+    }
+
     const printBtn = document.getElementById("btn-print-erros");
     if (printBtn) {
       printBtn.addEventListener("click", () => this.printCaderno());
@@ -159,14 +178,14 @@ class CadernoErrosManager {
     const statusFilter = document.getElementById("caderno-filter-status");
 
     if (reasonFilter) {
-      reasonFilter.addEventListener("change", (e) => {
+      reasonFilter.addEventListener("change", (e: any) => {
         this.filterReason = e.target.value;
         this.renderErrorsList();
       });
     }
 
     if (statusFilter) {
-      statusFilter.addEventListener("change", (e) => {
+      statusFilter.addEventListener("change", (e: any) => {
         this.filterStatus = e.target.value;
         this.renderErrorsList();
       });
@@ -177,6 +196,6 @@ class CadernoErrosManager {
 const cadernoManager = new CadernoErrosManager();
 export { CadernoErrosManager, cadernoManager };
 if (typeof window !== "undefined") {
-  window.CadernoErrosManager = CadernoErrosManager;
-  window.cadernoManager = cadernoManager;
+  (window as any).CadernoErrosManager = CadernoErrosManager;
+  (window as any).cadernoManager = cadernoManager;
 }

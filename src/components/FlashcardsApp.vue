@@ -6,9 +6,14 @@
         <h1><i class="fa-solid fa-layer-group text-primary"></i> Flashcards com Repetição Espaçada (SRS)</h1>
         <p>Fixe conceitos com o algoritmo SuperMemo SM-2. Quanto melhor a lembrança, mais longe o próximo intervalo.</p>
       </div>
-      <button class="btn btn-primary btn-sm" @click="openNewCardModal">
-        <i class="fa-solid fa-plus"></i> Novo Flashcard
-      </button>
+      <div class="view-header-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-secondary btn-sm" @click="openImportModal" title="Importar cards do Anki, CSV ou texto em lote">
+          <i class="fa-solid fa-file-import"></i> Importar (Anki / CSV)
+        </button>
+        <button class="btn btn-primary btn-sm" @click="openNewCardModal">
+          <i class="fa-solid fa-plus"></i> Novo Flashcard
+        </button>
+      </div>
     </div>
 
     <div class="flashcards-layout">
@@ -77,11 +82,14 @@
           </div>
         </div>
 
-        <!-- Ações do Card (Virar & Excluir) -->
+        <!-- Ações do Card (Virar & Excluir & Áudio TTS) -->
         <div class="flashcard-actions-wrapper">
           <div class="fc-flip-btn-row">
             <button class="btn btn-secondary" @click="flipCard">
               <i class="fa-solid fa-arrows-rotate"></i> {{ isFlipped ? 'Ocultar Resposta' : 'Virar Cartão (Espaço)' }}
+            </button>
+            <button class="btn btn-outline-primary btn-sm" @click="speakCardText" title="Ouvir Pergunta e Resposta em Voz Alta">
+              <i class="fa-solid fa-volume-high"></i> Voz
             </button>
             <button class="btn btn-outline-danger btn-sm" @click="deleteCurrentCard" title="Excluir este Flashcard">
               <i class="fa-solid fa-trash-can"></i> Excluir
@@ -295,10 +303,54 @@ function deleteCurrentCard() {
   }
 }
 
-function openNewCardModal() {
-  const modal = document.getElementById('modal-new-flashcard');
+function speakCardText() {
+  if (!('speechSynthesis' in window) || !currentCard.value) {
+    showToast('Síntese de voz não suportada neste navegador.', 'warning');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const textToSpeak = isFlipped.value 
+    ? `${currentCard.value.frente}. Resposta: ${currentCard.value.verso}`
+    : currentCard.value.frente;
+  const utterance = new SpeechSynthesisUtterance(textToSpeak);
+  utterance.lang = 'pt-BR';
+  utterance.rate = 1.05;
+  window.speechSynthesis.speak(utterance);
+}
+
+function openImportModal() {
+  const modal = document.getElementById('modal-import-flashcards') as HTMLDialogElement | null;
   if (modal) {
-    modal.classList.remove('hidden');
+    const select = document.getElementById('import-fc-disciplina') as HTMLSelectElement | null;
+    if (select) {
+      select.innerHTML = '';
+      const concurso = store.getActiveConcurso();
+      (concurso?.disciplinas || []).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.name;
+        select.appendChild(opt);
+      });
+    }
+    modal.showModal();
+  }
+}
+
+function openNewCardModal() {
+  const modal = document.getElementById('modal-new-flashcard') as HTMLDialogElement | null;
+  if (modal) {
+    const select = document.getElementById('new-fc-disciplina') as HTMLSelectElement | null;
+    if (select) {
+      select.innerHTML = '';
+      const concurso = store.getActiveConcurso();
+      (concurso?.disciplinas || []).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.name;
+        select.appendChild(opt);
+      });
+    }
+    modal.showModal();
   }
 }
 

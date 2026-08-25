@@ -21,8 +21,97 @@ class FlashcardsManager {
 
     if (!this.eventsBound) {
       this.bindNewCardModalEvents();
+      this.bindImportModalEvents();
       this.eventsBound = true;
     }
+  }
+
+  bindImportModalEvents() {
+    const form = document.getElementById("form-import-flashcards");
+    const fileInput = document.getElementById("import-fc-file") as HTMLInputElement | null;
+
+    if (fileInput) {
+      fileInput.addEventListener("change", (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const content = evt.target?.result as string;
+          const textarea = document.getElementById("import-fc-text") as HTMLTextAreaElement | null;
+          if (textarea && content) {
+            textarea.value = content;
+            showToast(`Arquivo "${file.name}" carregado. Clique em Importar para processar.`, "info");
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    if (form) {
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        this.processImportedText();
+      };
+    }
+  }
+
+  processImportedText() {
+    const isPro = store.isPro();
+    const select = document.getElementById("import-fc-disciplina") as HTMLSelectElement | null;
+    const textarea = document.getElementById("import-fc-text") as HTMLTextAreaElement | null;
+
+    if (!select || !textarea) return;
+
+    const rawText = textarea.value.trim();
+    if (!rawText) {
+      showToast("Insira ou cole o texto com os flashcards para importar!", "warning");
+      return;
+    }
+
+    const disciplinaId = select.value;
+    const disciplinaName = select.options[select.selectedIndex]?.text || "Geral";
+
+    const lines = rawText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+    const parsedCards: { frente: string; verso: string }[] = [];
+
+    lines.forEach(line => {
+      // Suporta separadores: Tab (\t), Ponto-e-vírgula (;), Barra vertical (|) ou dois pontos duplo (::)
+      let parts: string[] = [];
+      if (line.includes("\t")) {
+        parts = line.split("\t");
+      } else if (line.includes("::")) {
+        parts = line.split("::");
+      } else if (line.includes(";")) {
+        parts = line.split(";");
+      } else if (line.includes("|")) {
+        parts = line.split("|");
+      }
+
+      if (parts.length >= 2) {
+        const frente = parts[0].trim().replace(/^"|"$/g, "");
+        const verso = parts.slice(1).join(" - ").trim().replace(/^"|"$/g, "");
+        if (frente && verso) {
+          parsedCards.push({ frente, verso });
+        }
+      }
+    });
+
+    if (parsedCards.length === 0) {
+      showToast("Não foi possível reconhecer o formato dos cartões. Use separador ';' ou 'TAB' entre a pergunta e a resposta.", "error");
+      return;
+    }
+
+    if (!isPro && parsedCards.length > 30) {
+      openUpgradeModal();
+      showToast("No Plano Gratuito você pode importar até 30 cards por vez. Torne-se Caveira PRO para importações ilimitadas!", "warning");
+      parsedCards.splice(30);
+    }
+
+    const imported = store.importFlashcardsBatch(parsedCards, disciplinaId, disciplinaName);
+    showToast(`🎉 Sucesso! ${imported} flashcards foram importados para ${disciplinaName}!`, "success");
+
+    textarea.value = "";
+    document.getElementById("modal-import-flashcards")?.close();
   }
 
   bindNewCardModalEvents() {
@@ -61,7 +150,7 @@ class FlashcardsManager {
       });
     }
 
-    const modal = document.getElementById("modal-new-flashcard");
+    const modal = document.getElementById("modal-new-flashcard") as HTMLDialogElement | null;
     if (modal) modal.showModal();
   }
 
@@ -102,7 +191,7 @@ class FlashcardsManager {
     // Limpa campos e fecha modal
     frenteInput.value = "";
     versoInput.value = "";
-    document.getElementById("modal-new-flashcard")?.close();
+    (document.getElementById("modal-new-flashcard") as HTMLDialogElement | null)?.close();
   }
 
   saveNewCard() {

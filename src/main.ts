@@ -27,7 +27,11 @@ import { cadernoManager } from "./modules/errors";
 import { gamificationManager } from "./modules/gamification";
 import { pomodoro, pomodoroManager } from "./modules/pomodoro";
 import { PapiroCharts } from "./modules/analytics";
+import { tafManager } from "./modules/taf";
+import { discursivaManager } from "./modules/discursiva";
+import { leisManager } from "./modules/leis";
 import { localDB } from "./services/dexie";
+import { app } from "./app";
 
 // Inicialização da aplicação
 document.addEventListener("DOMContentLoaded", async () => {

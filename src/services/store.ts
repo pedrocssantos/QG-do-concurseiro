@@ -95,7 +95,10 @@ class Store {
         items: []
       },
       cicloWeeklyChecks: {},
-      dailyMissions: []
+      dailyMissions: [],
+      tafRecords: [],
+      discursivaAttempts: [],
+      leisReadState: {}
     };
   }
 
@@ -225,6 +228,15 @@ class Store {
     }
     if (!Array.isArray(state.dailyMissions)) {
       state.dailyMissions = [];
+    }
+    if (!Array.isArray(state.tafRecords)) {
+      state.tafRecords = [];
+    }
+    if (!Array.isArray(state.discursivaAttempts)) {
+      state.discursivaAttempts = [];
+    }
+    if (!state.leisReadState || typeof state.leisReadState !== "object") {
+      state.leisReadState = {};
     }
     if (!state.activeConcursoId) {
       state.activeConcursoId = state.concursos[0]?.id || "pf-agente";
@@ -1150,6 +1162,96 @@ class Store {
     this.rebuildCicloForConcurso(this.data.activeConcursoId || "pf-agente");
     this.save();
     this.notify("data_imported");
+  }
+
+  // ================= MÉTODOS TAF (TESTE DE APTIDÃO FÍSICA) =================
+  addTafRecord(record) {
+    if (!this.data.tafRecords) this.data.tafRecords = [];
+    const newRecord = {
+      id: `taf-${Date.now()}`,
+      date: this.getLocalDateString(),
+      ...record
+    };
+    this.data.tafRecords.unshift(newRecord);
+    this.addXP(40, "Treino TAF Registrado! 🏃");
+    this.save();
+    this.notify("taf_updated", newRecord);
+    return newRecord;
+  }
+
+  deleteTafRecord(id) {
+    if (!this.data.tafRecords) return;
+    this.data.tafRecords = this.data.tafRecords.filter(r => r.id !== id);
+    this.save();
+    this.notify("taf_updated", null);
+  }
+
+  // ================= MÉTODOS REDAÇÃO DISCURSIVA =================
+  addDiscursivaAttempt(attempt) {
+    if (!this.data.discursivaAttempts) this.data.discursivaAttempts = [];
+    const newAttempt = {
+      id: `disc-${Date.now()}`,
+      data: this.getLocalDateString(),
+      ...attempt
+    };
+    this.data.discursivaAttempts.unshift(newAttempt);
+    this.addXP(60, "Redação Discursiva Concluída! ✍️");
+    this.save();
+    this.notify("discursiva_updated", newAttempt);
+    return newAttempt;
+  }
+
+  // ================= MÉTODOS VADE MECUM / LEIS =================
+  toggleLeiArtigoLido(artigoId) {
+    if (!this.data.leisReadState) this.data.leisReadState = {};
+    const current = !!this.data.leisReadState[artigoId];
+    this.data.leisReadState[artigoId] = !current;
+    if (!current) {
+      this.addXP(10, "Artigo de Lei Lido! 📖");
+    }
+    this.save();
+    this.notify("leis_updated", { artigoId, lido: !current });
+    return !current;
+  }
+
+  isLeiArtigoLido(artigoId) {
+    return !!(this.data.leisReadState && this.data.leisReadState[artigoId]);
+  }
+
+  // ================= IMPORTADOR DE FLASHCARDS EM LOTE =================
+  importFlashcardsBatch(cards, disciplinaId, disciplinaName) {
+    if (!Array.isArray(cards) || cards.length === 0) return 0;
+    if (!this.data.flashcards) this.data.flashcards = [];
+
+    const todayStr = this.getLocalDateString();
+    let count = 0;
+
+    cards.forEach((c, idx) => {
+      const frente = String(c.frente || c.front || "").trim();
+      const verso = String(c.verso || c.back || "").trim();
+      if (!frente || !verso) return;
+
+      this.data.flashcards.push({
+        id: `fc-imp-${Date.now()}-${idx}`,
+        disciplinaId: disciplinaId || "pf-geral",
+        disciplinaName: disciplinaName || "Geral",
+        frente,
+        verso,
+        interval: 1,
+        repetitions: 0,
+        easeFactor: 2.5,
+        dueDate: todayStr,
+        lastReviewedAt: null
+      });
+      count++;
+    });
+
+    if (count > 0) {
+      this.addXP(count * 5, `${count} Flashcards Importados! 🃏`);
+      this.save();
+      this.notify("flashcards_updated", { imported: count });
+    }
+    return count;
   }
 }
 
