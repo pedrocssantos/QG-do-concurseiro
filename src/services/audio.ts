@@ -170,6 +170,14 @@ const audio = new AudioEngine();
 
 export { AudioEngine, audio };
 if (typeof window !== "undefined") {
-  window.AudioEngine = AudioEngine;
-  window.audio = audio;
+  (window as any).AudioEngine = AudioEngine;
+  (window as any).audio = audio;
+
+  const unlockAudio = () => {
+    audio.initContext();
+    window.removeEventListener("click", unlockAudio);
+    window.removeEventListener("touchstart", unlockAudio);
+  };
+  window.addEventListener("click", unlockAudio, { once: true });
+  window.addEventListener("touchstart", unlockAudio, { once: true });
 }

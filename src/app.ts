@@ -127,9 +127,35 @@ class App {
     }
   }
 
-  checkAuthReturn() {
+  async checkAuthReturn() {
     try {
-      const hash = window.location.hash;
+      const hash = window.location.hash || "";
+      const search = window.location.search || "";
+      const urlParams = new URLSearchParams(search);
+      const code = urlParams.get("code");
+
+      // Suporte a PKCE flow do Supabase
+      if (code && typeof db !== "undefined" && db.client) {
+        console.log("🔑 Código de autenticação PKCE detectado na URL.");
+        const { data, error } = await db.client.auth.exchangeCodeForSession(code);
+        if (data?.session?.user) {
+          store.data.profile.isLoggedIn = true;
+          store.data.profile.email = data.session.user.email || store.data.profile.email;
+          if (data.session.user.user_metadata?.name) {
+            store.data.profile.name = data.session.user.user_metadata.name;
+            store.data.profile.avatar = data.session.user.user_metadata.name.substring(0, 2).toUpperCase();
+          }
+          store.save();
+          showToast("🎉 E-mail confirmado com sucesso! Sua conta está ativa na nuvem!", "success");
+          db.updateAuthUI();
+          dashboardManager.renderHeaderInfo();
+          window.history.replaceState({}, document.title, window.location.pathname + "#dashboard");
+          this.handleRoute();
+          return;
+        }
+      }
+
+      // Suporte a Implicit flow (access_token no hash)
       if (hash && (hash.includes("access_token=") || hash.includes("type=signup") || hash.includes("type=recovery"))) {
         console.log("🔑 Retorno de confirmação de e-mail do Supabase detectado.");
         setTimeout(async () => {
@@ -160,12 +186,6 @@ class App {
   handleRoute() {
     const rawHash = window.location.hash.replace("#", "").trim();
     const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
-
-    // Authentication Guard
-    if (route !== "landing" && !store.data.profile.isLoggedIn) {
-      openAuthModal("login");
-      return; // Stop route processing
-    }
 
     this.currentRoute = route;
 

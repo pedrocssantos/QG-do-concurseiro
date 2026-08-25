@@ -1,6 +1,7 @@
 // ==========================================================================
 // QG DO CONCURSEIRO - SUPABASE SERVICE & OFFLINE-FIRST SYNC ENGINE (ESM)
 // ==========================================================================
+import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
 import { store } from "./store";
 import { showToast, openUpgradeModal, openAuthModal } from "../app";
 
@@ -8,6 +9,13 @@ const SUPABASE_URL = "https://enkdykbbayloriedogzj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_0yq01ZlZNTS-NOYar9cZjQ_TarnMj2t";
 
 class SupabaseService {
+  client: SupabaseClient | null;
+  currentUser: User | null;
+  profile: any;
+  isInitialized: boolean;
+  isSyncing: boolean;
+  syncTimeout: any;
+
   constructor() {
     this.client = null;
     this.currentUser = null;
@@ -18,19 +26,21 @@ class SupabaseService {
   }
 
   init() {
-    if (window.supabase && typeof window.supabase.createClient === "function") {
-      this.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    try {
+      this.client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         auth: {
           persistSession: true,
-          autoRefreshToken: true
+          autoRefreshToken: true,
+          detectSessionInUrl: true
         }
       });
       this.isInitialized = true;
       this.checkSession();
       this.listenAuthChanges();
       this.bindNetworkListeners();
-    } else {
-      console.warn("SDK do Supabase não carregado. Operando em modo offline/local.");
+      console.log("☁️ Supabase Client inicializado com sucesso!");
+    } catch (e) {
+      console.warn("⚠️ Falha ao inicializar cliente do Supabase. Operando em modo offline/local.", e);
     }
   }
 
