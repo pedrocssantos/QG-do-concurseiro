@@ -1045,11 +1045,11 @@
   <!-- OVERLAYS E MODAIS -->
 
   <!-- Modal: Onboarding de Boas-Vindas -->
-  <div class="modal-overlay hidden" id="modal-onboarding" style="z-index: 1100;">
+  <dialog class="modal-dialog" id="modal-onboarding" style="z-index: 1100;">
     <div class="modal-box" style="max-width: 620px; border-top: 4px solid var(--color-warning);">
       <div class="modal-header">
         <h3><i class="fa-solid fa-crosshairs text-warning"></i> Bem-vindo ao QG do Concurseiro</h3>
-        <button class="modal-close-btn" onclick="document.getElementById('modal-onboarding').classList.add('hidden')">&times;</button>
+        <form method="dialog"><button aria-label="Fechar" class="modal-close-btn">&times;</button></form>
       </div>
       <div class="modal-body" style="padding: 24px;">
         
@@ -1169,7 +1169,7 @@
 
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modo Zen Fullscreen -->
   <div class="zen-overlay hidden" id="zen-mode-overlay">
@@ -1192,11 +1192,11 @@
   </div>
 
   <!-- Modal: Nova Disciplina -->
-  <div class="modal-overlay hidden" id="modal-add-disciplina" role="dialog" aria-modal="true" aria-labelledby="add-disc-title">
+  <dialog class="modal-dialog" id="modal-add-disciplina" aria-labelledby="add-disc-title">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="add-disc-title"><i class="fa-solid fa-book text-primary"></i> Nova Disciplina</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1237,14 +1237,14 @@
         <button class="btn btn-primary" onclick="editalManager.saveNewDisciplina()">Salvar Disciplina</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Novo Tópico -->
-  <div class="modal-overlay hidden" id="modal-add-topico" role="dialog" aria-modal="true" aria-labelledby="add-topico-title">
+  <dialog class="modal-dialog" id="modal-add-topico" aria-labelledby="add-topico-title">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="add-topico-title"><i class="fa-solid fa-list text-primary"></i> Adicionar Tópico ao Edital</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1257,14 +1257,14 @@
         <button class="btn btn-primary" onclick="editalManager.saveNewTopico()">Adicionar Tópico</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Novo Concurso -->
-  <div class="modal-overlay hidden" id="modal-new-concurso" role="dialog" aria-modal="true" aria-labelledby="new-concurso-title-header">
+  <dialog class="modal-dialog" id="modal-new-concurso" aria-labelledby="new-concurso-title-header">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="new-concurso-title-header"><i class="fa-solid fa-trophy text-primary"></i> Criar Novo Plano de Concurso</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1289,14 +1289,14 @@
         <button class="btn btn-primary" id="btn-save-new-concurso">Criar e Ativar Plano</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Recalibrar Ciclo de Estudos -->
-  <div class="modal-overlay hidden" id="modal-recalibrate-ciclo" role="dialog" aria-modal="true" aria-labelledby="recalibrate-ciclo-title">
+  <dialog class="modal-dialog" id="modal-recalibrate-ciclo" aria-labelledby="recalibrate-ciclo-title">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="recalibrate-ciclo-title"><i class="fa-solid fa-arrows-rotate text-primary"></i> Recalibrar Ciclo de Estudos</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <p class="text-muted" style="margin-bottom: 16px; font-size: 0.9rem;">
@@ -1312,14 +1312,14 @@
         <button class="btn btn-primary" id="btn-save-recalibrate-ciclo" onclick="cicloManager.recalibrateFromModal()">Recalcular e Salvar Ciclo</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Novo Flashcard -->
-  <div class="modal-overlay hidden" id="modal-new-flashcard" role="dialog" aria-modal="true" aria-labelledby="new-fc-title">
+  <dialog class="modal-dialog" id="modal-new-flashcard" aria-labelledby="new-fc-title">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="new-fc-title"><i class="fa-solid fa-layer-group text-primary"></i> Criar Flashcard</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1340,14 +1340,14 @@
         <button class="btn btn-primary" onclick="flashcardsManager.saveNewCard()">Salvar Cartão</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Nova Questão -->
-  <div class="modal-overlay hidden" id="modal-new-question" role="dialog" aria-modal="true" aria-labelledby="new-q-title">
+  <dialog class="modal-dialog" id="modal-new-question" aria-labelledby="new-q-title">
     <div class="modal-box">
       <div class="modal-header">
         <h3 id="new-q-title"><i class="fa-solid fa-circle-question text-primary"></i> Adicionar Questão ao Banco</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -1379,14 +1379,14 @@
         <button class="btn btn-primary" id="btn-save-new-question">Salvar Questão</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Configuração do Simulado Customizado -->
-  <div class="modal-overlay hidden" id="modal-config-simulado">
+  <dialog class="modal-dialog" id="modal-config-simulado">
     <div class="modal-box" style="max-width: 580px;">
       <div class="modal-header">
         <h3><i class="fa-solid fa-stopwatch text-warning"></i> Configurar Simulado Cronometrado</h3>
-        <button class="modal-close-btn">&times;</button>
+        <form method="dialog"><button aria-label="Fechar" class="modal-close-btn">&times;</button></form>
       </div>
       <div class="modal-body" style="padding: 20px;">
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
@@ -1438,10 +1438,10 @@
         </button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Conclusão de Sessão & Próximo Passo -->
-  <div class="modal-overlay hidden" id="modal-post-pomodoro">
+  <dialog class="modal-dialog" id="modal-post-pomodoro">
     <div class="modal-box" style="text-align: center; max-width: 520px;">
       <div class="modal-header" style="justify-content: center;">
         <h3><i class="fa-solid fa-circle-check text-success"></i> Sessão de Estudo Concluída!</h3>
@@ -1478,14 +1478,14 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Resultado do Simulado -->
-  <div class="modal-overlay hidden" id="modal-simulado-result" role="dialog" aria-modal="true" aria-labelledby="sim-res-title">
+  <dialog class="modal-dialog" id="modal-simulado-result" aria-labelledby="sim-res-title">
     <div class="modal-box" style="text-align: center;">
       <div class="modal-header">
         <h3 id="sim-res-title"><i class="fa-solid fa-award text-warning"></i> Relatório do Simulado</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <div style="font-size: 2.8rem; margin: 10px 0;">🎯</div>
@@ -1526,10 +1526,10 @@
         <button class="btn btn-primary modal-close-btn">Continuar Estudando</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Level Up -->
-  <div class="modal-overlay hidden" id="modal-level-up" role="dialog" aria-modal="true" aria-labelledby="levelup-title">
+  <dialog class="modal-dialog" id="modal-level-up" aria-labelledby="levelup-title">
     <div class="modal-box" style="text-align: center; border: 2px solid var(--color-accent);">
       <div class="modal-body" style="padding: 36px 24px;">
         <div style="font-size: 3.5rem; margin-bottom: 10px;">⭐</div>
@@ -1543,10 +1543,10 @@
         </button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Autenticação (Login e Cadastro Obrigatório) -->
-  <div class="modal-overlay hidden" id="modal-auth" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" style="backdrop-filter: blur(8px); background: rgba(5, 16, 20, 0.85); z-index: 9999;">
+  <dialog class="modal-dialog" id="modal-auth" aria-labelledby="auth-modal-title" style="backdrop-filter: blur(8px); background: rgba(5, 16, 20, 0.85); z-index: 9999;">
     <div class="modal-box" style="max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color-light); position: relative;">
       <div class="modal-header" style="flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 24px 20px 14px; position: relative;">
         <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--color-primary-tint); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 4px;">
@@ -1554,7 +1554,7 @@
         </div>
         <h3 id="auth-modal-title" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">QG do Concurseiro</h3>
         <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Faça login ou crie sua conta para acessar a plataforma.</p>
-        <button class="modal-close-btn" aria-label="Fechar janela" style="position: absolute; top: 14px; right: 14px;">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela" style="position: absolute; top: 14px; right: 14px;">&times;</button></form>
       </div>
       <div class="modal-body" style="padding: 10px 20px 24px;">
         <!-- Abas Login / Cadastro -->
@@ -1597,14 +1597,14 @@
         </form>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Modal: Planos & Assinatura PRO -->
-  <div class="modal-overlay hidden" id="modal-upgrade-pro" role="dialog" aria-modal="true" aria-labelledby="upgrade-modal-title">
+  <dialog class="modal-dialog" id="modal-upgrade-pro" aria-labelledby="upgrade-modal-title">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(37,99,235,0.15));">
         <h3 id="upgrade-modal-title" style="color: #fbbf24;"><i class="fa-solid fa-crown"></i> Plano Caveira PRO - Acelere sua Aprovação</h3>
-        <button class="modal-close-btn" aria-label="Fechar janela">&times;</button>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
       </div>
       <div class="modal-body">
         <p style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 24px;">
@@ -1654,7 +1654,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <!-- Container de Toasts -->
   <div id="toast-container"></div>

@@ -53,6 +53,10 @@
                 <div class="fc-card-footer">
                   <i class="fa-solid fa-hand-pointer"></i> Clique ou pressione [Espaço] para revelar
                 </div>
+                <div class="fc-due-info" v-if="currentCard.dueDate">
+                  <i class="fa-regular fa-calendar-check"></i>
+                  {{ formatDueDate(currentCard) }}
+                </div>
               </div>
 
               <!-- Verso do Card -->
@@ -88,19 +92,19 @@
           <div v-if="isFlipped" class="fc-grade-grid">
             <button class="fc-grade-btn btn-grade-0" @click="rateCard(0)">
               <span class="grade-title">🔴 Errei</span>
-              <span class="grade-sub">Revisar em 1 min</span>
+              <span class="grade-sub">Revisar em {{ previewInterval(0) }}</span>
             </button>
             <button class="fc-grade-btn btn-grade-3" @click="rateCard(3)">
               <span class="grade-title">🟠 Difícil</span>
-              <span class="grade-sub">Revisar em 1 dia</span>
+              <span class="grade-sub">Revisar em {{ previewInterval(3) }}</span>
             </button>
             <button class="fc-grade-btn btn-grade-4" @click="rateCard(4)">
               <span class="grade-title">🟢 Bom</span>
-              <span class="grade-sub">Revisar em 3-6 dias</span>
+              <span class="grade-sub">Revisar em {{ previewInterval(4) }}</span>
             </button>
             <button class="fc-grade-btn btn-grade-5" @click="rateCard(5)">
               <span class="grade-title">🔵 Fácil</span>
-              <span class="grade-sub">Revisar em 7+ dias</span>
+              <span class="grade-sub">Revisar em {{ previewInterval(5) }}</span>
             </button>
           </div>
         </div>
@@ -208,6 +212,43 @@ const currentDeckName = computed(() => {
   return d ? d.name : (currentCard.value?.disciplinaId || 'Geral');
 });
 
+function previewInterval(quality: number): string {
+  if (!currentCard.value) return '';
+  const card = currentCard.value;
+  let ef = card.easeFactor || 2.5;
+  let interval = card.interval || 1;
+  let reps = card.repetitions || 0;
+  
+  if (quality < 3) {
+    return '< 1 dia';
+  }
+  
+  // SM-2 calculation preview
+  ef = Math.max(1.3, ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+  if (reps === 0) interval = 1;
+  else if (reps === 1) interval = 6;
+  else interval = Math.round(interval * ef);
+  
+  if (interval === 1) return '1 dia';
+  if (interval < 7) return `${interval} dias`;
+  if (interval < 30) return `${Math.round(interval / 7)} semana(s)`;
+  return `${Math.round(interval / 30)} mês(es)`;
+}
+
+function formatDueDate(card: Flashcard): string {
+  if (!card.dueDate) return 'Nova';
+  const today = store.getLocalDateString();
+  if (card.dueDate <= today) return '📌 Revisão pendente!';
+  
+  const due = new Date(card.dueDate + 'T12:00:00');
+  const now = new Date();
+  const diffDays = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 1) return 'Próxima revisão: amanhã';
+  if (diffDays < 7) return `Próxima revisão: ${diffDays} dias`;
+  return `Próxima revisão: ${card.dueDate}`;
+}
+
 function selectDeck(deckId: string) {
   selectedDeckId.value = deckId;
   currentIndex.value = 0;
@@ -239,7 +280,9 @@ function rateCard(quality: number) {
     currentIndex.value++;
   }
 
-  showToast(`Card classificado! Próxima revisão agendada.`, 'success');
+  const updatedCard = store.data.flashcards.find(c => c.id === cardId);
+  const nextReview = updatedCard ? formatDueDate(updatedCard) : 'agendada';
+  showToast(`Card classificado! ${nextReview}`, 'success');
 }
 
 function deleteCurrentCard() {
@@ -380,5 +423,14 @@ onUnmounted(() => {
 .grade-sub {
   font-size: 0.72rem;
   opacity: 0.8;
+}
+
+.fc-due-info {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 </style>

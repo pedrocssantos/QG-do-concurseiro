@@ -29,6 +29,7 @@ function sanitizeHTML(html: string): string {
 
 class QuestionsManager {
   constructor() {
+    this._searchDebounce = null;
     this.filteredQuestions = [];
     this.currentIndex = 0;
     this.selectedOption = null;
@@ -134,7 +135,11 @@ class QuestionsManager {
     if (bancaSelect) bancaSelect.addEventListener("change", (e) => { this.filters.banca = e.target.value; this.applyFilters(); });
     if (anoSelect) anoSelect.addEventListener("change", (e) => { this.filters.ano = e.target.value; this.applyFilters(); });
     if (statusSelect) statusSelect.addEventListener("change", (e) => { this.filters.status = e.target.value; this.applyFilters(); });
-    if (searchInput) searchInput.addEventListener("input", (e) => { this.filters.search = e.target.value.toLowerCase(); this.applyFilters(); });
+    if (searchInput) searchInput.addEventListener("input", (e) => {
+      this.filters.search = e.target.value.toLowerCase();
+      if (this._searchDebounce) clearTimeout(this._searchDebounce);
+      this._searchDebounce = setTimeout(() => this.applyFilters(), 300);
+    });
 
     if (prevBtn) prevBtn.addEventListener("click", () => this.navigate(-1));
     if (nextBtn) nextBtn.addEventListener("click", () => this.navigate(1));
@@ -420,7 +425,7 @@ class QuestionsManager {
       });
     }
 
-    modal.classList.remove("hidden");
+    modal.showModal();
   }
 
   bindSimuladoConfigHandlers() {
@@ -462,7 +467,7 @@ class QuestionsManager {
         if (!store.isPro() && store.getSimuladosThisWeek() >= 3) {
           showToast("Você atingiu o limite de 3 simulados semanais no Plano Gratuito. Assine o PRO para simulados ilimitados!", "warning");
           const modal = document.getElementById("modal-config-simulado");
-          if (modal) modal.classList.add("hidden");
+          if (modal) modal.close();
           if (typeof openUpgradeModal === "function") openUpgradeModal();
           return;
         }
@@ -477,7 +482,7 @@ class QuestionsManager {
         const selectedDiscIds = Array.from(document.querySelectorAll(".sim-disc-chk:checked")).map(c => c.value);
 
         const modal = document.getElementById("modal-config-simulado");
-        if (modal) modal.classList.add("hidden");
+        if (modal) modal.close();
 
         this.startSimulado(count, minutes * 60, selectedDiscIds, scoringModel);
       };
@@ -663,7 +668,7 @@ class QuestionsManager {
     const xpBonus = 100;
     store.addXP(xpBonus, "Bônus de Simulado Concluído! 🎓");
 
-    modal.classList.remove("hidden");
+    modal.showModal();
   }
 }
 

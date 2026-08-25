@@ -425,23 +425,25 @@ class DashboardManager {
   startMissionAction(route, disciplinaId) {
     window.location.hash = route;
     if (disciplinaId) {
-      setTimeout(() => {
-        if (route === "#pomodoro") {
-          const select = document.getElementById("pomo-subject-select");
-          if (select) {
-            select.value = disciplinaId;
-            if (typeof pomodoro !== "undefined") pomodoro.selectedDisciplinaId = disciplinaId;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (route === "#pomodoro") {
+            const select = document.getElementById("pomo-subject-select");
+            if (select) {
+              select.value = disciplinaId;
+              if (typeof pomodoro !== "undefined") pomodoro.selectedDisciplinaId = disciplinaId;
+            }
+          } else if (route === "#questoes") {
+            if (typeof questionsManager !== "undefined") {
+              questionsManager.setDisciplinaFilter(disciplinaId);
+            }
+          } else if (route === "#flashcards") {
+            if (typeof flashcardsManager !== "undefined") {
+              flashcardsManager.selectDeck(disciplinaId);
+            }
           }
-        } else if (route === "#questoes") {
-          if (typeof questionsManager !== "undefined") {
-            questionsManager.setDisciplinaFilter(disciplinaId);
-          }
-        } else if (route === "#flashcards") {
-          if (typeof flashcardsManager !== "undefined") {
-            flashcardsManager.selectDeck(disciplinaId);
-          }
-        }
-      }, 100);
+        });
+      });
     }
   }
 

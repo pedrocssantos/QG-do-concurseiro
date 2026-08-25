@@ -20,6 +20,7 @@ import { PapiroCharts } from "./modules/analytics";
 class App {
   constructor() {
     this.currentRoute = "dashboard";
+    this.previousRoute = null;
     this.routes = [
       "dashboard",
       "edital",
@@ -184,8 +185,26 @@ class App {
     // Rola para o topo suavemente
     window.scrollTo({ top: 0, behavior: "smooth" });
 
+    this.deactivateViewModule(this.previousRoute);
+    this.previousRoute = route;
+
     // Inicializa o módulo da view ativa
     this.activateViewModule(route);
+  }
+
+  deactivateViewModule(route) {
+    if (!route) return;
+    switch (route) {
+      case 'dashboard': dashboardManager.destroy?.(); break;
+      case 'edital': editalManager.destroy?.(); break;
+      case 'ciclo': cicloManager.destroy?.(); break;
+      case 'questoes': questionsManager.destroy?.(); break;
+      case 'erros': cadernoManager.destroy?.(); break;
+      case 'desempenho': break; // Static render
+      case 'ranking': gamificationManager.destroy?.(); break;
+      case 'pomodoro': break; // Pomodoro keeps running in background
+      case 'configuracoes': break;
+    }
   }
 
   activateViewModule(route) {
@@ -338,25 +357,25 @@ class App {
 
   bindModalHandlers() {
     // Fechamento de modais ao clicar no X ou fora
-    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    document.querySelectorAll(".modal-dialog").forEach(overlay => {
       overlay.addEventListener("click", (e) => {
         if (e.target === overlay) {
-          overlay.classList.add("hidden");
+          (overlay as HTMLDialogElement).close();
         }
       });
     });
 
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        const modal = btn.closest(".modal-overlay");
-        if (modal) modal.classList.add("hidden");
+        const modal = btn.closest(".modal-dialog") as HTMLDialogElement;
+        if (modal) modal.close();
       });
     });
 
     // Fechamento de qualquer modal ou tela zen com a tecla Escape
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        document.querySelectorAll(".modal-overlay:not(.hidden)").forEach(m => m.classList.add("hidden"));
+        document.querySelectorAll("dialog[open]").forEach(m => (m as HTMLDialogElement).close());
         const zenOverlay = document.getElementById("zen-mode-overlay");
         if (zenOverlay && !zenOverlay.classList.contains("hidden")) {
           if (typeof pomodoroManager !== "undefined" && pomodoroManager.toggleZenMode) {
@@ -378,7 +397,7 @@ class App {
           return;
         }
         const m = document.getElementById("modal-new-concurso");
-        if (m) m.classList.remove("hidden");
+        if (m) m.showModal();
       });
     }
 
@@ -392,7 +411,7 @@ class App {
     if (openNewQuestionBtn) {
       openNewQuestionBtn.addEventListener("click", () => {
         const m = document.getElementById("modal-new-question");
-        if (m) m.classList.remove("hidden");
+        if (m) m.showModal();
       });
     }
 
@@ -446,7 +465,7 @@ class App {
 
     store.addConcurso(newConcurso);
     const m = document.getElementById("modal-new-concurso");
-    if (m) m.classList.add("hidden");
+    if (m) m.close();
 
     dashboardManager.renderHeaderInfo();
     this.activateViewModule(this.currentRoute);
@@ -491,7 +510,7 @@ class App {
     });
 
     const m = document.getElementById("modal-new-question");
-    if (m) m.classList.add("hidden");
+    if (m) m.close();
 
     showToast("Questão adicionada ao banco com sucesso!", "success");
     if (this.currentRoute === "questoes") questionsManager.init();
@@ -583,7 +602,7 @@ class App {
   openOnboardingModal() {
     const modal = document.getElementById("modal-onboarding");
     if (!modal) return;
-    modal.classList.remove("hidden");
+    modal.showModal();
 
     const step1 = document.getElementById("onboard-step-1");
     const step2 = document.getElementById("onboard-step-2");
@@ -693,7 +712,7 @@ class App {
         store.save();
 
         const modal = document.getElementById("modal-onboarding");
-        if (modal) modal.classList.add("hidden");
+        if (modal) modal.close();
 
         showToast(`Bem-vindo ao QG, ${name}! Plano operacional ativado com sucesso!`, "success");
         this.handleRoute();
@@ -725,7 +744,7 @@ class App {
       document.getElementById("levelup-title").textContent = `NÍVEL ${data.newLevel}`;
       document.getElementById("levelup-rank").textContent = data.title;
       audio.playCompletionChime();
-      modal.classList.remove("hidden");
+      modal.showModal();
     }
   }
 }
@@ -765,7 +784,7 @@ function openAuthModal(tab = "login") {
   const modal = document.getElementById("modal-auth");
   if (modal) {
     switchAuthTab(tab);
-    modal.classList.remove("hidden");
+    modal.showModal();
   }
 }
 
@@ -901,7 +920,7 @@ async function handleAuthSubmit(e: Event) {
         // Se o Supabase exigiu confirmação por e-mail
         if (result?.user && !result?.session) {
           showToast("📧 Cadastro realizado! Enviamos um link de confirmação para seu e-mail.", "info");
-          document.getElementById("modal-auth")?.classList.add("hidden");
+          document.getElementById("modal-auth")?.close();
           return;
         }
       }
@@ -914,7 +933,7 @@ async function handleAuthSubmit(e: Event) {
       store.save();
 
       showToast(`🎉 Conta criada com sucesso! Bem-vindo(a), ${name.split(" ")[0]}!`, "success");
-      document.getElementById("modal-auth")?.classList.add("hidden");
+      document.getElementById("modal-auth")?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
       if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
@@ -931,7 +950,7 @@ async function handleAuthSubmit(e: Event) {
       store.save();
 
       showToast("🚀 Login realizado com sucesso! Seus dados foram sincronizados.", "success");
-      document.getElementById("modal-auth")?.classList.add("hidden");
+      document.getElementById("modal-auth")?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
       if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
@@ -960,7 +979,7 @@ const STRIPE_CHECKOUT_LINKS = {
 
 function openUpgradeModal() {
   const modal = document.getElementById("modal-upgrade-pro");
-  if (modal) modal.classList.remove("hidden");
+  if (modal) modal.showModal();
 }
 
 function startCheckout(planType) {
@@ -980,7 +999,7 @@ function startCheckout(planType) {
     showToast(`Redirecionando para o checkout seguro da Stripe (${planType === 'anual' ? 'Plano Anual' : 'Plano Mensal'})... 💳`, "info");
     
     // Fecha o modal antes do redirecionamento
-    document.getElementById("modal-upgrade-pro")?.classList.add("hidden");
+    document.getElementById("modal-upgrade-pro")?.close();
 
     setTimeout(() => {
       window.location.href = url.toString();

@@ -177,15 +177,17 @@ class CicloManager {
 
   startCurrentPapiro(disciplinaId) {
     window.location.hash = "#pomodoro";
-    setTimeout(() => {
-      const select = document.getElementById("pomo-subject-select");
-      if (select) {
-        select.value = disciplinaId;
-        pomodoro.selectedDisciplinaId = disciplinaId;
-      }
-      pomodoro.start();
-      showToast("Sessão de foco iniciada! Bons estudos!", "success");
-    }, 100);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const select = document.getElementById("pomo-subject-select");
+        if (select) {
+          select.value = disciplinaId;
+          pomodoro.selectedDisciplinaId = disciplinaId;
+        }
+        pomodoro.start();
+        showToast("Sessão de foco iniciada! Bons estudos!", "success");
+      });
+    });
   }
 
   openRecalibrateModal() {
@@ -193,7 +195,7 @@ class CicloManager {
     if (modal) {
       const input = document.getElementById("recalibrate-weekly-hours");
       if (input) input.value = store.data.profile?.weeklyGoalHours || 25;
-      modal.classList.remove("hidden");
+      modal.showModal();
     }
   }
 
@@ -230,7 +232,7 @@ class CicloManager {
     this.renderCicloVisual();
 
     const modal = document.getElementById("modal-recalibrate-ciclo");
-    if (modal) modal.classList.add("hidden");
+    if (modal) modal.close();
 
     showToast(`Ciclo recalculado com sucesso para ${weeklyHours}h semanais! 🔄`, "success");
   }

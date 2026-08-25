@@ -62,7 +62,7 @@ class FlashcardsManager {
     }
 
     const modal = document.getElementById("modal-new-flashcard");
-    if (modal) modal.classList.remove("hidden");
+    if (modal) modal.showModal();
   }
 
   saveNewFlashcard() {
@@ -102,7 +102,7 @@ class FlashcardsManager {
     // Limpa campos e fecha modal
     frenteInput.value = "";
     versoInput.value = "";
-    document.getElementById("modal-new-flashcard")?.classList.add("hidden");
+    document.getElementById("modal-new-flashcard")?.close();
   }
 
   saveNewCard() {

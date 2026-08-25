@@ -235,15 +235,17 @@ class EditalManager {
 
   startPapiroOnTopic(discId, topicoId) {
     window.location.hash = "#pomodoro";
-    setTimeout(() => {
-      const select = document.getElementById("pomo-subject-select");
-      if (select) {
-        select.value = discId;
-        pomodoro.selectedDisciplinaId = discId;
-        pomodoro.selectedTopicoId = topicoId;
-      }
-      showToast("Tópico selecionado para sessão de foco!", "info");
-    }, 100);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const select = document.getElementById("pomo-subject-select");
+        if (select) {
+          select.value = discId;
+          pomodoro.selectedDisciplinaId = discId;
+          pomodoro.selectedTopicoId = topicoId;
+        }
+        showToast("Tópico selecionado para sessão de foco!", "info");
+      });
+    });
   }
 
   openAddTopicoModal(discId) {
@@ -251,7 +253,7 @@ class EditalManager {
     const modal = document.getElementById("modal-add-topico");
     if (modal) {
       document.getElementById("new-topico-title").value = "";
-      modal.classList.remove("hidden");
+      modal.showModal();
     }
   }
 
@@ -277,7 +279,7 @@ class EditalManager {
     });
 
     const modal = document.getElementById("modal-add-topico");
-    if (modal) modal.classList.add("hidden");
+    if (modal) modal.close();
 
     this.renderDisciplinasList();
     this.renderHeader();
@@ -308,7 +310,7 @@ class EditalManager {
     if (addDiscBtn) {
       addDiscBtn.addEventListener("click", () => {
         const modal = document.getElementById("modal-add-disciplina");
-        if (modal) modal.classList.remove("hidden");
+        if (modal) modal.showModal();
       });
     }
   }
@@ -338,7 +340,7 @@ class EditalManager {
     });
 
     const modal = document.getElementById("modal-add-disciplina");
-    if (modal) modal.classList.add("hidden");
+    if (modal) modal.close();
     if (nameInput) nameInput.value = "";
 
     this.renderDisciplinasList();

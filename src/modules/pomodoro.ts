@@ -388,12 +388,14 @@ class PomodoroController {
       btnQuestions.onclick = () => {
         modal.classList.add("hidden");
         window.location.hash = "#questoes";
-        setTimeout(() => {
-          if (typeof questionsManager !== "undefined") {
-            questionsManager.setDisciplinaFilter(disciplinaId);
-          }
-          showToast(`Filtrando questões de ${discName}!`, "info");
-        }, 150);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (typeof questionsManager !== "undefined") {
+              questionsManager.setDisciplinaFilter(disciplinaId);
+            }
+            showToast(`Filtrando questões de ${discName}!`, "info");
+          });
+        });
       };
     }
 
@@ -403,12 +405,14 @@ class PomodoroController {
       btnCards.onclick = () => {
         modal.classList.add("hidden");
         window.location.hash = "#flashcards";
-        setTimeout(() => {
-          if (typeof flashcardsManager !== "undefined") {
-            flashcardsManager.selectDeck(disciplinaId);
-          }
-          showToast(`Deck selecionado: Flashcards de ${discName}!`, "info");
-        }, 150);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (typeof flashcardsManager !== "undefined") {
+              flashcardsManager.selectDeck(disciplinaId);
+            }
+            showToast(`Deck selecionado: Flashcards de ${discName}!`, "info");
+          });
+        });
       };
     }
 
@@ -418,14 +422,14 @@ class PomodoroController {
       const breakMins = this.mode === "pomodoro_50" ? 10 : 5;
       btnBreak.innerHTML = `<i class="fa-solid fa-mug-hot"></i> Iniciar Descanso (${breakMins} min)`;
       btnBreak.onclick = () => {
-        modal.classList.add("hidden");
+        modal.close();
         this.state = "break";
         this.secondsRemaining = breakMins * 60;
         this.start(true);
       };
     }
 
-    modal.classList.remove("hidden");
+    modal.showModal();
   }
 
   toggleZenMode(active) {
