@@ -21,15 +21,94 @@ class PomodoroController {
     this.selectedTopicoId = null;
     this.isZenMode = false;
     this.eventsBound = false;
+    this.lastSaveTime = null;
   }
 
   init() {
+    this.checkSavedSession();
     this.updateSubjectDropdown();
     this.render();
     if (!this.eventsBound) {
       this.bindEvents();
       this.eventsBound = true;
     }
+  }
+
+  checkSavedSession() {
+    try {
+      const saved = localStorage.getItem("qg_pomodoro_active_session");
+      if (saved) {
+        const session = JSON.parse(saved);
+        if (session.state === "running" || session.state === "break" || session.state === "paused") {
+          if (confirm("Você tem uma sessão de estudo em andamento. Deseja retomá-la?")) {
+            this.mode = session.mode;
+            this.state = session.state;
+            this.lastActiveState = session.lastActiveState || "running";
+            this.secondsRemaining = session.secondsRemaining;
+            this.secondsElapsed = session.secondsElapsed;
+            this.totalSessionSeconds = session.totalSessionSeconds;
+            this.selectedDisciplinaId = session.selectedDisciplinaId;
+            
+            const modeBtns = document.querySelectorAll(".pomo-mode-btn");
+            modeBtns.forEach(b => {
+              if (b.dataset.mode === this.mode) b.classList.add("active");
+              else b.classList.remove("active");
+            });
+
+            const now = Date.now();
+            let deltaSecs = 0;
+            if (this.state === "running" || this.state === "break") {
+              deltaSecs = Math.max(0, Math.round((now - session.savedAt) / 1000));
+            }
+            
+            if (deltaSecs > 0) {
+              if (this.mode === "stopwatch") {
+                this.secondsElapsed += deltaSecs;
+                this.totalSessionSeconds += deltaSecs;
+              } else {
+                this.secondsRemaining = Math.max(0, this.secondsRemaining - deltaSecs);
+                if (this.state !== "break") {
+                  this.totalSessionSeconds += deltaSecs;
+                }
+              }
+            }
+            
+            this.lastTickTime = now;
+            this.lastSaveTime = now;
+            
+            if (this.secondsRemaining === 0 && this.mode !== "stopwatch") {
+              this.completeInterval();
+            } else if (this.state === "running" || this.state === "break") {
+              if (this.timerInterval) clearInterval(this.timerInterval);
+              this.timerInterval = setInterval(() => this.tick(), 1000);
+            }
+          } else {
+            this.clearSavedSession();
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error loading saved pomodoro session", e);
+    }
+  }
+
+  saveSession() {
+    if (this.state === "idle") return;
+    const session = {
+      mode: this.mode,
+      state: this.state,
+      lastActiveState: this.lastActiveState,
+      secondsRemaining: this.secondsRemaining,
+      secondsElapsed: this.secondsElapsed,
+      totalSessionSeconds: this.totalSessionSeconds,
+      selectedDisciplinaId: this.selectedDisciplinaId,
+      savedAt: Date.now()
+    };
+    localStorage.setItem("qg_pomodoro_active_session", JSON.stringify(session));
+  }
+
+  clearSavedSession() {
+    localStorage.removeItem("qg_pomodoro_active_session");
   }
 
   updateSubjectDropdown() {
@@ -74,6 +153,40 @@ class PomodoroController {
     document.addEventListener("fullscreenchange", () => {
       if (!document.fullscreenElement && this.isZenMode) {
         this.toggleZenMode(false);
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        try {
+          const saved = localStorage.getItem("qg_pomodoro_active_session");
+          if (saved) {
+            const session = JSON.parse(saved);
+            if (this.state === "running" || this.state === "break") {
+              const now = Date.now();
+              const deltaSecs = Math.max(0, Math.round((now - session.savedAt) / 1000));
+              
+              if (this.mode === "stopwatch") {
+                this.secondsElapsed = session.secondsElapsed + deltaSecs;
+                this.totalSessionSeconds = session.totalSessionSeconds + deltaSecs;
+              } else {
+                this.secondsRemaining = Math.max(0, session.secondsRemaining - deltaSecs);
+                if (this.state !== "break") {
+                  this.totalSessionSeconds = session.totalSessionSeconds + deltaSecs;
+                }
+                if (this.secondsRemaining === 0) {
+                  this.completeInterval();
+                }
+              }
+              this.lastTickTime = now;
+              this.lastSaveTime = now;
+              this.saveSession();
+              this.render();
+            }
+          }
+        } catch (e) {
+          console.error("Error on visibilitychange restore", e);
+        }
       }
     });
 
@@ -150,6 +263,7 @@ class PomodoroController {
     try {
       audio.stopAmbientNoise();
     } catch (e) {}
+    this.saveSession();
     this.render();
   }
 
@@ -171,10 +285,17 @@ class PomodoroController {
         this.completeInterval();
       }
     }
+
+    if (!this.lastSaveTime || now - this.lastSaveTime >= 30000) {
+      this.saveSession();
+      this.lastSaveTime = now;
+    }
+
     this.render();
   }
 
   completeInterval() {
+    this.clearSavedSession();
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = null;
     try {
@@ -200,6 +321,7 @@ class PomodoroController {
   }
 
   reset(askToSave = true) {
+    this.clearSavedSession();
     if (this.timerInterval) clearInterval(this.timerInterval);
     this.timerInterval = null;
     try {

@@ -12,8 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="QG Concurseiro">
 
-  <!-- PWA Manifest & Ícones Oficiais -->
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA: Manifest gerado automaticamente pelo vite-plugin-pwa -->
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
@@ -25,15 +24,7 @@
   <!-- Font Awesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- CSS Customizado -->
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="stylesheet" href="css/edital.css">
-  <link rel="stylesheet" href="css/questions.css">
-  <link rel="stylesheet" href="css/flashcards.css">
-  <link rel="stylesheet" href="css/pomodoro.css">
-  <link rel="stylesheet" href="css/landing.css">
+  <!-- CSS: Carregado via Vite (main.ts importa todos os estilos) -->
 </head>
 <body>
 
@@ -1667,9 +1658,6 @@
 
   <!-- Container de Toasts -->
   <div id="toast-container"></div>
-
-  <!-- Supabase JS Client via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Módulo Principal Vite TypeScript -->
   <script type="module" src="/src/main.ts"></script>

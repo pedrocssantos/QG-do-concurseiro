@@ -293,6 +293,13 @@ class Store {
       }
     }
 
+    if (fields.r24h === true && !topico.r24h) {
+      topico.r24hDate = this.getLocalDateString();
+    }
+    if (fields.r7d === true && !topico.r7d) {
+      topico.r7dDate = this.getLocalDateString();
+    }
+
     Object.assign(topico, fields);
 
     this.checkBadges();

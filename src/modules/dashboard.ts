@@ -230,33 +230,43 @@ class DashboardManager {
     (concurso.disciplinas || []).forEach(d => {
       (d.topicos || []).forEach(t => {
         if (t.teoria) {
-          const tDate = t.teoriaDate ? new Date(t.teoriaDate) : todayObj;
-          const diffDays = Math.floor((todayObj - tDate) / (1000 * 60 * 60 * 24));
+          const baseTeoriaDate = t.teoriaDate ? new Date(t.teoriaDate) : todayObj;
 
-          if (!t.r24h && diffDays >= 1) {
-            pendingReviewTopics.push({
-              disciplina: d.name,
-              disciplinaId: d.id,
-              topico: t.title,
-              topicoId: t.id,
-              revType: "R24h"
-            });
-          } else if (t.r24h && !t.r7d && diffDays >= 7) {
-            pendingReviewTopics.push({
-              disciplina: d.name,
-              disciplinaId: d.id,
-              topico: t.title,
-              topicoId: t.id,
-              revType: "R7d"
-            });
-          } else if (t.r7d && !t.r30d && diffDays >= 30) {
-            pendingReviewTopics.push({
-              disciplina: d.name,
-              disciplinaId: d.id,
-              topico: t.title,
-              topicoId: t.id,
-              revType: "R30d"
-            });
+          if (!t.r24h) {
+            const diffDays = Math.floor((todayObj.getTime() - baseTeoriaDate.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays >= 1) {
+              pendingReviewTopics.push({
+                disciplina: d.name,
+                disciplinaId: d.id,
+                topico: t.title,
+                topicoId: t.id,
+                revType: "R24h"
+              });
+            }
+          } else if (!t.r7d) {
+            const baseR24Date = t.r24hDate ? new Date(t.r24hDate) : baseTeoriaDate;
+            const diffDays = Math.floor((todayObj.getTime() - baseR24Date.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays >= 7) {
+              pendingReviewTopics.push({
+                disciplina: d.name,
+                disciplinaId: d.id,
+                topico: t.title,
+                topicoId: t.id,
+                revType: "R7d"
+              });
+            }
+          } else if (!t.r30d) {
+            const baseR7Date = t.r7dDate ? new Date(t.r7dDate) : baseTeoriaDate;
+            const diffDays = Math.floor((todayObj.getTime() - baseR7Date.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays >= 30) {
+              pendingReviewTopics.push({
+                disciplina: d.name,
+                disciplinaId: d.id,
+                topico: t.title,
+                topicoId: t.id,
+                revType: "R30d"
+              });
+            }
           }
         }
       });

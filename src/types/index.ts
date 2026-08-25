@@ -36,7 +36,9 @@ export interface Topico {
   questoesFeitas: number;
   questoesAcertos: number;
   r24h: boolean;
+  r24hDate?: string;
   r7d: boolean;
+  r7dDate?: string;
   r30d: boolean;
   dominio: number; // 1 a 5
 }

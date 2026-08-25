@@ -67,17 +67,8 @@ class App {
   }
 
   registerServiceWorker() {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-          .then((reg) => {
-            console.log("✅ PWA Service Worker ativo! Escopo:", reg.scope);
-          })
-          .catch((err) => {
-            console.warn("⚠️ Falha ao registrar Service Worker:", err);
-          });
-      });
-    }
+    // Service Worker agora é registrado automaticamente pelo vite-plugin-pwa (Workbox)
+    // Não é necessário registrar manualmente './service-worker.js'
 
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -158,6 +149,13 @@ class App {
   handleRoute() {
     const rawHash = window.location.hash.replace("#", "").trim();
     const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
+
+    // Authentication Guard
+    if (route !== "landing" && !store.data.profile.isLoggedIn) {
+      openAuthModal("login");
+      return; // Stop route processing
+    }
+
     this.currentRoute = route;
 
     // Atualiza links da barra de navegação

@@ -9,6 +9,24 @@ import { showToast, openUpgradeModal } from "../app";
 // QG DO CONCURSEIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS
 // ==========================================================================
 
+function sanitizeHTML(html: string): string {
+  if (!html) return "";
+  return String(html).replace(/<\/?([a-zA-Z0-9\-]+)([^>]*)>/g, (match, tag, attrs) => {
+    const t = tag.toLowerCase();
+    const allowed = ['strong', 'em', 'br', 'p', 'code', 'ul', 'li', 'ol'];
+    
+    if (t === 'script' || /on[a-z]+\s*=/i.test(attrs)) {
+      return match.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    
+    if (allowed.includes(t)) {
+      return match.startsWith('</') ? `</${t}>` : `<${t}>`;
+    }
+    
+    return '';
+  });
+}
+
 class QuestionsManager {
   constructor() {
     this.filteredQuestions = [];
@@ -216,8 +234,8 @@ class QuestionsManager {
         btn.className = `option-item ${this.selectedOption === alt.id ? "selected" : ""}`;
         btn.dataset.optId = alt.id;
         btn.innerHTML = `
-          <span class="option-badge">${alt.id}</span>
-          <span class="option-text">${alt.text}</span>
+          <span class="option-badge">${sanitizeHTML(String(alt.id))}</span>
+          <span class="option-text">${sanitizeHTML(String(alt.text))}</span>
         `;
 
         btn.addEventListener("click", () => {
@@ -324,7 +342,7 @@ class QuestionsManager {
           : `<div class="badge-error-feedback"><i class="fa-solid fa-circle-xmark"></i> RESPOSTA INCORRETA (Enviado para o Caderno de Erros)</div>`;
       }
       if (feedbackText) {
-        feedbackText.innerHTML = (q.explicacao || "").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        feedbackText.innerHTML = sanitizeHTML((q.explicacao || "").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"));
       }
     }
 
@@ -395,8 +413,8 @@ class QuestionsManager {
         item.style.fontSize = "0.8rem";
         item.style.cursor = "pointer";
         item.innerHTML = `
-          <input type="checkbox" class="custom-chk-sm sim-disc-chk" value="${d.id}" checked>
-          <span>${d.name}</span>
+          <input type="checkbox" class="custom-chk-sm sim-disc-chk" value="${sanitizeHTML(String(d.id))}" checked>
+          <span>${sanitizeHTML(String(d.name))}</span>
         `;
         container.appendChild(item);
       });
@@ -585,7 +603,7 @@ class QuestionsManager {
     });
 
     const isCespe = this.simuladoScoringModel !== "standard";
-    const netScore = isCespe ? (correct - incorrect) : correct;
+    const netScore = isCespe ? Math.max(0, correct - incorrect) : correct;
     const accuracy = this.filteredQuestions.length > 0 ? Math.round((correct / this.filteredQuestions.length) * 100) : 0;
 
     const durationMinutes = Math.max(1, Math.round(elapsedSeconds / 60));
