@@ -2,6 +2,7 @@
 // QG DO CONCURSEIRO - STORE STATE (ESM)
 // ==========================================================================
 import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGES, DEFAULT_LEADERBOARD } from "../data/data";
+import { PRESET_CONCURSOS } from "../data/presetsData";
 import { db } from "./supabase";
 import { localDB } from "./dexie";
 import { showToast } from "../app";
@@ -426,6 +427,299 @@ class Store {
     disc.topicos = (disc.topicos || []).filter(t => t.id !== topicoId);
     this.save();
     this.notify("topico_deleted", { concursoId, disciplinaId, topicoId });
+  }
+
+  addTopicosBatch(concursoId, disciplinaId, topicTitles) {
+    const concurso = this.data.concursos.find(c => c.id === concursoId);
+    if (!concurso) return [];
+    const disc = (concurso.disciplinas || []).find(d => d.id === disciplinaId);
+    if (!disc) return [];
+    if (!disc.topicos) disc.topicos = [];
+
+    const created = [];
+    const now = Date.now();
+
+    topicTitles.forEach((rawTitle, index) => {
+      const cleanTitle = sanitizeText(rawTitle)
+        .replace(/^[\s\-\*\•\⁃\◦\–\—\.\;]+/, "")
+        .replace(/^\d+([\.\-\)]\d+)*[\.\-\)]\s*/, "")
+        .replace(/[\;\.]$/, "")
+        .trim();
+
+      if (cleanTitle.length > 0) {
+        const topico = {
+          id: `top-${now}-${index}-${Math.random().toString(36).substring(2, 6)}`,
+          title: cleanTitle,
+          teoria: false,
+          resumo: false,
+          r24h: false,
+          r7d: false,
+          r30d: false,
+          questoesFeitas: 0,
+          questoesAcertos: 0,
+          dominio: 1
+        };
+        disc.topicos.push(topico);
+        created.push(topico);
+      }
+    });
+
+    this.save();
+    this.notify("edital_updated", { concursoId, disciplinaId, batchCount: created.length });
+    return created;
+  }
+
+  clonePresetConcurso(presetId) {
+    const preset = PRESET_CONCURSOS.find(p => p.id === presetId);
+    if (!preset) return null;
+
+    const newConcursoId = `concurso-${Date.now()}`;
+    const cloned = {
+      id: newConcursoId,
+      title: `${preset.title} (Personalizado)`,
+      shortTitle: preset.shortTitle,
+      category: preset.category,
+      banca: preset.banca,
+      targetDate: preset.targetDate,
+      vagas: preset.vagas || 500,
+      salario: preset.salario || "R$ 10.000,00",
+      totalHoursGoal: 500,
+      dailyGoalMinutes: 240,
+      disciplinas: preset.disciplinas.map((d, dIdx) => ({
+        id: `disc-${Date.now()}-${dIdx}`,
+        name: d.name,
+        weight: d.weight || 3,
+        color: d.color,
+        icon: d.icon,
+        difficulty: 3,
+        topicos: d.topicos.map((t, tIdx) => ({
+          id: `top-${Date.now()}-${dIdx}-${tIdx}`,
+          title: t.title,
+          teoria: false,
+          resumo: false,
+          r24h: false,
+          r7d: false,
+          r30d: false,
+          questoesFeitas: 0,
+          questoesAcertos: 0,
+          dominio: 1
+        }))
+      }))
+    };
+
+    this.data.concursos.push(cloned);
+    this.setActiveConcurso(newConcursoId);
+    this.rebuildCicloForConcurso(newConcursoId);
+    this.save();
+    this.notify("concurso_added", cloned);
+    return cloned;
+  }
+
+  exportEditalToJSON(concursoId, includeProgress = false) {
+    const concurso = this.data.concursos.find(c => c.id === concursoId) || this.getActiveConcurso();
+    if (!concurso) throw new Error("Concurso não encontrado.");
+
+    const payload = {
+      schemaVersion: "1.0",
+      exportedAt: new Date().toISOString(),
+      source: "QG_DO_CONCURSEIRO",
+      concurso: {
+        title: concurso.title,
+        shortTitle: concurso.shortTitle || concurso.title,
+        category: concurso.category || "Personalizado",
+        banca: concurso.banca || "Cebraspe",
+        targetDate: concurso.targetDate,
+        totalHoursGoal: concurso.totalHoursGoal || 500,
+        dailyGoalMinutes: concurso.dailyGoalMinutes || 240,
+        disciplinas: (concurso.disciplinas || []).map(d => ({
+          name: d.name,
+          weight: d.weight || 3,
+          color: d.color || "#38BDF8",
+          icon: d.icon || "fa-book",
+          difficulty: d.difficulty || 3,
+          topicos: (d.topicos || []).map(t => ({
+            title: t.title,
+            ...(includeProgress ? {
+              teoria: !!t.teoria,
+              resumo: !!t.resumo,
+              r24h: !!t.r24h,
+              r7d: !!t.r7d,
+              r30d: !!t.r30d,
+              dominio: t.dominio || 1,
+              questoesFeitas: t.questoesFeitas || 0,
+              questoesAcertos: t.questoesAcertos || 0
+            } : {
+              teoria: false,
+              resumo: false,
+              r24h: false,
+              r7d: false,
+              r30d: false,
+              dominio: 1,
+              questoesFeitas: 0,
+              questoesAcertos: 0
+            })
+          }))
+        }))
+      }
+    };
+
+    return JSON.stringify(payload, null, 2);
+  }
+
+  importEditalFromJSON(jsonString) {
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonString);
+    } catch {
+      throw new Error("Arquivo JSON inválido ou corrompido.");
+    }
+
+    if (!isSafeObject(parsed)) {
+      throw new Error("Objeto rejeitado por segurança (Prototype Pollution detectado).");
+    }
+
+    const cData = parsed.concurso || parsed;
+    if (!cData || !cData.title || !Array.isArray(cData.disciplinas)) {
+      throw new Error("Formato de edital inválido: 'title' e lista de 'disciplinas' são obrigatórios.");
+    }
+
+    const newConcursoId = `concurso-import-${Date.now()}`;
+    const sanitizedConcurso = {
+      id: newConcursoId,
+      title: sanitizeText(cData.title).substring(0, 100),
+      shortTitle: sanitizeText(cData.shortTitle || cData.title).substring(0, 40),
+      category: sanitizeText(cData.category || "Importado").substring(0, 30),
+      banca: sanitizeText(cData.banca || "Geral").substring(0, 40),
+      targetDate: cData.targetDate || this.getLocalDateString(),
+      totalHoursGoal: Number(cData.totalHoursGoal) || 500,
+      dailyGoalMinutes: Number(cData.dailyGoalMinutes) || 240,
+      disciplinas: cData.disciplinas.map((d, dIdx) => ({
+        id: `disc-${Date.now()}-${dIdx}`,
+        name: sanitizeText(d.name || "Disciplina").substring(0, 80),
+        weight: Math.min(5, Math.max(1, Number(d.weight) || 3)),
+        color: d.color && /^#[0-9a-fA-F]{3,6}$/.test(d.color) ? d.color : "#38BDF8",
+        icon: sanitizeText(d.icon || "fa-book"),
+        difficulty: Math.min(5, Math.max(1, Number(d.difficulty) || 3)),
+        topicos: Array.isArray(d.topicos) ? d.topicos.map((t, tIdx) => ({
+          id: `top-${Date.now()}-${dIdx}-${tIdx}`,
+          title: sanitizeText(t.title || "Tópico").substring(0, 200),
+          teoria: !!t.teoria,
+          resumo: !!t.resumo,
+          r24h: !!t.r24h,
+          r7d: !!t.r7d,
+          r30d: !!t.r30d,
+          questoesFeitas: Number(t.questoesFeitas) || 0,
+          questoesAcertos: Number(t.questoesAcertos) || 0,
+          dominio: Math.min(5, Math.max(1, Number(t.dominio) || 1))
+        })) : []
+      }))
+    };
+
+    this.data.concursos.push(sanitizedConcurso);
+    this.setActiveConcurso(newConcursoId);
+    this.rebuildCicloForConcurso(newConcursoId);
+    this.save();
+    this.notify("concurso_added", sanitizedConcurso);
+    return sanitizedConcurso;
+  }
+
+  importBulkParsedEdital(parsedDisciplinas: any[], mode: string = "replace", concursoMeta: any = {}) {
+    if (!parsedDisciplinas || parsedDisciplinas.length === 0) return null;
+
+    if (mode === "newConcurso") {
+      const newConcursoId = `concurso-bulk-${Date.now()}`;
+      const newConcurso = {
+        id: newConcursoId,
+        title: concursoMeta.title || "Novo Concurso Personalizado",
+        shortTitle: concursoMeta.shortTitle || "Personalizado",
+        category: "Personalizado",
+        banca: concursoMeta.banca || "Cebraspe",
+        targetDate: concursoMeta.targetDate || "2026-12-31",
+        totalHoursGoal: 500,
+        dailyGoalMinutes: 240,
+        disciplinas: parsedDisciplinas.map((d, dIdx) => ({
+          id: `disc-${Date.now()}-${dIdx}`,
+          name: d.name,
+          weight: d.weight || 3,
+          color: d.color || "#38BDF8",
+          icon: d.icon || "fa-book",
+          difficulty: 3,
+          topicos: (d.topicos || []).map((t, tIdx) => ({
+            id: `top-${Date.now()}-${dIdx}-${tIdx}`,
+            title: t.title,
+            teoria: false,
+            resumo: false,
+            r24h: false,
+            r7d: false,
+            r30d: false,
+            questoesFeitas: 0,
+            questoesAcertos: 0,
+            dominio: 1
+          }))
+        }))
+      };
+
+      this.data.concursos.push(newConcurso);
+      this.setActiveConcurso(newConcursoId);
+      this.rebuildCicloForConcurso(newConcursoId);
+      this.save();
+      this.notify("concurso_added", newConcurso);
+      return newConcurso;
+    }
+
+    const currentConcurso = this.getActiveConcurso();
+    if (!currentConcurso) return null;
+
+    if (mode === "replace") {
+      currentConcurso.disciplinas = parsedDisciplinas.map((d, dIdx) => ({
+        id: `disc-${Date.now()}-${dIdx}`,
+        name: d.name,
+        weight: d.weight || 3,
+        color: d.color || "#38BDF8",
+        icon: d.icon || "fa-book",
+        difficulty: 3,
+        topicos: (d.topicos || []).map((t, tIdx) => ({
+          id: `top-${Date.now()}-${dIdx}-${tIdx}`,
+          title: t.title,
+          teoria: false,
+          resumo: false,
+          r24h: false,
+          r7d: false,
+          r30d: false,
+          questoesFeitas: 0,
+          questoesAcertos: 0,
+          dominio: 1
+        }))
+      }));
+    } else if (mode === "append") {
+      parsedDisciplinas.forEach((d, dIdx) => {
+        currentConcurso.disciplinas.push({
+          id: `disc-${Date.now()}-${dIdx}`,
+          name: d.name,
+          weight: d.weight || 3,
+          color: d.color || "#38BDF8",
+          icon: d.icon || "fa-book",
+          difficulty: 3,
+          topicos: (d.topicos || []).map((t, tIdx) => ({
+            id: `top-${Date.now()}-${dIdx}-${tIdx}`,
+            title: t.title,
+            teoria: false,
+            resumo: false,
+            r24h: false,
+            r7d: false,
+            r30d: false,
+            questoesFeitas: 0,
+            questoesAcertos: 0,
+            dominio: 1
+          }))
+        });
+      });
+    }
+
+    this.rebuildCicloForConcurso(currentConcurso.id);
+    this.save();
+    this.notify("edital_updated", currentConcurso);
+    return currentConcurso;
   }
 
   // ================= SESSÕES DE ESTUDO & CRONÔMETRO =================

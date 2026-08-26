@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QG DO CONCURSEIRO - EDITAL VERTICALIZADO (CSS PURO)
+   QG DO CONCURSEIRO - EDITAL VERTICALIZADO (DESIGN ERGONÔMICO)
    ========================================================================== */
 
 /* ==========================================================================
@@ -7,13 +7,8 @@
    ========================================================================== */
 .edital-hero-banner {
   background-color: var(--bg-surface);
-  background-image: 
-    linear-gradient(135deg, var(--color-primary-tint) 0%, transparent 100%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 24px 24px;
   border: 1px solid var(--border-color);
-  border-left: 4px solid var(--color-primary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: clamp(1.25rem, 2vw, 1.5rem);
   margin-bottom: clamp(1rem, 2vw, 1.5rem);
   display: flex;
@@ -27,7 +22,7 @@
 .edital-hero-left h2 {
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-main);
 }
@@ -40,11 +35,10 @@
 }
 
 .edital-tag {
-  font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
@@ -53,7 +47,7 @@
 .countdown-badge {
   background: var(--color-primary-tint);
   color: var(--color-primary);
-  border-color: rgba(77, 126, 168, 0.3);
+  border-color: rgba(56, 189, 248, 0.25);
 }
 
 .edital-hero-right {
@@ -63,9 +57,9 @@
 .edital-progress-header {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--text-muted);
   margin-bottom: 6px;
 }
 
@@ -73,20 +67,18 @@
   width: 100%;
   height: 6px;
   background-color: var(--bg-surface-inset);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
 }
 
 .edital-progress-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  box-shadow: 0 0 8px var(--color-primary-glow);
   transition: width 0.4s ease;
 }
 
 .edital-topicos-summary {
-  font-family: var(--font-mono);
   font-size: var(--text-2xs);
   color: var(--text-dimmed);
   margin-top: 4px;
@@ -116,7 +108,7 @@
 }
 
 .edital-disc-header {
-  padding: 14px 20px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -126,7 +118,7 @@
 }
 
 .edital-disc-header:hover {
-  background-color: var(--bg-surface-elevated);
+  background-color: var(--bg-surface-hover);
 }
 
 .disc-header-left {
@@ -154,16 +146,25 @@
 .disc-name {
   font-family: var(--font-display);
   font-size: var(--text-base);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-main);
+}
+
+.badge-weight {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
 }
 
 .disc-meta-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-mono);
   font-size: var(--text-2xs);
   color: var(--text-dimmed);
   margin-top: 2px;
@@ -177,9 +178,9 @@
 
 .mini-progress-track {
   width: 100px;
-  height: 4px;
+  height: 5px;
   background-color: var(--bg-surface-inset);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
@@ -223,20 +224,19 @@
 }
 
 .topics-table th {
-  padding: 10px 14px;
-  font-family: var(--font-mono);
+  padding: 10px 16px;
   font-size: var(--text-2xs);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--text-dimmed);
-  background: var(--bg-header-tint);
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   white-space: nowrap;
 }
 
 .topics-table td {
-  padding: 11px 14px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
@@ -252,34 +252,79 @@
 }
 
 .topic-title-cell strong {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-main);
+  line-height: 1.45;
 }
 
 .dominio-select {
-  background-color: var(--bg-surface-elevated);
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: 700;
-  padding: 3px 6px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: 4px 8px;
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
+  transition: var(--transition-fast);
 }
 
 .dominio-select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-glow);
 }
 
 .disc-body-footer {
   padding: 10px 16px;
-  background-color: var(--bg-header-tint);
+  background-color: var(--bg-surface);
   border-top: 1px solid var(--border-color);
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   CARDS DO CATÁLOGO DE EDITAIS
+   ========================================================================== */
+.catalogo-preset-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition-fast);
+}
+
+.catalogo-preset-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.preset-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.preset-card-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--text-dimmed);
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preset-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 @media (max-width: 600px) {

@@ -308,15 +308,25 @@
             <h1>Edital Verticalizado Interativo</h1>
             <p>Monitore cada disciplina, teoria, resumos e as revisões periódicas R24h, R7d e R30d.</p>
           </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" id="btn-open-catalogo-editais" title="Escolher entre editais oficiais prontos">
+              <i class="fa-solid fa-layer-group text-accent"></i> Catálogo de Editais
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-open-bulk-edital-modal" title="Importar colando texto livre do PDF">
+              <i class="fa-solid fa-file-lines text-primary"></i> Parser de Texto Livre
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-import-edital-json" title="Importar arquivo .json de edital">
+              <i class="fa-solid fa-upload"></i> Importar (.json)
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-export-edital-json" title="Exportar este edital em .json">
+              <i class="fa-solid fa-download"></i> Exportar (.json)
+            </button>
+            <input type="file" id="input-import-edital-file" accept=".json" style="display: none;">
             <button class="btn btn-secondary btn-sm" id="btn-print-edital" title="Imprimir Edital ou Salvar em PDF">
-              <i class="fa-solid fa-print"></i> Imprimir / PDF
+              <i class="fa-solid fa-print"></i> PDF
             </button>
-            <button class="btn btn-secondary btn-sm" id="btn-open-add-disc-modal">
+            <button class="btn btn-primary btn-sm" id="btn-open-add-disc-modal">
               <i class="fa-solid fa-folder-plus"></i> Nova Disciplina
-            </button>
-            <button class="btn btn-primary btn-sm" id="btn-open-new-concurso-modal">
-              <i class="fa-solid fa-plus"></i> Criar Novo Edital
             </button>
           </div>
         </div>
@@ -1600,6 +1610,122 @@
       <div class="modal-footer">
         <form method="dialog"><button class="btn btn-secondary">Cancelar</button></form>
         <button class="btn btn-primary" id="btn-save-new-concurso">Criar e Ativar Plano</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Catálogo de Editais Prontos -->
+  <dialog class="modal-dialog" id="modal-catalogo-editais" aria-labelledby="catalogo-editais-title">
+    <div class="modal-box modal-box-lg" style="max-width: 860px; width: 95%;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h3 id="catalogo-editais-title"><i class="fa-solid fa-layer-group text-accent"></i> Catálogo de Editais Oficiais Prontos</h3>
+        </div>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <p class="text-muted" style="margin: 0; font-size: 0.85rem;">Escolha um edital oficial completo para clonar e começar a estudar imediatamente:</p>
+          <select class="filter-select" id="catalogo-category-filter" style="font-size: 0.8rem; padding: 4px 10px;">
+            <option value="all">Todas as Carreiras</option>
+            <option value="Policial">Carreira Policial</option>
+            <option value="Fiscal">Carreira Fiscal / RFB</option>
+            <option value="Previdenciário">Previdenciário / INSS</option>
+            <option value="Tribunais">Tribunais / Judiciário</option>
+          </select>
+        </div>
+        <div class="catalogo-grid" id="catalogo-editais-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
+          <!-- Gerado dinamicamente via EditalManager -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn btn-secondary">Fechar</button></form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Parser de Edital por Texto Livre (Bulk Parser) -->
+  <dialog class="modal-dialog" id="modal-bulk-edital-parser" aria-labelledby="bulk-parser-title">
+    <div class="modal-box modal-box-lg" style="max-width: 820px; width: 95%;">
+      <div class="modal-header">
+        <h3 id="bulk-parser-title"><i class="fa-solid fa-file-lines text-primary"></i> Importador de Edital por Texto Livre</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 12px; font-size: 0.85rem;">
+          Copie o conteúdo programático do PDF do seu edital e cole abaixo. O sistema identificará automaticamente as disciplinas, pesos e tópicos.
+        </p>
+        <div class="form-group">
+          <textarea class="form-input" id="bulk-edital-raw-text" rows="7" placeholder="Exemplo:
+DIREITO CONSTITUCIONAL (Peso 3):
+1. Direitos e garantias fundamentais. 2. Organização do Estado. 3. Poder Executivo.
+
+INFORMÁTICA (Peso 5):
+- Redes de computadores e TCP/IP
+- Banco de dados e SQL
+- Segurança da informação" style="font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.45;"></textarea>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <button class="btn btn-primary btn-sm" onclick="editalManager.analyzeBulkText()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Analisar Texto e Gerar Preview
+          </button>
+          <span style="font-size: 0.75rem; color: var(--text-dimmed);">Suporta múltiplos formatos e bullets</span>
+        </div>
+
+        <div id="bulk-edital-preview-container">
+          <!-- Preview gerado dinamicamente -->
+        </div>
+
+        <div id="bulk-edital-actions-footer" class="hidden" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="bulk-new-concurso-title" style="font-size: 0.85rem;">Nome do Concurso (se for criar novo):</label>
+            <input type="text" class="form-input" id="bulk-new-concurso-title" placeholder="Ex: Polícia Civil de Minas Gerais - Escrivão">
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="editalManager.applyBulkImport('replace')">
+              <i class="fa-solid fa-arrows-rotate"></i> Substituir Disciplinas no Edital Atual
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="editalManager.applyBulkImport('append')">
+              <i class="fa-solid fa-plus"></i> Adicionar ao Edital Atual
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="editalManager.applyBulkImport('newConcurso')">
+              <i class="fa-solid fa-folder-plus"></i> Criar como Novo Concurso
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn btn-secondary">Cancelar</button></form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Adicionar Tópicos em Lote na Disciplina -->
+  <dialog class="modal-dialog" id="modal-add-topicos-batch" aria-labelledby="batch-topicos-title">
+    <div class="modal-box" style="max-width: 580px; width: 95%;">
+      <div class="modal-header">
+        <h3 id="batch-topicos-title"><i class="fa-solid fa-list-check text-primary"></i> Colar Tópicos em Lote</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 10px; font-size: 0.85rem;">
+          Disciplina selecionada: <strong id="batch-topicos-disc-title" style="color: var(--text-main);"></strong>
+        </p>
+        <div class="form-group">
+          <label for="batch-topicos-text">Cole os tópicos (um por linha):</label>
+          <textarea class="form-input" id="batch-topicos-text" rows="8" placeholder="Exemplo:
+1. Princípios Constitucionais
+2. Direitos Individuais e Coletivos (Art. 5º)
+3. Direitos Sociais e Nacionalidade
+4. Organização Político-Administrativa" style="font-size: 0.85rem; line-height: 1.45;"></textarea>
+        </div>
+        <p style="font-size: 0.75rem; color: var(--text-dimmed); margin: 0;">
+          💡 Marcadores (-, *, 1., 1.1) são removidos automaticamente pelo sistema.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn btn-secondary">Cancelar</button></form>
+        <button class="btn btn-primary" onclick="editalManager.saveTopicosBatch()">Adicionar Todos os Tópicos</button>
       </div>
     </div>
   </dialog>

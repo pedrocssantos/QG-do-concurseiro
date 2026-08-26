@@ -1,63 +1,59 @@
 /* ==========================================================================
-   QG DO CONCURSEIRO - DESIGN SYSTEM TÁTICO & OPERACIONAL (CSS PURO)
+   QG DO CONCURSEIRO - DESIGN SYSTEM ERGONÔMICO (ANTI-FADIGA VISUAL)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
   /* ==========================================================================
-     PALETA OFICIAL QG DO CONCURSEIRO (TEMA ESCURO)
+     PALETA SLATE / GRAPHITE - DARK MODE (RELAXANTE PARA SESSÕES LONGAS)
      ========================================================================== */
-  /* Ink Black (#051014) como fundo base */
-  --bg-main: #051014;
-  --bg-canvas-subtle: #0b1a20;
+  /* Fundos em camadas suaves de Ardósia/Obsidiana */
+  --bg-main: #0B0F17;
+  --bg-canvas-subtle: #111827;
+  --bg-surface: #1E293B;
+  --bg-surface-elevated: #273549;
+  --bg-surface-hover: #334155;
+  --bg-surface-active: #3E4F69;
+  --bg-surface-inset: #0F172A;
 
-  /* Graphite (#2E2F2F) para elevar elementos sobre o fundo */
-  --bg-surface: #2E2F2F;
-  --bg-surface-elevated: #383939;
-  --bg-surface-hover: #424343;
-  --bg-surface-active: #4c4e4e;
-  --bg-surface-inset: #1e1f1f;
+  /* Micro-Bordas Suaves (Sem atrito visual) */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-light: rgba(255, 255, 255, 0.14);
+  --border-color-strong: rgba(255, 255, 255, 0.22);
+  --border-color-glow: rgba(56, 189, 248, 0.25);
 
-  /* Bordas Sutis de Precisão */
-  --border-color: rgba(249, 249, 251, 0.1);
-  --border-color-light: rgba(249, 249, 251, 0.18);
-  --border-color-strong: rgba(249, 249, 251, 0.3);
-  --border-color-glow: rgba(77, 126, 168, 0.4);
+  /* Texto Anti-Glaze (Reduz Halation) */
+  --text-main: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-dimmed: #64748B;
+  --text-inverse: #0B0F17;
 
-  /* Bright Snow (#F9F9FB) como texto principal sobre fundos escuros */
-  --text-main: #F9F9FB;
-  --text-muted: #b0b4ba;
-  --text-dimmed: #7d828a;
-  --text-inverse: #051014;
+  /* Acentuações Ergonômicas (Sky Blue Tático & Sage Emerald) */
+  --color-primary: #38BDF8;
+  --color-primary-hover: #0EA5E9;
+  --color-primary-light: #7DD3FC;
+  --color-primary-glow: rgba(56, 189, 248, 0.18);
+  --color-primary-tint: rgba(56, 189, 248, 0.10);
 
-  /* Steel Blue (#4D7EA8) como destaque principal e ações primárias */
-  --color-primary: #4D7EA8;
-  --color-primary-hover: #3b6589;
-  --color-primary-light: #6b98bd;
-  --color-primary-glow: rgba(77, 126, 168, 0.3);
-  --color-primary-tint: rgba(77, 126, 168, 0.14);
+  --color-accent: #34D399;
+  --color-accent-hover: #10B981;
+  --color-accent-light: #6EE7B7;
+  --color-accent-glow: rgba(52, 211, 153, 0.18);
+  --color-accent-tint: rgba(52, 211, 153, 0.10);
 
-  /* Sage Green (#7EA172) para estados positivos, sucesso e streak */
-  --color-accent: #7EA172;
-  --color-accent-hover: #698b5e;
-  --color-accent-light: #9cb992;
-  --color-accent-glow: rgba(126, 161, 114, 0.3);
-  --color-accent-tint: rgba(126, 161, 114, 0.14);
+  --color-warning: #FBBF24;
+  --color-warning-hover: #F59E0B;
+  --color-warning-glow: rgba(251, 191, 36, 0.18);
+  --color-warning-tint: rgba(251, 191, 36, 0.10);
 
-  /* Cores Complementares de Alerta & Erro */
-  --color-warning: #D99B26;
-  --color-warning-hover: #b8801b;
-  --color-warning-glow: rgba(217, 155, 38, 0.3);
-  --color-warning-tint: rgba(217, 155, 38, 0.14);
+  --color-danger: #F87171;
+  --color-danger-hover: #EF4444;
+  --color-danger-glow: rgba(248, 113, 113, 0.18);
+  --color-danger-tint: rgba(248, 113, 113, 0.10);
 
-  --color-danger: #D9534F;
-  --color-danger-hover: #c2433f;
-  --color-danger-glow: rgba(217, 83, 79, 0.3);
-  --color-danger-tint: rgba(217, 83, 79, 0.14);
-
-  --color-cyan: #3b9db8;
-  --color-purple: #8b5cf6;
+  --color-cyan: #22D3EE;
+  --color-purple: #A78BFA;
 
   /* Espaçamentos Fluidos & Responsivos */
   --space-3xs: 0.125rem;
@@ -70,103 +66,98 @@
   --space-2xl: 2.5rem;
 
   /* Tipografia Fluida */
-  --text-2xs: clamp(0.68rem, 0.75vw, 0.72rem);
-  --text-xs: clamp(0.75rem, 0.85vw, 0.8rem);
-  --text-sm: clamp(0.82rem, 0.95vw, 0.88rem);
-  --text-base: clamp(0.92rem, 1vw, 1rem);
-  --text-lg: clamp(1.05rem, 1.2vw, 1.15rem);
-  --text-xl: clamp(1.2rem, 1.5vw, 1.35rem);
-  --text-2xl: clamp(1.4rem, 2vw, 1.75rem);
-  --text-3xl: clamp(1.8rem, 3vw, 2.3rem);
+  --text-2xs: clamp(0.70rem, 0.75vw, 0.75rem);
+  --text-xs: clamp(0.78rem, 0.85vw, 0.82rem);
+  --text-sm: clamp(0.85rem, 0.95vw, 0.90rem);
+  --text-base: clamp(0.95rem, 1vw, 1.02rem);
+  --text-lg: clamp(1.10rem, 1.2vw, 1.20rem);
+  --text-xl: clamp(1.25rem, 1.5vw, 1.40rem);
+  --text-2xl: clamp(1.50rem, 2vw, 1.80rem);
+  --text-3xl: clamp(1.90rem, 3vw, 2.40rem);
 
   /* Geometria Moderna e Suave */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
   /* Sombras & Profundidade Refinada */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.5);
-  --shadow-hud: 0 0 0 1px var(--border-color), 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-hud: 0 0 0 1px var(--border-color), 0 4px 20px rgba(0, 0, 0, 0.3);
 
   /* Famílias Tipográficas */
-  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Transição de Comando */
+  /* Transição */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
   --sidebar-width: 250px;
   --header-height: 60px;
-  --bg-header: rgba(5, 16, 20, 0.92);
-  --bg-header-tint: rgba(0, 0, 0, 0.15);
+  --bg-header: rgba(11, 15, 23, 0.90);
+  --bg-header-tint: rgba(255, 255, 255, 0.02);
 }
 
 /* ==========================================================================
-   PALETA OFICIAL QG DO CONCURSEIRO (TEMA CLARO)
+   PALETA CLEAN SLATE - LIGHT MODE (AREJADO & NÍTIDO)
    ========================================================================== */
 [data-theme="light"] {
-  /* Bright Snow (#F9F9FB) como fundo principal */
-  --bg-main: #F9F9FB;
-  --bg-canvas-subtle: #f0f1f5;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f0f1f5;
-  --bg-surface-hover: #e4e6ed;
-  --bg-surface-active: #d6d9e3;
-  --bg-surface-inset: #eceef4;
-  --bg-header: rgba(249, 249, 251, 0.94);
-  --bg-header-tint: rgba(5, 16, 20, 0.03);
+  --bg-main: #F8FAFC;
+  --bg-canvas-subtle: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F8FAFC;
+  --bg-surface-hover: #F1F5F9;
+  --bg-surface-active: #E2E8F0;
+  --bg-surface-inset: #F8FAFC;
+  --bg-header: rgba(248, 250, 252, 0.92);
+  --bg-header-tint: rgba(15, 23, 42, 0.02);
 
-  /* Bordas Sutis */
-  --border-color: rgba(5, 16, 20, 0.08);
-  --border-color-light: rgba(5, 16, 20, 0.15);
-  --border-color-strong: rgba(5, 16, 20, 0.3);
-  --border-color-glow: rgba(77, 126, 168, 0.3);
+  --border-color: rgba(15, 23, 42, 0.08);
+  --border-color-light: rgba(15, 23, 42, 0.14);
+  --border-color-strong: rgba(15, 23, 42, 0.22);
+  --border-color-glow: rgba(2, 132, 199, 0.20);
 
-  /* Ink Black (#051014) como texto principal */
-  --text-main: #051014;
-  --text-muted: #525866;
-  --text-dimmed: #7e8695;
-  --text-inverse: #F9F9FB;
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --text-dimmed: #64748B;
+  --text-inverse: #FFFFFF;
 
-  /* Steel Blue (#4D7EA8) como destaque */
-  --color-primary: #3b6b94;
-  --color-primary-hover: #2c5273;
-  --color-primary-light: #5d8db5;
-  --color-primary-glow: rgba(59, 107, 148, 0.25);
-  --color-primary-tint: rgba(59, 107, 148, 0.12);
+  --color-primary: #0284C7;
+  --color-primary-hover: #0369A1;
+  --color-primary-light: #38BDF8;
+  --color-primary-glow: rgba(2, 132, 199, 0.15);
+  --color-primary-tint: rgba(2, 132, 199, 0.08);
 
-  /* Sage Green (#7EA172) como sucesso */
-  --color-accent: #5e8452;
-  --color-accent-hover: #4a6a40;
-  --color-accent-light: #7ea172;
-  --color-accent-glow: rgba(94, 132, 82, 0.25);
-  --color-accent-tint: rgba(94, 132, 82, 0.12);
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-light: #34D399;
+  --color-accent-glow: rgba(5, 150, 105, 0.15);
+  --color-accent-tint: rgba(5, 150, 105, 0.08);
 
-  --color-warning: #c28517;
-  --color-warning-hover: #a16c0e;
-  --color-warning-glow: rgba(194, 133, 23, 0.25);
-  --color-warning-tint: rgba(194, 133, 23, 0.12);
+  --color-warning: #D97706;
+  --color-warning-hover: #B45309;
+  --color-warning-glow: rgba(217, 119, 6, 0.15);
+  --color-warning-tint: rgba(217, 119, 6, 0.08);
 
-  --color-danger: #c7433f;
-  --color-danger-hover: #a9322e;
-  --color-danger-glow: rgba(199, 67, 63, 0.25);
-  --color-danger-tint: rgba(199, 67, 63, 0.12);
+  --color-danger: #DC2626;
+  --color-danger-hover: #B91C1C;
+  --color-danger-glow: rgba(220, 38, 38, 0.15);
+  --color-danger-tint: rgba(220, 38, 38, 0.08);
 
-  --shadow-sm: 0 1px 2px rgba(5, 16, 20, 0.05);
-  --shadow-md: 0 4px 10px rgba(5, 16, 20, 0.08);
-  --shadow-lg: 0 12px 24px rgba(5, 16, 20, 0.12);
-  --shadow-hud: 0 1px 3px rgba(5, 16, 20, 0.08);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 10px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.09);
+  --shadow-hud: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 /* ==========================================================================
-   RESET & FUNDAÇÃO GLOBAL
+   RESET & FUNDAÇÃO GLOBAL (SEM RUÍDO DE GRADE)
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -177,13 +168,9 @@
 body {
   font-family: var(--font-body);
   background-color: var(--bg-main);
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.03) 0%, transparent 60%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 36px 36px, 36px 36px;
+  background-image: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.025) 0%, transparent 70%);
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -191,27 +178,28 @@ body {
 }
 
 [data-theme="light"] body {
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.04) 0%, transparent 60%),
-    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-image: radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.035) 0%, transparent 70%);
 }
 
-/* Scrollbar Tática */
+/* Scrollbar Ergonômica */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xs);
+  background: var(--bg-surface-hover);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-color-light);
+  background: var(--text-dimmed);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 a {
