@@ -10,6 +10,8 @@ import { showToast } from "../app";
 // ==========================================================================
 
 class CicloManager {
+  eventsBound: boolean;
+
   constructor() {
     this.eventsBound = false;
   }
@@ -179,7 +181,7 @@ class CicloManager {
     window.location.hash = "#pomodoro";
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        const select = document.getElementById("pomo-subject-select");
+        const select = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
         if (select) {
           select.value = disciplinaId;
           pomodoro.selectedDisciplinaId = disciplinaId;
@@ -191,16 +193,16 @@ class CicloManager {
   }
 
   openRecalibrateModal() {
-    const modal = document.getElementById("modal-recalibrate-ciclo");
+    const modal = document.getElementById("modal-recalibrate-ciclo") as HTMLDialogElement | null;
     if (modal) {
-      const input = document.getElementById("recalibrate-weekly-hours");
-      if (input) input.value = store.data.profile?.weeklyGoalHours || 25;
+      const input = document.getElementById("recalibrate-weekly-hours") as HTMLInputElement | null;
+      if (input) input.value = String(store.data.profile?.weeklyGoalHours || 25);
       modal.showModal();
     }
   }
 
   recalibrateFromModal() {
-    const input = document.getElementById("recalibrate-weekly-hours");
+    const input = document.getElementById("recalibrate-weekly-hours") as HTMLInputElement | null;
     const hours = input ? (parseInt(input.value, 10) || 25) : 25;
     this.recalibrateCiclo(hours);
   }
@@ -231,7 +233,7 @@ class CicloManager {
     store.save();
     this.renderCicloVisual();
 
-    const modal = document.getElementById("modal-recalibrate-ciclo");
+    const modal = document.getElementById("modal-recalibrate-ciclo") as HTMLDialogElement | null;
     if (modal) modal.close();
 
     showToast(`Ciclo recalculado com sucesso para ${weeklyHours}h semanais! 🔄`, "success");

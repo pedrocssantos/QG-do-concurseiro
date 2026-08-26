@@ -111,7 +111,7 @@ class FlashcardsManager {
     showToast(`🎉 Sucesso! ${imported} flashcards foram importados para ${disciplinaName}!`, "success");
 
     textarea.value = "";
-    document.getElementById("modal-import-flashcards")?.close();
+    (document.getElementById("modal-import-flashcards") as HTMLDialogElement)?.close();
   }
 
   bindNewCardModalEvents() {

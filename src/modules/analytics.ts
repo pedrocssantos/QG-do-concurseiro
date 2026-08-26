@@ -4,7 +4,7 @@
 import Chart from "chart.js/auto";
 
 // Mapa de instâncias ativas para permitir destruição e re-renderização limpa
-const activeCharts = {};
+const activeCharts: Record<string, any> = {};
 
 class PapiroCharts {
   static getThemeColors() {
@@ -24,7 +24,7 @@ class PapiroCharts {
     };
   }
 
-  static destroyExisting(canvasId) {
+  static destroyExisting(canvasId: string) {
     if (activeCharts[canvasId]) {
       activeCharts[canvasId].destroy();
       delete activeCharts[canvasId];
@@ -32,13 +32,14 @@ class PapiroCharts {
   }
 
   // 1. Gráfico de Linha / Área Suave (Horas Estudadas na Semana)
-  static renderLineAreaChart(canvasId, labels, data, options = {}) {
-    const canvas = document.getElementById(canvasId);
+  static renderLineAreaChart(canvasId: string, labels: string[], data: number[], options = {}) {
+    const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) return;
     this.destroyExisting(canvasId);
 
     const theme = this.getThemeColors();
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 220);
     gradient.addColorStop(0, "rgba(77, 126, 168, 0.45)");
@@ -99,13 +100,14 @@ class PapiroCharts {
   }
 
   // 2. Gráfico de Barras (Questões Feitas por Disciplina)
-  static renderBarChart(canvasId, items, options = {}) {
-    const canvas = document.getElementById(canvasId);
+  static renderBarChart(canvasId: string, items: any[], options = {}) {
+    const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) return;
     this.destroyExisting(canvasId);
 
     const theme = this.getThemeColors();
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const labels = (items || []).map(it => it.label.length > 12 ? it.label.substring(0, 10) + "…" : it.label);
     const fullLabels = (items || []).map(it => it.label);
@@ -157,13 +159,14 @@ class PapiroCharts {
   }
 
   // 3. Gráfico Donut (Distribuição de Tempo por Disciplina)
-  static renderDonutChart(canvasId, items, centerText = "") {
-    const canvas = document.getElementById(canvasId);
+  static renderDonutChart(canvasId: string, items: any[], centerText = "") {
+    const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) return;
     this.destroyExisting(canvasId);
 
     const theme = this.getThemeColors();
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const validItems = (items || []).filter(it => (it.value || 0) > 0);
     const labels = validItems.length > 0 ? validItems.map(it => it.label) : ["Sem estudos registrados"];
@@ -209,13 +212,14 @@ class PapiroCharts {
   }
 
   // 4. Gráfico Radar (Domínio do Conteúdo por Disciplina)
-  static renderRadarChart(canvasId, items) {
-    const canvas = document.getElementById(canvasId);
+  static renderRadarChart(canvasId: string, items: any[]) {
+    const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) return;
     this.destroyExisting(canvasId);
 
     const theme = this.getThemeColors();
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const labels = (items || []).map(it => it.label.length > 12 ? it.label.substring(0, 10) + "…" : it.label);
     const fullLabels = (items || []).map(it => it.label);

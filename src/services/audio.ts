@@ -3,6 +3,11 @@
 // ==========================================================================
 
 class AudioEngine {
+  ctx: AudioContext | null = null;
+  ambientSource: AudioBufferSourceNode | null = null;
+  ambientGain: GainNode | null = null;
+  isPlayingAmbient: boolean = false;
+
   constructor() {
     this.ctx = null;
     this.ambientSource = null;

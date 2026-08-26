@@ -4,8 +4,11 @@
 import Dexie from "dexie";
 
 class QGDatabase extends Dexie {
+  isMigrated: boolean;
+
   constructor() {
     super("QGConcurseiroDB");
+    this.isMigrated = false;
 
     this.version(1).stores({
       state: "key", // key-value store para snapshot do app state

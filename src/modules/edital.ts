@@ -10,6 +10,9 @@ import { showToast } from "../app";
 // ==========================================================================
 
 class EditalManager {
+  selectedDisciplinaId: string | null;
+  eventsBound: boolean;
+
   constructor() {
     this.selectedDisciplinaId = null;
     this.eventsBound = false;
@@ -41,7 +44,7 @@ class EditalManager {
     if (concurso.targetDate && countdownEl) {
       const target = new Date(concurso.targetDate);
       const today = new Date();
-      const diffTime = target - today;
+      const diffTime = target.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       countdownEl.innerHTML = diffDays > 0 
         ? `<i class="fa-solid fa-hourglass-half"></i> Faltam ${diffDays} dias para o combate`
@@ -213,7 +216,7 @@ class EditalManager {
       if (card) {
         const countEl = card.querySelector(".disc-topics-count");
         const percentLabel = card.querySelector(".disc-percent-label");
-        const fillEl = card.querySelector(".mini-progress-fill");
+        const fillEl = card.querySelector(".mini-progress-fill") as HTMLElement | null;
         if (countEl) countEl.textContent = `${doneTopicos}/${totalTopicos} tópicos`;
         if (percentLabel) percentLabel.textContent = `${percent}%`;
         if (fillEl) fillEl.style.width = `${percent}%`;
@@ -238,7 +241,7 @@ class EditalManager {
     window.location.hash = "#pomodoro";
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        const select = document.getElementById("pomo-subject-select");
+        const select = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
         if (select) {
           select.value = discId;
           pomodoro.selectedDisciplinaId = discId;
@@ -251,16 +254,17 @@ class EditalManager {
 
   openAddTopicoModal(discId) {
     this.selectedDisciplinaId = discId;
-    const modal = document.getElementById("modal-add-topico");
+    const modal = document.getElementById("modal-add-topico") as HTMLDialogElement | null;
     if (modal) {
-      document.getElementById("new-topico-title").value = "";
+      const input = document.getElementById("new-topico-title") as HTMLInputElement | null;
+      if (input) input.value = "";
       modal.showModal();
     }
   }
 
   saveNewTopico() {
-    const titleInput = document.getElementById("new-topico-title");
-    const title = titleInput.value.trim();
+    const titleInput = document.getElementById("new-topico-title") as HTMLInputElement | null;
+    const title = titleInput ? titleInput.value.trim() : "";
     if (!title) {
       showToast("Insira o nome do tópico!", "warning");
       return;
@@ -279,7 +283,7 @@ class EditalManager {
       dominio: 1
     });
 
-    const modal = document.getElementById("modal-add-topico");
+    const modal = document.getElementById("modal-add-topico") as HTMLDialogElement | null;
     if (modal) modal.close();
 
     this.renderDisciplinasList();
@@ -310,20 +314,20 @@ class EditalManager {
     const addDiscBtn = document.getElementById("btn-open-add-disc-modal");
     if (addDiscBtn) {
       addDiscBtn.addEventListener("click", () => {
-        const modal = document.getElementById("modal-add-disciplina");
+        const modal = document.getElementById("modal-add-disciplina") as HTMLDialogElement | null;
         if (modal) modal.showModal();
       });
     }
   }
 
   saveNewDisciplina() {
-    const nameInput = document.getElementById("new-disc-name");
+    const nameInput = document.getElementById("new-disc-name") as HTMLInputElement | null;
     const name = nameInput ? nameInput.value.trim() : "";
-    const weightInput = document.getElementById("new-disc-weight");
+    const weightInput = document.getElementById("new-disc-weight") as HTMLInputElement | null;
     const weight = weightInput ? (parseInt(weightInput.value, 10) || 3) : 3;
-    const colorSelect = document.getElementById("new-disc-color");
+    const colorSelect = document.getElementById("new-disc-color") as HTMLSelectElement | null;
     const color = colorSelect ? colorSelect.value : "#4D7EA8";
-    const iconSelect = document.getElementById("new-disc-icon");
+    const iconSelect = document.getElementById("new-disc-icon") as HTMLSelectElement | null;
     const icon = iconSelect ? iconSelect.value : "fa-book";
 
     if (!name) {
@@ -340,7 +344,7 @@ class EditalManager {
       topicos: []
     });
 
-    const modal = document.getElementById("modal-add-disciplina");
+    const modal = document.getElementById("modal-add-disciplina") as HTMLDialogElement | null;
     if (modal) modal.close();
     if (nameInput) nameInput.value = "";
 

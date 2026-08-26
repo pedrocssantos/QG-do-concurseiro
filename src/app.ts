@@ -104,9 +104,9 @@ class App {
 
         // Se logado no Supabase, sincroniza na nuvem
         if (typeof db !== "undefined" && db.client && db.currentUser) {
-          db.client.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id).then(() => {
+          (db.client.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id) as any).then(() => {
             if (db.loadUserProfile) db.loadUserProfile(db.currentUser.id);
-          }).catch(err => console.warn("Erro ao sincronizar PRO no Supabase:", err));
+          }).catch((err: any) => console.warn("Erro ao sincronizar PRO no Supabase:", err));
         }
 
         if (typeof db !== "undefined" && db.updateAuthUI) {
@@ -223,19 +223,19 @@ class App {
     this.activateViewModule(route);
   }
 
-  deactivateViewModule(route) {
+  deactivateViewModule(route: string) {
     if (!route) return;
     switch (route) {
-      case 'dashboard': dashboardManager.destroy?.(); break;
-      case 'edital': editalManager.destroy?.(); break;
-      case 'ciclo': cicloManager.destroy?.(); break;
-      case 'questoes': questionsManager.destroy?.(); break;
-      case 'erros': cadernoManager.destroy?.(); break;
-      case 'leis': leisManager.destroy?.(); break;
-      case 'discursiva': discursivaManager.destroy?.(); break;
-      case 'taf': tafManager.destroy?.(); break;
+      case 'dashboard': (dashboardManager as any).destroy?.(); break;
+      case 'edital': (editalManager as any).destroy?.(); break;
+      case 'ciclo': (cicloManager as any).destroy?.(); break;
+      case 'questoes': (questionsManager as any).destroy?.(); break;
+      case 'erros': (cadernoManager as any).destroy?.(); break;
+      case 'leis': (leisManager as any).destroy?.(); break;
+      case 'discursiva': (discursivaManager as any).destroy?.(); break;
+      case 'taf': (tafManager as any).destroy?.(); break;
       case 'desempenho': break; // Static render
-      case 'ranking': gamificationManager.destroy?.(); break;
+      case 'ranking': (gamificationManager as any).destroy?.(); break;
       case 'pomodoro': break; // Pomodoro keeps running in background
       case 'configuracoes': break;
     }
@@ -309,14 +309,14 @@ class App {
       PapiroCharts.renderLineAreaChart("chart-analytics-hours", weekly.labels, weekly.hours);
       
       const subjectDist = store.getSubjectDistribution();
-      const donutItems = subjectDist.map(s => ({
+      const donutItems = (subjectDist as any[]).map((s: any) => ({
         label: s.name,
         value: s.minutes,
         color: s.color
       }));
       PapiroCharts.renderDonutChart("chart-analytics-donut", donutItems);
 
-      const barItems = subjectDist.map(s => ({
+      const barItems = (subjectDist as any[]).map((s: any) => ({
         label: s.name,
         value: s.questions,
         color: s.color
@@ -329,13 +329,13 @@ class App {
 
   renderSettingsView() {
     const profile = store.data.profile;
-    const nameInput = document.getElementById("setting-user-name");
-    const goalInput = document.getElementById("setting-daily-goal");
-    const weeklyGoalInput = document.getElementById("setting-weekly-goal");
+    const nameInput = document.getElementById("setting-user-name") as HTMLInputElement | null;
+    const goalInput = document.getElementById("setting-daily-goal") as HTMLInputElement | null;
+    const weeklyGoalInput = document.getElementById("setting-weekly-goal") as HTMLInputElement | null;
 
     if (nameInput) nameInput.value = profile.name || "";
-    if (goalInput) goalInput.value = profile.dailyGoalMinutes ? Math.round(profile.dailyGoalMinutes / 60) : 4;
-    if (weeklyGoalInput) weeklyGoalInput.value = profile.weeklyGoalHours || 25;
+    if (goalInput) goalInput.value = String(profile.dailyGoalMinutes ? Math.round(profile.dailyGoalMinutes / 60) : 4);
+    if (weeklyGoalInput) weeklyGoalInput.value = String(profile.weeklyGoalHours || 25);
   }
 
   bindGlobalNavigation() {
@@ -439,7 +439,7 @@ class App {
           openUpgradeModal();
           return;
         }
-        const m = document.getElementById("modal-new-concurso");
+        const m = document.getElementById("modal-new-concurso") as HTMLDialogElement | null;
         if (m) m.showModal();
       });
     }
@@ -453,7 +453,7 @@ class App {
     const openNewQuestionBtn = document.getElementById("btn-open-new-question-modal");
     if (openNewQuestionBtn) {
       openNewQuestionBtn.addEventListener("click", () => {
-        const m = document.getElementById("modal-new-question");
+        const m = document.getElementById("modal-new-question") as HTMLDialogElement | null;
         if (m) m.showModal();
       });
     }
@@ -472,10 +472,10 @@ class App {
       return;
     }
 
-    const title = document.getElementById("new-concurso-title").value.trim();
-    const shortTitle = document.getElementById("new-concurso-short").value.trim() || title;
-    const banca = document.getElementById("new-concurso-banca").value.trim() || "Cebraspe";
-    const date = document.getElementById("new-concurso-date").value || "2026-12-31";
+    const title = (document.getElementById("new-concurso-title") as HTMLInputElement)?.value.trim();
+    const shortTitle = (document.getElementById("new-concurso-short") as HTMLInputElement)?.value.trim() || title;
+    const banca = (document.getElementById("new-concurso-banca") as HTMLInputElement)?.value.trim() || "Cebraspe";
+    const date = (document.getElementById("new-concurso-date") as HTMLInputElement)?.value || "2026-12-31";
 
     if (!title) {
       showToast("Preencha o nome do concurso!", "warning");
@@ -507,7 +507,7 @@ class App {
     };
 
     store.addConcurso(newConcurso);
-    const m = document.getElementById("modal-new-concurso");
+    const m = document.getElementById("modal-new-concurso") as HTMLDialogElement | null;
     if (m) m.close();
 
     dashboardManager.renderHeaderInfo();
@@ -516,11 +516,11 @@ class App {
   }
 
   saveNewQuestion() {
-    const enunciado = document.getElementById("new-q-enunciado").value.trim();
-    const disciplinaName = document.getElementById("new-q-disciplina").value.trim() || "Geral";
-    const assunto = document.getElementById("new-q-assunto").value.trim() || "Geral";
-    const resposta = document.getElementById("new-q-resposta").value;
-    const explicacao = document.getElementById("new-q-explicacao").value.trim();
+    const enunciado = (document.getElementById("new-q-enunciado") as HTMLTextAreaElement)?.value.trim();
+    const disciplinaName = (document.getElementById("new-q-disciplina") as HTMLInputElement)?.value.trim() || "Geral";
+    const assunto = (document.getElementById("new-q-assunto") as HTMLInputElement)?.value.trim() || "Geral";
+    const resposta = (document.getElementById("new-q-resposta") as HTMLSelectElement)?.value || "C";
+    const explicacao = (document.getElementById("new-q-explicacao") as HTMLTextAreaElement)?.value.trim();
 
     if (!enunciado || !explicacao) {
       showToast("Preencha o enunciado e a explicação da questão!", "warning");
@@ -552,7 +552,7 @@ class App {
       explicacao
     });
 
-    const m = document.getElementById("modal-new-question");
+    const m = document.getElementById("modal-new-question") as HTMLDialogElement | null;
     if (m) m.close();
 
     showToast("Questão adicionada ao banco com sucesso!", "success");
@@ -563,9 +563,9 @@ class App {
     const saveProfileBtn = document.getElementById("btn-save-settings");
     if (saveProfileBtn) {
       saveProfileBtn.addEventListener("click", () => {
-        const name = document.getElementById("setting-user-name").value.trim();
-        const dailyH = parseInt(document.getElementById("setting-daily-goal").value, 10) || 4;
-        const weeklyH = parseInt(document.getElementById("setting-weekly-goal").value, 10) || 25;
+        const name = (document.getElementById("setting-user-name") as HTMLInputElement)?.value.trim();
+        const dailyH = parseInt((document.getElementById("setting-daily-goal") as HTMLInputElement)?.value, 10) || 4;
+        const weeklyH = parseInt((document.getElementById("setting-weekly-goal") as HTMLInputElement)?.value, 10) || 25;
 
         if (name) {
           store.data.profile.name = name;
@@ -599,11 +599,11 @@ class App {
     // Importar Backup
     const importInput = document.getElementById("input-import-backup");
     if (importInput) {
-      importInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
+      importInput.addEventListener("change", (e: any) => {
+        const file = e.target.files?.[0];
         if (file) {
           const reader = new FileReader();
-          reader.onload = (evt) => {
+          reader.onload = (evt: any) => {
             const success = store.importBackup(evt.target.result);
             if (success) {
               showToast("Backup restaurado com sucesso!", "success");
@@ -643,7 +643,7 @@ class App {
   }
 
   openOnboardingModal() {
-    const modal = document.getElementById("modal-onboarding");
+    const modal = document.getElementById("modal-onboarding") as HTMLDialogElement | null;
     if (!modal) return;
     modal.showModal();
 
@@ -661,10 +661,10 @@ class App {
       opt.addEventListener("click", () => {
         options.forEach(o => o.classList.remove("selected"));
         opt.classList.add("selected");
-        const radio = opt.querySelector("input[type='radio']");
+        const radio = opt.querySelector("input[type='radio']") as HTMLInputElement | null;
         if (radio) radio.checked = true;
 
-        const concursoId = opt.dataset.concursoId;
+        const concursoId = (opt as HTMLElement).dataset.concursoId;
         if (concursoId === "custom") {
           if (customFields) customFields.classList.remove("hidden");
         } else {
@@ -676,11 +676,11 @@ class App {
     const nextBtn = document.getElementById("onboard-btn-next-1");
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
-        const selectedOpt = document.querySelector(".onboard-card-option.selected");
+        const selectedOpt = document.querySelector(".onboard-card-option.selected") as HTMLElement | null;
         const concursoId = selectedOpt ? selectedOpt.dataset.concursoId : "pf-agente";
 
         if (concursoId === "custom") {
-          const title = document.getElementById("onboard-custom-title")?.value.trim();
+          const title = (document.getElementById("onboard-custom-title") as HTMLInputElement)?.value.trim();
           if (!title) {
             showToast("Informe o nome do concurso personalizado!", "warning");
             return;
@@ -707,16 +707,16 @@ class App {
     const finishBtn = document.getElementById("onboard-btn-finish");
     if (finishBtn) {
       finishBtn.addEventListener("click", () => {
-        const name = document.getElementById("onboard-input-name")?.value.trim() || "Concurseiro(a)";
-        const dailyH = parseInt(document.getElementById("onboard-input-daily-hours")?.value, 10) || 3;
-        const weeklyH = parseInt(document.getElementById("onboard-input-weekly-hours")?.value, 10) || 20;
+        const name = (document.getElementById("onboard-input-name") as HTMLInputElement)?.value.trim() || "Concurseiro(a)";
+        const dailyH = parseInt((document.getElementById("onboard-input-daily-hours") as HTMLInputElement)?.value, 10) || 3;
+        const weeklyH = parseInt((document.getElementById("onboard-input-weekly-hours") as HTMLInputElement)?.value, 10) || 20;
 
-        const selectedOpt = document.querySelector(".onboard-card-option.selected");
+        const selectedOpt = document.querySelector(".onboard-card-option.selected") as HTMLElement | null;
         const concursoId = selectedOpt ? selectedOpt.dataset.concursoId : "pf-agente";
 
         if (concursoId === "custom") {
-          const title = document.getElementById("onboard-custom-title")?.value.trim() || "Meu Concurso";
-          const banca = document.getElementById("onboard-custom-banca")?.value.trim() || "Cebraspe";
+          const title = (document.getElementById("onboard-custom-title") as HTMLInputElement)?.value.trim() || "Meu Concurso";
+          const banca = (document.getElementById("onboard-custom-banca") as HTMLInputElement)?.value.trim() || "Cebraspe";
 
           const newConcurso = {
             id: `concurso-${Date.now()}`,
@@ -744,7 +744,7 @@ class App {
           store.addConcurso(newConcurso);
           store.setActiveConcurso(newConcurso.id);
         } else {
-          store.setActiveConcurso(concursoId);
+          store.setActiveConcurso(concursoId || "pf-agente");
         }
 
         store.data.profile.name = name;
@@ -754,7 +754,7 @@ class App {
         store.data.profile.onboardingCompleted = true;
         store.save();
 
-        const modal = document.getElementById("modal-onboarding");
+        const modal = document.getElementById("modal-onboarding") as HTMLDialogElement | null;
         if (modal) modal.close();
 
         showToast(`Bem-vindo ao QG, ${name}! Plano operacional ativado com sucesso!`, "success");
@@ -781,11 +781,13 @@ class App {
     });
   }
 
-  showLevelUpModal(data) {
-    const modal = document.getElementById("modal-level-up");
+  showLevelUpModal(data: any) {
+    const modal = document.getElementById("modal-level-up") as HTMLDialogElement | null;
     if (modal) {
-      document.getElementById("levelup-title").textContent = `NÍVEL ${data.newLevel}`;
-      document.getElementById("levelup-rank").textContent = data.title;
+      const titleEl = document.getElementById("levelup-title");
+      if (titleEl) titleEl.textContent = `NÍVEL ${data.newLevel}`;
+      const rankEl = document.getElementById("levelup-rank");
+      if (rankEl) rankEl.textContent = data.title;
       audio.playCompletionChime();
       modal.showModal();
     }
@@ -793,7 +795,7 @@ class App {
 }
 
 // Toast Notifier
-function showToast(message, type = "info") {
+function showToast(message, type = "info", duration = 4000) {
   const container = document.getElementById("toast-container");
   if (!container) return;
 
@@ -817,16 +819,16 @@ function showToast(message, type = "info") {
   setTimeout(() => {
     toast.classList.add("toast-fade-out");
     setTimeout(() => toast.remove(), 400);
-  }, 4000);
+  }, duration);
 }
 
 // Auth Modal & Upgrade Modal Helpers
-let currentAuthTab = "login";
+let currentAuthTab: "login" | "signup" = "login";
 
-function openAuthModal(tab = "login") {
-  const modal = document.getElementById("modal-auth");
+function openAuthModal(tab: "login" | "signup" | string = "login") {
+  const modal = document.getElementById("modal-auth") as HTMLDialogElement | null;
   if (modal) {
-    switchAuthTab(tab);
+    switchAuthTab(tab === "signup" ? "signup" : "login");
     modal.showModal();
   }
 }
@@ -963,7 +965,7 @@ async function handleAuthSubmit(e: Event) {
         // Se o Supabase exigiu confirmação por e-mail
         if (result?.user && !result?.session) {
           showToast("📧 Cadastro realizado! Enviamos um link de confirmação para seu e-mail.", "info");
-          document.getElementById("modal-auth")?.close();
+          (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
           return;
         }
       }
@@ -976,7 +978,7 @@ async function handleAuthSubmit(e: Event) {
       store.save();
 
       showToast(`🎉 Conta criada com sucesso! Bem-vindo(a), ${name.split(" ")[0]}!`, "success");
-      document.getElementById("modal-auth")?.close();
+      (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
       if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
@@ -993,7 +995,7 @@ async function handleAuthSubmit(e: Event) {
       store.save();
 
       showToast("🚀 Login realizado com sucesso! Seus dados foram sincronizados.", "success");
-      document.getElementById("modal-auth")?.close();
+      (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
       if (typeof dashboardManager !== "undefined") dashboardManager.renderHeaderInfo();
@@ -1021,7 +1023,7 @@ const STRIPE_CHECKOUT_LINKS = {
 };
 
 function openUpgradeModal() {
-  const modal = document.getElementById("modal-upgrade-pro");
+  const modal = document.getElementById("modal-upgrade-pro") as HTMLDialogElement | null;
   if (modal) modal.showModal();
 }
 
@@ -1042,7 +1044,7 @@ function startCheckout(planType) {
     showToast(`Redirecionando para o checkout seguro da Stripe (${planType === 'anual' ? 'Plano Anual' : 'Plano Mensal'})... 💳`, "info");
     
     // Fecha o modal antes do redirecionamento
-    document.getElementById("modal-upgrade-pro")?.close();
+    (document.getElementById("modal-upgrade-pro") as HTMLDialogElement)?.close();
 
     setTimeout(() => {
       window.location.href = url.toString();
@@ -1068,6 +1070,4 @@ if (typeof window !== "undefined") {
   window.openUpgradeModal = openUpgradeModal;
   window.startCheckout = startCheckout;
 }
-document.addEventListener("DOMContentLoaded", () => {
-  app.init();
-});
+

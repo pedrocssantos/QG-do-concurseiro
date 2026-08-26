@@ -8,6 +8,20 @@ import { flashcardsManager } from "./flashcards";
 import { showToast } from "../app";
 
 class PomodoroController {
+  mode: string;
+  state: string;
+  lastActiveState: string;
+  secondsRemaining: number;
+  secondsElapsed: number;
+  totalSessionSeconds: number;
+  timerInterval: any;
+  lastTickTime: number | null;
+  selectedDisciplinaId: string | null;
+  selectedTopicoId: string | null;
+  isZenMode: boolean;
+  eventsBound: boolean;
+  lastSaveTime: number | null;
+
   constructor() {
     this.mode = "pomodoro_25"; // pomodoro_25, pomodoro_50, stopwatch
     this.state = "idle"; // idle, running, paused, break
@@ -51,14 +65,14 @@ class PomodoroController {
             
             const modeBtns = document.querySelectorAll(".pomo-mode-btn");
             modeBtns.forEach(b => {
-              if (b.dataset.mode === this.mode) b.classList.add("active");
+              if ((b as HTMLElement).dataset.mode === this.mode) b.classList.add("active");
               else b.classList.remove("active");
             });
 
             const now = Date.now();
             let deltaSecs = 0;
             if (this.state === "running" || this.state === "break") {
-              deltaSecs = Math.max(0, Math.round((now - session.savedAt) / 1000));
+              deltaSecs = Math.max(0, Math.round((now - (session.savedAt || now)) / 1000));
             }
             
             if (deltaSecs > 0) {
@@ -112,7 +126,7 @@ class PomodoroController {
   }
 
   updateSubjectDropdown() {
-    const select = document.getElementById("pomo-subject-select");
+    const select = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
     if (!select) return;
 
     const concurso = store.getActiveConcurso();
@@ -191,13 +205,13 @@ class PomodoroController {
     });
 
     if (subjectSelect) {
-      subjectSelect.addEventListener("change", (e) => {
+      subjectSelect.addEventListener("change", (e: any) => {
         this.selectedDisciplinaId = e.target.value;
       });
     }
 
     if (soundSelect) {
-      soundSelect.addEventListener("change", (e) => {
+      soundSelect.addEventListener("change", (e: any) => {
         const val = e.target.value;
         if (this.state === "running") {
           audio.startAmbientNoise(val);
@@ -209,7 +223,7 @@ class PomodoroController {
       btn.addEventListener("click", () => {
         modeBtns.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        this.setMode(btn.dataset.mode);
+        this.setMode((btn as HTMLElement).dataset.mode);
       });
     });
   }
@@ -241,7 +255,7 @@ class PomodoroController {
     this.state = runningBreak ? "break" : "running";
     this.lastActiveState = this.state;
 
-    const soundSelect = document.getElementById("pomo-sound-select");
+    const soundSelect = document.getElementById("pomo-sound-select") as HTMLSelectElement | null;
     if (soundSelect && soundSelect.value !== "none" && !runningBreak) {
       try {
         audio.startAmbientNoise(soundSelect.value);
@@ -374,7 +388,7 @@ class PomodoroController {
   }
 
   showPostPomodoroModal(minutes, discName, disciplinaId) {
-    const modal = document.getElementById("modal-post-pomodoro");
+    const modal = document.getElementById("modal-post-pomodoro") as HTMLDialogElement | null;
     if (!modal) return;
 
     const minEl = document.getElementById("post-pomo-minutes");

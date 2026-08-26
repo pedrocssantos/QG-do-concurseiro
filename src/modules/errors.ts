@@ -9,6 +9,10 @@ import { showToast } from "../app";
 // ==========================================================================
 
 class CadernoErrosManager {
+  filterReason: string;
+  filterStatus: string;
+  eventsBound: boolean;
+
   constructor() {
     this.filterReason = "all";
     this.filterStatus = "all"; // all, pending, resolved
@@ -128,8 +132,8 @@ class CadernoErrosManager {
     }
   }
 
-  saveNote(errorId) {
-    const textarea = document.getElementById(`note-${errorId}`);
+  saveNote(errorId: string) {
+    const textarea = document.getElementById(`note-${errorId}`) as HTMLTextAreaElement | null;
     if (textarea) {
       const note = textarea.value.trim();
       store.updateCadernoErro(errorId, { note });

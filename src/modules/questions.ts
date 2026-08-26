@@ -28,6 +28,28 @@ function sanitizeHTML(html: string): string {
 }
 
 class QuestionsManager {
+  _searchDebounce: any;
+  filteredQuestions: any[];
+  currentIndex: number;
+  selectedOption: any;
+  isAnswered: boolean;
+  simuladoMode: boolean;
+  simuladoTimer: any;
+  simuladoSecondsLeft: number;
+  simuladoTotalSeconds: number;
+  simuladoStartTime: number;
+  questionStartTime: number;
+  simuladoScoringModel: string;
+  simuladoAnswers: Record<string, any>;
+  filters: {
+    disciplinaId: string;
+    banca: string;
+    ano: string;
+    status: string;
+    search: string;
+  };
+  eventsBound: boolean;
+
   constructor() {
     this._searchDebounce = null;
     this.filteredQuestions = [];
@@ -38,6 +60,9 @@ class QuestionsManager {
     this.simuladoTimer = null;
     this.simuladoSecondsLeft = 0;
     this.simuladoTotalSeconds = 0;
+    this.simuladoStartTime = 0;
+    this.questionStartTime = 0;
+    this.simuladoScoringModel = "cespe";
     this.simuladoAnswers = {}; // { questionId: selectedOption }
     this.filters = {
       disciplinaId: "all",
@@ -59,35 +84,37 @@ class QuestionsManager {
     }
     if (!this.eventsBound) {
       this.bindEvents();
+      this.bindSimuladoConfigHandlers();
       this.eventsBound = true;
     }
   }
 
   populateFilterDropdowns() {
-    const discSelect = document.getElementById("q-filter-disciplina");
-    const bancaSelect = document.getElementById("q-filter-banca");
-    const anoSelect = document.getElementById("q-filter-ano");
-    if (!discSelect) return;
+    const discSelect = document.getElementById("q-filter-disciplina") as HTMLSelectElement | null;
+    const bancaSelect = document.getElementById("q-filter-banca") as HTMLSelectElement | null;
+    const anoSelect = document.getElementById("q-filter-ano") as HTMLSelectElement | null;
 
-    const concurso = store.getActiveConcurso();
-    discSelect.innerHTML = `<option value="all">Todas as Disciplinas</option>`;
-    ((concurso && concurso.disciplinas) || []).forEach(d => {
-      const opt = document.createElement("option");
-      opt.value = d.id;
-      opt.textContent = d.name;
-      discSelect.appendChild(opt);
-    });
-    if (this.filters.disciplinaId) {
-      discSelect.value = this.filters.disciplinaId;
+    if (discSelect) {
+      discSelect.innerHTML = `<option value="all">Todas as Disciplinas</option>`;
+      const concurso = store.getActiveConcurso();
+      (concurso?.disciplinas || []).forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = d.name;
+        discSelect.appendChild(opt);
+      });
+      if (this.filters.disciplinaId) {
+        discSelect.value = this.filters.disciplinaId;
+      }
     }
 
     if (bancaSelect) {
-      const bancas = [...new Set((store.data.questions || []).map(q => q.banca).filter(Boolean))];
+      const bancas = [...new Set((store.data.questions || []).map((q: any) => q.banca).filter(Boolean))];
       bancaSelect.innerHTML = `<option value="all">Todas as Bancas</option>`;
-      bancas.forEach(b => {
+      bancas.forEach((b: any) => {
         const opt = document.createElement("option");
-        opt.value = b;
-        opt.textContent = b;
+        opt.value = String(b);
+        opt.textContent = String(b);
         bancaSelect.appendChild(opt);
       });
       if (this.filters.banca) {
@@ -96,7 +123,7 @@ class QuestionsManager {
     }
 
     if (anoSelect) {
-      const anos = [...new Set((store.data.questions || []).map(q => q.ano).filter(Boolean))].sort((a, b) => b - a);
+      const anos = [...new Set((store.data.questions || []).map((q: any) => q.ano).filter(Boolean))].sort((a: any, b: any) => Number(b) - Number(a));
       anoSelect.innerHTML = `<option value="all">Todos os Anos</option>`;
       anos.forEach(a => {
         const opt = document.createElement("option");
@@ -112,7 +139,7 @@ class QuestionsManager {
 
   setDisciplinaFilter(disciplinaId) {
     this.filters.disciplinaId = disciplinaId;
-    const filterSelect = document.getElementById("q-filter-disciplina");
+    const filterSelect = document.getElementById("q-filter-disciplina") as HTMLSelectElement | null;
     if (filterSelect) {
       filterSelect.value = disciplinaId;
     }
@@ -140,22 +167,22 @@ class QuestionsManager {
   }
 
   bindEvents() {
-    const discSelect = document.getElementById("q-filter-disciplina");
-    const bancaSelect = document.getElementById("q-filter-banca");
-    const anoSelect = document.getElementById("q-filter-ano");
-    const statusSelect = document.getElementById("q-filter-status");
-    const searchInput = document.getElementById("q-filter-search");
-    const prevBtn = document.getElementById("q-btn-prev");
-    const nextBtn = document.getElementById("q-btn-next");
-    const submitBtn = document.getElementById("q-btn-submit");
+    const discSelect = document.getElementById("q-filter-disciplina") as HTMLSelectElement | null;
+    const bancaSelect = document.getElementById("q-filter-banca") as HTMLSelectElement | null;
+    const anoSelect = document.getElementById("q-filter-ano") as HTMLSelectElement | null;
+    const statusSelect = document.getElementById("q-filter-status") as HTMLSelectElement | null;
+    const searchInput = document.getElementById("q-filter-search") as HTMLInputElement | null;
+    const prevBtn = document.getElementById("q-btn-prev") as HTMLButtonElement | null;
+    const nextBtn = document.getElementById("q-btn-next") as HTMLButtonElement | null;
+    const submitBtn = document.getElementById("q-btn-submit") as HTMLButtonElement | null;
     const startSimuladoBtn = document.getElementById("btn-start-simulado");
     const finishSimuladoBtn = document.getElementById("btn-finish-simulado");
 
-    if (discSelect) discSelect.addEventListener("change", (e) => { this.filters.disciplinaId = e.target.value; this.applyFilters(); });
-    if (bancaSelect) bancaSelect.addEventListener("change", (e) => { this.filters.banca = e.target.value; this.applyFilters(); });
-    if (anoSelect) anoSelect.addEventListener("change", (e) => { this.filters.ano = e.target.value; this.applyFilters(); });
-    if (statusSelect) statusSelect.addEventListener("change", (e) => { this.filters.status = e.target.value; this.applyFilters(); });
-    if (searchInput) searchInput.addEventListener("input", (e) => {
+    if (discSelect) discSelect.addEventListener("change", (e: any) => { this.filters.disciplinaId = e.target.value; this.applyFilters(); });
+    if (bancaSelect) bancaSelect.addEventListener("change", (e: any) => { this.filters.banca = e.target.value; this.applyFilters(); });
+    if (anoSelect) anoSelect.addEventListener("change", (e: any) => { this.filters.ano = e.target.value; this.applyFilters(); });
+    if (statusSelect) statusSelect.addEventListener("change", (e: any) => { this.filters.status = e.target.value; this.applyFilters(); });
+    if (searchInput) searchInput.addEventListener("input", (e: any) => {
       this.filters.search = e.target.value.toLowerCase();
       if (this._searchDebounce) clearTimeout(this._searchDebounce);
       this._searchDebounce = setTimeout(() => this.applyFilters(), 300);
@@ -276,7 +303,7 @@ class QuestionsManager {
     const feedbackBox = document.getElementById("q-feedback-box");
     if (feedbackBox) feedbackBox.classList.add("hidden");
 
-    const submitBtn = document.getElementById("q-btn-submit");
+    const submitBtn = document.getElementById("q-btn-submit") as HTMLButtonElement | null;
     if (submitBtn) {
       submitBtn.disabled = this.simuladoMode;
       submitBtn.textContent = "Responder Questão";
@@ -303,7 +330,7 @@ class QuestionsManager {
 
     const options = document.querySelectorAll("#q-alternativas-container .option-item");
     options.forEach(opt => {
-      if (opt.dataset.optId === this.selectedOption) {
+      if ((opt as HTMLElement).dataset.optId === this.selectedOption) {
         opt.classList.add("selected");
       } else {
         opt.classList.remove("selected");
@@ -346,7 +373,7 @@ class QuestionsManager {
     // Destaca as opções
     const options = document.querySelectorAll("#q-alternativas-container .option-item");
     options.forEach(opt => {
-      const optId = opt.dataset.optId;
+      const optId = (opt as HTMLElement).dataset.optId;
       if (optId === q.respostaCorreta) {
         opt.classList.add("correct");
       } else if (optId === this.selectedOption && !isCorrect) {
@@ -371,7 +398,7 @@ class QuestionsManager {
       }
     }
 
-    const submitBtn = document.getElementById("q-btn-submit");
+    const submitBtn = document.getElementById("q-btn-submit") as HTMLButtonElement | null;
     if (submitBtn) submitBtn.disabled = true;
   }
 
@@ -393,15 +420,15 @@ class QuestionsManager {
       }
     }
 
-    const prevBtn = document.getElementById("q-btn-prev");
-    const nextBtn = document.getElementById("q-btn-next");
+    const prevBtn = document.getElementById("q-btn-prev") as HTMLButtonElement | null;
+    const nextBtn = document.getElementById("q-btn-next") as HTMLButtonElement | null;
     if (prevBtn) prevBtn.disabled = this.currentIndex === 0 || !this.filteredQuestions || this.filteredQuestions.length === 0;
     if (nextBtn) nextBtn.disabled = !this.filteredQuestions || this.currentIndex >= this.filteredQuestions.length - 1 || this.filteredQuestions.length === 0;
   }
 
   // ================= MODO SIMULADO CRONOMETRADO =================
   openSimuladoConfigModal() {
-    const modal = document.getElementById("modal-config-simulado");
+    const modal = document.getElementById("modal-config-simulado") as HTMLDialogElement | null;
     if (!modal) return;
 
     const isPro = store.isPro();
@@ -417,8 +444,8 @@ class QuestionsManager {
         modalBody.prepend(usageBanner);
       }
       usageBanner.innerHTML = `
-        <span><i class="fa-solid fa-crown text-warning"></i> Plano Gratuito: <strong>${weeklySimulados}/3 simulados</strong> esta semana</span>
-        <button type="button" onclick="if(typeof openUpgradeModal===function)openUpgradeModal();" class="btn btn-primary btn-xs" style="padding: 2px 8px; font-size: 0.72rem;">Seja PRO</button>
+        <span><i class="fa-solid fa-triangle-exclamation"></i> <strong>Plano Gratuito:</strong> ${weeklySimulados}/3 simulados nesta semana.</span>
+        <button class="btn btn-warning btn-xs" onclick="openUpgradeModal()">Virar PRO</button>
       `;
     } else if (usageBanner) {
       usageBanner.remove();
@@ -430,7 +457,7 @@ class QuestionsManager {
 
     if (container) {
       container.innerHTML = "";
-      ((concurso && concurso.disciplinas) || []).forEach(d => {
+      (concurso?.disciplinas || []).forEach(d => {
         const item = document.createElement("label");
         item.style.display = "flex";
         item.style.alignItems = "center";
@@ -450,7 +477,7 @@ class QuestionsManager {
 
   bindSimuladoConfigHandlers() {
     document.querySelectorAll(".sim-btn-count").forEach(btn => {
-      btn.onclick = () => {
+      (btn as HTMLElement).onclick = () => {
         document.querySelectorAll(".sim-btn-count").forEach(b => {
           b.classList.remove("active", "btn-primary");
           b.classList.add("btn-secondary");
@@ -461,7 +488,7 @@ class QuestionsManager {
     });
 
     document.querySelectorAll(".sim-btn-time").forEach(btn => {
-      btn.onclick = () => {
+      (btn as HTMLElement).onclick = () => {
         document.querySelectorAll(".sim-btn-time").forEach(b => {
           b.classList.remove("active", "btn-primary");
           b.classList.add("btn-secondary");
@@ -475,8 +502,8 @@ class QuestionsManager {
     if (selectAllBtn) {
       selectAllBtn.onclick = () => {
         const chks = document.querySelectorAll(".sim-disc-chk");
-        const allChecked = Array.from(chks).every(c => c.checked);
-        chks.forEach(c => c.checked = !allChecked);
+        const allChecked = Array.from(chks).every(c => (c as HTMLInputElement).checked);
+        chks.forEach(c => (c as HTMLInputElement).checked = !allChecked);
         selectAllBtn.textContent = allChecked ? "Selecionar Todas" : "Desmarcar Todas";
       };
     }
@@ -486,22 +513,22 @@ class QuestionsManager {
       confirmBtn.onclick = () => {
         if (!store.isPro() && store.getSimuladosThisWeek() >= 3) {
           showToast("Você atingiu o limite de 3 simulados semanais no Plano Gratuito. Assine o PRO para simulados ilimitados!", "warning");
-          const modal = document.getElementById("modal-config-simulado");
+          const modal = document.getElementById("modal-config-simulado") as HTMLDialogElement | null;
           if (modal) modal.close();
           if (typeof openUpgradeModal === "function") openUpgradeModal();
           return;
         }
 
-        const activeCountBtn = document.querySelector(".sim-btn-count.active");
-        const count = activeCountBtn ? parseInt(activeCountBtn.dataset.count, 10) : 10;
+        const activeCountBtn = document.querySelector(".sim-btn-count.active") as HTMLElement | null;
+        const count = activeCountBtn ? parseInt(activeCountBtn.dataset.count || "10", 10) : 10;
 
-        const activeTimeBtn = document.querySelector(".sim-btn-time.active");
-        const minutes = activeTimeBtn ? parseInt(activeTimeBtn.dataset.time, 10) : 30;
+        const activeTimeBtn = document.querySelector(".sim-btn-time.active") as HTMLElement | null;
+        const minutes = activeTimeBtn ? parseInt(activeTimeBtn.dataset.time || "30", 10) : 30;
 
-        const scoringModel = document.getElementById("sim-scoring-model")?.value || "cespe";
-        const selectedDiscIds = Array.from(document.querySelectorAll(".sim-disc-chk:checked")).map(c => c.value);
+        const scoringModel = (document.getElementById("sim-scoring-model") as HTMLSelectElement | null)?.value || "cespe";
+        const selectedDiscIds = Array.from(document.querySelectorAll(".sim-disc-chk:checked")).map(c => (c as HTMLInputElement).value);
 
-        const modal = document.getElementById("modal-config-simulado");
+        const modal = document.getElementById("modal-config-simulado") as HTMLDialogElement | null;
         if (modal) modal.close();
 
         this.startSimulado(count, minutes * 60, selectedDiscIds, scoringModel);
@@ -688,7 +715,7 @@ class QuestionsManager {
     const xpBonus = 100;
     store.addXP(xpBonus, "Bônus de Simulado Concluído! 🎓");
 
-    modal.showModal();
+    if (modal) (modal as HTMLDialogElement).showModal();
   }
 }
 

@@ -377,7 +377,80 @@ class SupabaseService {
         await this.client.from("user_errors").upsert(newErrorsToUpload);
       }
 
-      // 5. Salva estado unificado no store
+      // 5. SINCRONIZA FLASHCARDS (FLASHCARDS & FLASHCARDS_PROGRESS)
+      try {
+        const { data: cloudCards } = await this.client.from("flashcards").select("*").eq("user_id", uid);
+        const { data: cloudProg } = await this.client.from("flashcards_progress").select("*").eq("user_id", uid);
+        const localCards = store.data.flashcards || [];
+        const cardMap = new Map();
+
+        localCards.forEach(c => cardMap.set(c.id, {
+          id: c.id,
+          disciplinaId: c.disciplinaId,
+          topicId: c.topicId || null,
+          frente: c.frente || (c as any).front || "",
+          verso: c.verso || (c as any).back || "",
+          interval: c.interval || 1,
+          repetitions: c.repetitions || 0,
+          easeFactor: c.easeFactor || 2.5,
+          dueDate: c.dueDate || store.getLocalDateString(),
+          isSystem: !!c.isSystem
+        }));
+
+        const progMap = new Map((cloudProg || []).map(p => [p.card_id, p]));
+
+        (cloudCards || []).forEach(cc => {
+          const prog = progMap.get(cc.id);
+          const existing = cardMap.get(cc.id);
+          if (!existing) {
+            cardMap.set(cc.id, {
+              id: cc.id,
+              disciplinaId: cc.disciplina_id,
+              topicId: cc.topic_id,
+              frente: cc.front,
+              verso: cc.back,
+              interval: prog ? prog.interval : 1,
+              repetitions: prog ? prog.repetitions : 0,
+              easeFactor: prog ? Number(prog.ease_factor) : 2.5,
+              dueDate: prog ? prog.due_date : store.getLocalDateString(),
+              isSystem: !!cc.is_system
+            });
+          }
+        });
+
+        store.data.flashcards = Array.from(cardMap.values());
+
+        // Envia flashcards customizados locais que não estão na nuvem
+        const customLocalCards = Array.from(cardMap.values()).filter(c => !c.isSystem);
+        if (customLocalCards.length > 0) {
+          const cardsToUpload = customLocalCards.map(c => ({
+            id: c.id,
+            disciplina_id: c.disciplinaId,
+            topic_id: c.topicId || null,
+            front: c.frente,
+            back: c.verso,
+            is_system: false,
+            user_id: uid
+          }));
+          await this.client.from("flashcards").upsert(cardsToUpload);
+
+          const progToUpload = customLocalCards.map(c => ({
+            id: `prog-${uid}-${c.id}`,
+            user_id: uid,
+            card_id: c.id,
+            interval: c.interval,
+            repetitions: c.repetitions,
+            ease_factor: c.easeFactor,
+            due_date: c.dueDate,
+            updated_at: new Date().toISOString()
+          }));
+          await this.client.from("flashcards_progress").upsert(progToUpload);
+        }
+      } catch (fcErr) {
+        console.warn("Aviso ao sincronizar flashcards na nuvem:", fcErr);
+      }
+
+      // 6. Salva estado unificado no store
       store.save();
 
       console.log("☁️ Sincronização em nuvem concluída com sucesso!");
@@ -394,7 +467,60 @@ class SupabaseService {
 
   // ================= SALVAMENTOS PONTUAIS ASSÍNCRONOS =================
 
-  async saveSessionToCloud(session) {
+  async saveFlashcardToCloud(card: any) {
+    if (!this.client || !this.currentUser) return;
+    try {
+      await this.client.from("flashcards").upsert({
+        id: card.id,
+        disciplina_id: card.disciplinaId,
+        topic_id: card.topicId || null,
+        front: card.frente || card.front || "",
+        back: card.verso || card.back || "",
+        is_system: !!card.isSystem,
+        user_id: this.currentUser.id
+      });
+
+      await this.client.from("flashcards_progress").upsert({
+        id: `prog-${this.currentUser.id}-${card.id}`,
+        user_id: this.currentUser.id,
+        card_id: card.id,
+        interval: card.interval || 1,
+        repetitions: card.repetitions || 0,
+        ease_factor: card.easeFactor || 2.5,
+        due_date: card.dueDate || new Date().toISOString().split("T")[0],
+        last_reviewed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn("Erro ao salvar flashcard na nuvem:", e);
+    }
+  }
+
+  async saveTopicoProgressToCloud(topico: any, disciplinaId: string) {
+    if (!this.client || !this.currentUser) return;
+    try {
+      await this.client.from("topicos").upsert({
+        id: topico.id,
+        disciplina_id: disciplinaId,
+        user_id: this.currentUser.id,
+        title: topico.title,
+        teoria: !!topico.teoria,
+        teoria_date: topico.teoriaDate || null,
+        resumo: !!topico.resumo,
+        questoes_feitas: topico.questoesFeitas || 0,
+        questoes_acertos: topico.questoesAcertos || 0,
+        r24h: !!topico.r24h,
+        r7d: !!topico.r7d,
+        r30d: !!topico.r30d,
+        dominio: topico.dominio || 1,
+        updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn("Erro ao salvar progresso de tópico na nuvem:", e);
+    }
+  }
+
+  async saveSessionToCloud(session: any) {
     if (!this.client || !this.currentUser) return;
     try {
       await this.client.from("study_sessions").upsert({
@@ -414,7 +540,7 @@ class SupabaseService {
     }
   }
 
-  async saveQuestionAnswerToCloud(answer) {
+  async saveQuestionAnswerToCloud(answer: any) {
     if (!this.client || !this.currentUser) return;
     try {
       await this.client.from("question_attempts").upsert({
@@ -433,7 +559,7 @@ class SupabaseService {
     }
   }
 
-  async saveErrorToCloud(errItem) {
+  async saveErrorToCloud(errItem: any) {
     if (!this.client || !this.currentUser) return;
     try {
       await this.client.from("user_errors").upsert({

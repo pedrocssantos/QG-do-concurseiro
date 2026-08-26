@@ -62,7 +62,7 @@ class LeisManager {
     if (titleEl) titleEl.textContent = `${currentLei.sigla} - ${currentLei.nome}`;
     if (descEl) descEl.textContent = currentLei.descricao;
 
-    let artigos = currentLei.artigos || [];
+    let artigos: any[] = (currentLei.artigos as any[]) || [];
 
     // Filtro por termo de busca
     if (this.searchTerm) {
@@ -71,7 +71,7 @@ class LeisManager {
         a.numero.toLowerCase().includes(term) ||
         a.caput.toLowerCase().includes(term) ||
         (a.tema && a.tema.toLowerCase().includes(term)) ||
-        (a.incisos && a.incisos.some(inc => inc.toLowerCase().includes(term)))
+        (a.incisos && a.incisos.some((inc: string) => inc.toLowerCase().includes(term)))
       );
     }
 
@@ -92,7 +92,7 @@ class LeisManager {
       return;
     }
 
-    artigos.forEach(art => {
+    artigos.forEach((art: any) => {
       const isLido = store.isLeiArtigoLido(art.id);
       const card = document.createElement("div");
       card.className = `lei-artigo-card ${isLido ? "artigo-lido" : ""} ${art.destaque ? "artigo-destaque" : ""}`;
@@ -101,7 +101,7 @@ class LeisManager {
       let incisosHtml = "";
       if (art.incisos && art.incisos.length > 0) {
         incisosHtml = `<ul class="lei-incisos-list">` + 
-          art.incisos.map(inc => `<li>${inc}</li>`).join("") + 
+          art.incisos.map((inc: string) => `<li>${inc}</li>`).join("") + 
         `</ul>`;
       }
 
@@ -141,7 +141,7 @@ class LeisManager {
 
   createFlashcardFromArtigo(artigoId: string) {
     const currentLei = DEFAULT_LEIS.find(l => l.id === this.selectedLeiId);
-    const art = currentLei?.artigos.find(a => a.id === artigoId);
+    const art = (currentLei?.artigos as any[])?.find(a => a.id === artigoId);
     if (!art) return;
 
     const frente = `[${currentLei?.sigla}] O que dispõe o ${art.numero} (${art.tema || "Legislação"})?`;

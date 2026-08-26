@@ -378,6 +378,10 @@ class Store {
 
     Object.assign(topico, fields);
 
+    if (typeof db !== "undefined" && db.saveTopicoProgressToCloud) {
+      db.saveTopicoProgressToCloud(topico, disciplinaId);
+    }
+
     this.checkBadges();
     this.notify("edital_updated", { concursoId, disciplinaId, topicoId });
   }

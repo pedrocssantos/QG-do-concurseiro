@@ -14,6 +14,8 @@ import { showToast } from "../app";
 // ==========================================================================
 
 class DashboardManager {
+  eventsBound: boolean;
+
   constructor() {
     this.eventsBound = false;
   }
@@ -51,7 +53,7 @@ class DashboardManager {
     const userXpEl = document.getElementById("dash-user-xp");
     const userLevelEl = document.getElementById("dash-user-level");
     const streakCountEl = document.getElementById("dash-streak-count");
-    const concursoSelect = document.getElementById("header-concurso-select");
+    const concursoSelect = document.getElementById("header-concurso-select") as HTMLSelectElement | null;
 
     if (userNameEl) userNameEl.textContent = profile.name || "Concurseiro";
     if (userRankEl) userRankEl.textContent = rankTitle;
@@ -77,7 +79,7 @@ class DashboardManager {
     // Atualiza o visual progressivo do Streak
     const streak = profile.streak || 0;
     const streakInfo = this.getStreakTier(streak);
-    const streakPill = document.querySelector(".streak-pill");
+    const streakPill = document.querySelector(".streak-pill") as HTMLElement | null;
     if (streakPill) {
       streakPill.className = `streak-pill ${streakInfo.class}`;
       streakPill.title = `Frequência de Estudos: ${streakInfo.label}`;
@@ -123,7 +125,7 @@ class DashboardManager {
     if (concurso.targetDate) {
       const target = new Date(concurso.targetDate);
       const today = new Date();
-      const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       if (diffDays > 0) {
         insights.push({
           type: diffDays < 30 ? "danger" : "info",
@@ -429,7 +431,7 @@ class DashboardManager {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           if (route === "#pomodoro") {
-            const select = document.getElementById("pomo-subject-select");
+            const select = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
             if (select) {
               select.value = disciplinaId;
               if (typeof pomodoro !== "undefined") pomodoro.selectedDisciplinaId = disciplinaId;
@@ -455,7 +457,7 @@ class DashboardManager {
 
     // 2. Gráfico Donut de Disciplinas
     const subjectDist = store.getSubjectDistribution();
-    const donutItems = subjectDist.map(s => ({
+    const donutItems = (subjectDist as any[]).map((s: any) => ({
       label: s.name,
       value: s.minutes,
       color: s.color
@@ -490,10 +492,10 @@ class DashboardManager {
   }
 
   bindEvents() {
-    const concursoSelect = document.getElementById("header-concurso-select");
+    const concursoSelect = document.getElementById("header-concurso-select") as HTMLSelectElement | null;
     if (concursoSelect) {
       concursoSelect.addEventListener("change", (e) => {
-        store.setActiveConcurso(e.target.value);
+        store.setActiveConcurso((e.target as HTMLSelectElement).value);
         this.init();
         showToast("Plano de estudos ativo alterado com sucesso!", "info");
       });
