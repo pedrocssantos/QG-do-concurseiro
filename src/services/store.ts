@@ -542,23 +542,29 @@ class Store {
   advanceCiclo(disciplinaId, minutesStudied) {
     if (!this.data.ciclo || !this.data.ciclo.items || this.data.ciclo.items.length === 0) return;
     const items = this.data.ciclo.items;
-    const item = items.find(i => i.disciplinaId === disciplinaId);
+    let item = items.find(i => i.disciplinaId === disciplinaId);
+    if (!item && disciplinaId) {
+      const discNameLower = disciplinaId.toLowerCase();
+      item = items.find(i => (i.disciplinaName || "").toLowerCase().includes(discNameLower) || discNameLower.includes((i.disciplinaName || "").toLowerCase()));
+    }
     if (item) {
-      item.minutesDone += minutesStudied;
+      item.minutesDone = (item.minutesDone || 0) + minutesStudied;
       if (item.minutesDone >= item.minutesGoal) {
         // Se concluiu a matéria atual do ponteiro, avança para a próxima
         const currIdx = this.data.ciclo.currentSubjectIndex || 0;
-        if (items[currIdx] && items[currIdx].disciplinaId === disciplinaId) {
+        if (items[currIdx] && items[currIdx].disciplinaId === item.disciplinaId) {
           this.data.ciclo.currentSubjectIndex = (currIdx + 1) % items.length;
         }
         // Verifica se todas as matérias foram concluídas para fechar o ciclo
-        const allDone = items.every(i => i.minutesDone >= i.minutesGoal);
+        const allDone = items.every(i => (i.minutesDone || 0) >= i.minutesGoal);
         if (allDone) {
           items.forEach(i => i.minutesDone = 0);
           this.data.ciclo.currentSubjectIndex = 0;
           this.addXP(100, "Ciclo Completo Fechado! 🔥");
         }
       }
+      this.save();
+      this.notify("ciclo_updated", this.data.ciclo);
     }
   }
 
@@ -623,6 +629,19 @@ class Store {
           if (data.isCorrect) {
             topico.questoesAcertos = (topico.questoesAcertos || 0) + 1;
           }
+
+          // Recalcula o nível de domínio do tópico (1 a 5 estrelas) com base no aproveitamento real
+          const totalQ = topico.questoesFeitas;
+          const acertosQ = topico.questoesAcertos || 0;
+          if (totalQ >= 3) {
+            const accRate = (acertosQ / totalQ) * 100;
+            if (accRate >= 85) topico.dominio = 5;
+            else if (accRate >= 70) topico.dominio = 4;
+            else if (accRate >= 55) topico.dominio = 3;
+            else if (accRate >= 40) topico.dominio = 2;
+            else topico.dominio = 1;
+          }
+          this.notify("topico_updated", { concursoId: concurso.id, disciplinaId: disc.id, topico });
         }
       }
     }
@@ -632,12 +651,24 @@ class Store {
       this.addToCadernoErrosAuto(data.questionId, "conteudo");
     } else {
       this.addXP(15, "Questão Correta!");
+
+      // Se acertou uma questão que estava no Caderno de Erros, marca como resolvida
+      if (Array.isArray(this.data.cadernoErros)) {
+        const erroExistente = this.data.cadernoErros.find(e => e.questionId === data.questionId && !e.resolved);
+        if (erroExistente) {
+          erroExistente.resolved = true;
+          erroExistente.resolvedDate = this.getLocalDateString();
+          this.addXP(25, "Erro Superado no Caderno de Erros! 🎯");
+          this.notify("caderno_erros_resolved", erroExistente);
+        }
+      }
     }
 
     // Atualiza missões de questões
     this.checkMissionsProgress({ type: "questoes", count: 1, disciplinaId: data.disciplinaId });
 
     this.checkBadges();
+    this.save();
     this.notify("question_answered", record);
 
     if (typeof db !== "undefined" && db.saveQuestionAnswerToCloud) {

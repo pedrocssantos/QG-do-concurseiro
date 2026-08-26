@@ -771,6 +771,186 @@ const DEFAULT_QUESTIONS = [
     ],
     respostaCorreta: "C",
     explicacao: "Gabarito: **CERTO**. Conforme art. 16, I e § 4º, da Lei 8.213/91: o cônjuge, a companheira e o filho não emancipado menor de 21 anos são dependentes de 1ª classe, e a dependência econômica das pessoas indicadas no inciso I é presumida."
+  },
+  {
+    id: "q-21",
+    disciplinaId: "pf-dir-penal",
+    disciplinaName: "Direito Penal & Processual Penal",
+    assunto: "Crimes contra a Administração Pública",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Agente de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O servidor público que exige, para si ou para outrem, direta ou indiretamente, ainda que fora da função ou antes de assumi-la, mas em razão dela, vantagem indevida, comete o crime de corrupção passiva.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "E",
+    explicacao: "Gabarito: **ERRADO**. O verbo nuclear **EXIGIR** tipifica o crime de **CONCUSSÃO** (Art. 316 do CP). Na corrupção passiva (Art. 317 do CP), os verbos nucleares são *solicitar, receber* ou *aceitar promessa* de vantagem indevida."
+  },
+  {
+    id: "q-22",
+    disciplinaId: "pf-dir-penal",
+    disciplinaName: "Direito Penal & Processual Penal",
+    assunto: "Inquérito Policial",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Escrivão de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "A autoridade policial não poderá mandar arquivar autos de inquérito policial, sendo o arquivamento ato privativo da autoridade judiciária competente mediante provocação do titular da ação penal.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Princípio da Indisponibilidade do Inquérito Policial (Art. 17 do CPP): 'A autoridade policial não poderá mandar arquivar autos de inquérito'."
+  },
+  {
+    id: "q-23",
+    disciplinaId: "pf-dir-adm",
+    disciplinaName: "Direito Administrativo",
+    assunto: "Licitações e Contratos (Nova Lei 14.133/21)",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Agente de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "De acordo com a Nova Lei de Licitações (Lei nº 14.133/2021), a inexigibilidade de licitação decorre da inviabilidade de competição, como na contratação de profissional do setor artístico consagrado pela crítica especializada ou pela opinião pública.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Art. 74, II, da Lei nº 14.133/2021: 'É inexigível a licitação quando inviável a competição, em especial no caso de: [...] II - contratação de profissional do setor artístico, diretamente ou por meio de empresário exclusivo, desde que consagrado pela crítica especializada ou pela opinião pública'."
+  },
+  {
+    id: "q-24",
+    disciplinaId: "pf-dir-adm",
+    disciplinaName: "Direito Administrativo",
+    assunto: "Lei de Improbidade Administrativa (Lei 8.429/92)",
+    banca: "Cebraspe",
+    orgao: "PRF",
+    cargo: "Policial Rodoviário Federal",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "Após as alterações introduzidas pela Lei nº 14.230/2021, todos os atos de improbidade administrativa previstos na Lei nº 8.429/1992 passaram a exigir a comprovação do dolo específico, não subsistindo mais a modalidade culposa em nenhuma hipótese.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. O art. 1º, §§ 1º e 2º, da Lei 8.429/92 (com redação da Lei 14.230/21) extinguiu a improbidade culposa (inclusive do art. 10 - lesão ao erário), passando a exigir estritamente o dolo específico."
+  },
+  {
+    id: "q-25",
+    disciplinaId: "pf-dir-const",
+    disciplinaName: "Direito Constitucional",
+    assunto: "Remédios Constitucionais",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Papiloscopista",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O habeas data é a ação constitucional cabível para assegurar o conhecimento de informações relativas à pessoa do impetrante, constantes de registros ou bancos de dados de entidades governamentais ou de caráter público, sendo sua impetração condicionada à prévia recusa administrativa.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Súmula nº 2 do STJ: 'Não cabe o habeas data (CF, art. 5º, LXXII, a) se não houve recusa de informações por parte da autoridade administrativa'."
+  },
+  {
+    id: "q-26",
+    disciplinaId: "pf-info",
+    disciplinaName: "Informática & Tecnologia da Informação",
+    assunto: "Criptografia e Segurança da Informação",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Perito Criminal Federal",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "Na criptografia assimétrica, a chave pública do destinatário é utilizada para cifrar a mensagem, e apenas a chave privada correspondente do destinatário é capaz de decifrar o conteúdo, garantindo confidencialidade.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Princípio básico da criptografia de chave pública (assimétrica): Quem quer enviar mensagem confidencial cifra com a chave pública do receptor; somente o receptor (de posse de sua chave privada secreta) consegue decifrar."
+  },
+  {
+    id: "q-27",
+    disciplinaId: "pf-info",
+    disciplinaName: "Informática & Tecnologia da Informação",
+    assunto: "Banco de Dados: SQL DDL e DML",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Agente de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "Em linguagem SQL, os comandos CREATE, ALTER e DROP pertencem à categoria DML (Data Manipulation Language), pois alteram os registros de dados armazenados nas tabelas.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "E",
+    explicacao: "Gabarito: **ERRADO**. Os comandos CREATE, ALTER e DROP pertencem à categoria **DDL (Data Definition Language)**, pois definem e modificam a estrutura do banco de dados (schema). DML compreende INSERT, UPDATE e DELETE."
+  },
+  {
+    id: "q-28",
+    disciplinaId: "pf-contab",
+    disciplinaName: "Contabilidade Geral",
+    assunto: "Regime de Competência e Fatos Contábeis",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Agente de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "Pelo regime de competência, as receitas e as despesas devem ser incluídas na apuração do resultado do período em que ocorrerem os seus respectivos pagamentos ou recebimentos em dinheiro.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "E",
+    explicacao: "Gabarito: **ERRADO**. A definição apresentada refere-se ao **Regime de Caixa**. Pelo **Regime de Competência** (NBC TG Estrutura Conceitual), receitas e despesas são reconhecidas no momento do seu fato gerador (quando incorridas/geradas), independentemente do recebimento ou pagamento em dinheiro."
+  },
+  {
+    id: "q-29",
+    disciplinaId: "pf-rlm",
+    disciplinaName: "Raciocínio Lógico e Estatística",
+    assunto: "Equivalências e Negações Lógicas",
+    banca: "Cebraspe",
+    orgao: "Polícia Federal",
+    cargo: "Escrivão de Polícia",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "A negação lógica da proposição condicional 'Se o suspeito mente, então ele é culpado' é equivalente a 'O suspeito mente e ele não é culpado'.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Regra do **MANÉ** para negação da condicional p → q: Mantém a primeira (p) **E** Nega a segunda (~q). Portanto: ~(p → q) ≡ p ∧ ~q."
+  },
+  {
+    id: "q-30",
+    disciplinaId: "prf-transito",
+    disciplinaName: "Legislação de Trânsito",
+    assunto: "Crimes de Trânsito (Art. 306 CTB)",
+    banca: "Cebraspe",
+    orgao: "PRF",
+    cargo: "Policial Rodoviário Federal",
+    ano: 2024,
+    tipo: "certo_errado",
+    enunciado: "O crime de conduzir veículo automotor com capacidade psicomotora alterada em razão da influência de álcool (art. 306 do CTB) é de perigo abstrato, dispensando a demonstração de perigo concreto à segurança viária.",
+    alternativas: [
+      { id: "C", text: "Certo" },
+      { id: "E", text: "Errado" }
+    ],
+    respostaCorreta: "C",
+    explicacao: "Gabarito: **CERTO**. Jurisprudência pacificada do STJ (Tema 484 / Súmula em Recursos Repetitivos) e STF: O crime do art. 306 do CTB é de **perigo abstrato**, configurando-se com a simples condução de veículo automotor sob influência de álcool nos índices legais, dispensando dano ou perigo concreto."
   }
 ];
 
@@ -902,6 +1082,72 @@ const DEFAULT_FLASHCARDS = [
     disciplinaName: "Direito Constitucional",
     frente: "Quais são os Fundamentos da República Federativa do Brasil (Art. 1º CF)?",
     verso: "Mnemônico **SO-CI-DI-VA-PLU**:\n• **SO**berania\n• **CI**dadania\n• **DI**gnidade da Pessoa Humana\n• **VA**lores Sociais do Trabalho e da Livre Iniciativa\n• **PLU**ralismo Político",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-13",
+    disciplinaId: "pf-dir-adm",
+    disciplinaName: "Direito Administrativo",
+    frente: "Qual a diferença entre DESCONCENTRAÇÃO e DESCENTRALIZAÇÃO?",
+    verso: "• **Desconcentração:** Distribuição interna de competências dentro da MESMA pessoa jurídica (cria **ÓRGÃOS**; há hierarquia e subordinação).\n• **Descentralização:** Transferência de competências para OUTRA pessoa jurídica (cria **ENTIDADES** da Adm. Indireta ou delegatárias; não há hierarquia, apenas vinculação/tutela).",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-14",
+    disciplinaId: "pf-dir-penal",
+    disciplinaName: "Processo Penal",
+    frente: "Quais são as espécies de Flagrante Delito (Art. 302 do CPP)?",
+    verso: "1. **Próprio / Perfeito:** Está cometendo ou acaba de cometer a infração.\n2. **Impróprio / Quase-flagrante:** É perseguido logo após pela autoridade/vítima em situação que faça presumir ser o autor.\n3. **Presumido / Ficto:** É encontrado logo depois com instrumentos, armas ou objetos que façam presumir ser ele o autor.",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-15",
+    disciplinaId: "pf-info",
+    disciplinaName: "Informática",
+    frente: "Quais são as principais PORTAS TCP padrão dos protocolos de rede?",
+    verso: "• **FTP:** 20 (Dados) e 21 (Controle)\n• **SSH:** 22\n• **Telnet:** 23\n• **SMTP:** 587 (submissão) / 25\n• **DNS:** 53\n• **HTTP:** 80\n• **HTTPS:** 443\n• **POP3:** 110 / 995 (SSL)\n• **IMAP:** 143 / 993 (SSL)",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-16",
+    disciplinaId: "pf-contab",
+    disciplinaName: "Contabilidade Geral",
+    frente: "Qual é a Equação Fundamental do Patrimônio na Contabilidade?",
+    verso: "📊 **ATIVO = PASSIVO EXIGÍVEL + PATRIMÔNIO LÍQUIDO** (A = P + PL)\n\n• **Ativo (A):** Bens e Direitos (Aplicação de Recursos).\n• **Passivo Exigível (P):** Obrigações com Terceiros (Origem de Terceiros).\n• **Patrimônio Líquido (PL):** Capital Próprio / Situação Líquida (Origem Própria).",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-17",
+    disciplinaId: "dep-lep",
+    disciplinaName: "Lei de Execução Penal (LEP)",
+    frente: "Como funciona a REMIÇÃO DE PENA por trabalho e por estudo (Art. 126 LEP)?",
+    verso: "• **Por Trabalho:** 1 dia de pena a cada **3 dias de trabalho** (jornada de 6h a 8h).\n• **Por Estudo:** 1 dia de pena a cada **12 horas de frequência escolar** (divididas em no mínimo 3 dias).\n\n💡 *O preso em regime fechado ou semiaberto pode remir a pena por ambas as modalidades cumulativamente.*",
+    interval: 1,
+    repetitions: 0,
+    easeFactor: 2.5,
+    dueDate: new Date().toISOString().split("T")[0]
+  },
+  {
+    id: "fc-18",
+    disciplinaId: "pf-dir-const",
+    disciplinaName: "Direito Constitucional",
+    frente: "Quais são as principais matérias de Competência Privativa da União (Art. 22 CF)?",
+    verso: "Mnemônico **CAPACETE DE P.M.** (Direito...):\n• **C**ivil\n• **A**grário\n• **P**enal\n• **A**eronáutico\n• **C**omercial\n• **E**leitoral\n• **T**rabalho\n• **E**spacial\n• **D**esapropriação\n• **E**nergia\n• **P**rocessual\n• **M**arítimo",
     interval: 1,
     repetitions: 0,
     easeFactor: 2.5,

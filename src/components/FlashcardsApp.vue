@@ -17,6 +17,34 @@
     </div>
 
     <div class="flashcards-layout">
+      <!-- Barra de Modo de Revisão SRS -->
+      <div class="srs-mode-bar" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 16px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="badge" style="background: var(--color-accent-tint); color: var(--color-accent); border: 1px solid rgba(126,161,114,0.35); font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 800; padding: 4px 10px; border-radius: var(--radius-xs);">
+            <i class="fa-solid fa-fire"></i> {{ dueTodayCount }} cards devidos hoje
+          </span>
+          <span style="font-size: var(--text-xs); color: var(--text-muted);">
+            {{ showAllCardsMode ? 'Modo Livre (Praticando todos os flashcards)' : 'Fila Inteligente SM-2 (Apenas cards para revisar hoje)' }}
+          </span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button 
+            class="btn btn-sm" 
+            :class="!showAllCardsMode ? 'btn-primary' : 'btn-secondary'"
+            @click="showAllCardsMode = false; currentIndex = 0;"
+          >
+            <i class="fa-solid fa-calendar-day"></i> Fila do Dia ({{ dueTodayCount }})
+          </button>
+          <button 
+            class="btn btn-sm" 
+            :class="showAllCardsMode ? 'btn-primary' : 'btn-secondary'"
+            @click="showAllCardsMode = true; currentIndex = 0;"
+          >
+            <i class="fa-solid fa-book-open"></i> Modo Livre ({{ totalCardsCount }})
+          </button>
+        </div>
+      </div>
+
       <!-- Seletor de Decks (Disciplinas) -->
       <div class="deck-chips-container">
         <button 
@@ -25,7 +53,7 @@
           @click="selectDeck('all')"
         >
           <i class="fa-solid fa-layer-group"></i> Todos os Decks
-          <span class="deck-badge">{{ totalCardsCount }}</span>
+          <span class="deck-badge" :class="{ 'badge-due': dueTodayCount > 0 }">{{ showAllCardsMode ? totalCardsCount : dueTodayCount }}</span>
         </button>
 
         <button 
@@ -36,7 +64,7 @@
           @click="selectDeck(deck.id)"
         >
           <i class="fa-solid" :class="deck.icon || 'fa-book'"></i> {{ deck.name }}
-          <span class="deck-badge">{{ deck.count }}</span>
+          <span class="deck-badge" :class="{ 'badge-due': deck.dueCount > 0 }">{{ showAllCardsMode ? deck.count : deck.dueCount }}</span>
         </button>
       </div>
 
@@ -156,27 +184,34 @@ const decks = computed(() => {
   storeVersion.value;
   const cards: any[] = store.data?.flashcards || [];
   const activeDisc = activeConcurso.value?.disciplinas || [];
+  const today = store.getLocalDateString();
 
-  const deckMap = new Map<string, { id: string; name: string; icon: string; count: number }>();
+  const deckMap = new Map<string, { id: string; name: string; icon: string; count: number; dueCount: number }>();
 
   // 1. Adiciona as matérias do concurso ativo
   activeDisc.forEach(d => {
+    const discCards = cards.filter(c => c.disciplinaId === d.id);
+    const dueCards = discCards.filter(c => !c.dueDate || c.dueDate <= today);
     deckMap.set(d.id, {
       id: d.id,
       name: d.name,
       icon: d.icon || 'fa-book',
-      count: cards.filter(c => c.disciplinaId === d.id).length
+      count: discCards.length,
+      dueCount: dueCards.length
     });
   });
 
   // 2. Adiciona outros decks com cards cadastrados
   cards.forEach(c => {
     if (!deckMap.has(c.disciplinaId)) {
+      const discCards = cards.filter(card => card.disciplinaId === c.disciplinaId);
+      const dueCards = discCards.filter(card => !card.dueDate || card.dueDate <= today);
       deckMap.set(c.disciplinaId, {
         id: c.disciplinaId,
         name: c.disciplinaName || c.disciplinaId,
         icon: 'fa-book',
-        count: 1
+        count: discCards.length,
+        dueCount: dueCards.length
       });
     }
   });
@@ -187,6 +222,13 @@ const decks = computed(() => {
 const totalCardsCount = computed(() => {
   storeVersion.value;
   return (store.data?.flashcards || []).length;
+});
+
+const dueTodayCount = computed(() => {
+  storeVersion.value;
+  const cards: any[] = store.data?.flashcards || [];
+  const today = store.getLocalDateString();
+  return cards.filter(c => !c.dueDate || c.dueDate <= today).length;
 });
 
 // Cards filtrados por deck e agendamento

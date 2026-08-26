@@ -400,7 +400,7 @@ class PomodoroController {
     const btnQuestions = document.getElementById("post-pomo-btn-questoes");
     if (btnQuestions) {
       btnQuestions.onclick = () => {
-        modal.classList.add("hidden");
+        modal.close();
         window.location.hash = "#questoes";
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -417,7 +417,7 @@ class PomodoroController {
     const btnCards = document.getElementById("post-pomo-btn-flashcards");
     if (btnCards) {
       btnCards.onclick = () => {
-        modal.classList.add("hidden");
+        modal.close();
         window.location.hash = "#flashcards";
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
