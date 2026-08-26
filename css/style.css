@@ -606,24 +606,32 @@ button, input, select, textarea {
   color: var(--color-primary);
 }
 
+.header-icon-btn,
 .theme-toggle-btn {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: var(--transition-fast);
+  flex-shrink: 0;
 }
 
+.header-icon-btn:hover,
 .theme-toggle-btn:hover {
   color: var(--text-main);
   border-color: var(--border-color-light);
   background-color: var(--bg-surface-hover);
+}
+
+.header-icon-btn:active,
+.theme-toggle-btn:active {
+  transform: scale(0.96);
 }
 
 /* ==========================================================================
@@ -687,6 +695,9 @@ button, input, select, textarea {
 /* ==========================================================================
    RESPONSIVIDADE MOBILE
    ========================================================================== */
+/* ==========================================================================
+   RESPONSIVIDADE MOBILE & TABLET
+   ========================================================================== */
 @media (max-width: 900px) {
   .app-sidebar {
     transform: translateX(-100%);
@@ -707,22 +718,54 @@ button, input, select, textarea {
 
   .app-main {
     margin-left: 0;
+    max-width: 100vw;
   }
 
   .mobile-menu-btn {
-    display: flex;
+    display: inline-flex;
   }
 
   .view-content-wrapper {
-    padding: 14px;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
   }
 
   .app-header {
-    padding: 0 14px;
+    padding: 0 12px;
+    gap: 8px;
   }
 
   .streak-pill span, .xp-pill span {
     display: none;
+  }
+
+  .concurso-header-select {
+    max-width: 140px;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 600px) {
+  #header-btn-quick-focus {
+    padding: 6px 10px;
+    font-size: 0;
+  }
+
+  #header-btn-quick-focus i {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .concurso-badge-wrapper {
+    padding: 4px 8px;
+  }
+
+  .concurso-header-select {
+    max-width: 110px;
+    font-size: 0.8rem;
+  }
+
+  .header-right {
+    gap: 6px;
   }
 }
 

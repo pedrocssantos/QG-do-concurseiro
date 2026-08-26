@@ -69,16 +69,19 @@
    ========================================================================== */
 .flashcard-stage {
   perspective: 1200px;
+  -webkit-perspective: 1200px;
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  min-height: 360px;
+  min-height: clamp(280px, 50vh, 380px);
 }
 
 .flashcard-3d-box {
   width: 100%;
-  height: 360px;
+  height: clamp(280px, 50vh, 380px);
   cursor: pointer;
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
 }
 
 .flashcard-inner {
@@ -88,10 +91,12 @@
   text-align: center;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .flashcard-inner.flipped {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 .flashcard-front, .flashcard-back {
@@ -100,12 +105,14 @@
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border-radius: var(--radius-md);
-  padding: 28px;
+  padding: clamp(16px, 3vw, 28px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow: var(--shadow-sm);
+  overflow-y: auto;
 }
 
 .flashcard-front {
@@ -118,6 +125,7 @@
   background: var(--bg-surface-elevated);
   border: 1px solid var(--color-primary);
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
 }
 
 .fc-card-header {
