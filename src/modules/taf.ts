@@ -48,8 +48,8 @@ class TafManager {
         isApto = true;
       }
     } else if (tipo === "tempo_menor") {
-      // Para natação: tempo menor é melhor
-      if (value > min) {
+      // Para natação: tempo menor é melhor. Valor <= 0 indica que não foi realizado
+      if (value <= 0 || value > min) {
         score = 0;
         isApto = false;
       } else if (value <= max) {
@@ -138,28 +138,38 @@ class TafManager {
     let maxPossible = 0;
     let isAllApto = true;
 
-    const updateScoreBadge = (idPrefix: string, res: any, isApplicable: boolean) => {
+    const updateScoreBadge = (idPrefix: string, res: any, conf: any) => {
       const badge = document.getElementById(`taf-score-${idPrefix}`);
       if (!badge) return;
-      if (!isApplicable) {
+      if (!conf) {
         badge.textContent = "N/A";
         badge.className = "taf-status-pill n-a";
         return;
       }
 
       totalScore += res.score;
-      maxPossible += 5; // Cada prova pontua até 5 pontos ou equivalente
+      maxPossible += conf.pesoMax || 5;
       if (!res.isApto) isAllApto = false;
 
       badge.textContent = res.isApto ? `Apto (${res.score} pts)` : `Inapto (${res.score} pts)`;
       badge.className = `taf-status-pill ${res.isApto ? "apto" : "inapto"}`;
     };
 
-    updateScoreBadge("barra", resBarra, !!criteria?.barra);
-    updateScoreBadge("corrida", resCorrida, !!criteria?.corrida);
-    updateScoreBadge("abdominal", resAbdominal, !!criteria?.abdominal);
-    updateScoreBadge("salto", resSalto, !!criteria?.salto);
-    updateScoreBadge("natacao", resNatacao, !!criteria?.natacao);
+    updateScoreBadge("barra", resBarra, criteria?.barra);
+    updateScoreBadge("corrida", resCorrida, criteria?.corrida);
+    updateScoreBadge("abdominal", resAbdominal, criteria?.abdominal);
+    updateScoreBadge("salto", resSalto, criteria?.salto);
+    updateScoreBadge("natacao", resNatacao, criteria?.natacao);
+
+    // Linha de corte global por edital
+    let globalMinScore = 0;
+    if (this.selectedOrgao === "pf") globalMinScore = 10.0;
+    else if (this.selectedOrgao === "prf") globalMinScore = 12.0;
+    else if (this.selectedOrgao === "pm") globalMinScore = 200.0;
+    else if (this.selectedOrgao === "pc") globalMinScore = 10.0;
+
+    const meetsGlobalCut = totalScore >= globalMinScore;
+    const isFinalApto = isAllApto && meetsGlobalCut && totalScore > 0;
 
     // Indicador Geral de Aptidão
     const overallBanner = document.getElementById("taf-overall-result");
@@ -167,14 +177,17 @@ class TafManager {
     const overallScoreEl = document.getElementById("taf-overall-score");
 
     if (overallBanner && overallText && overallScoreEl) {
-      if (isAllApto && totalScore > 0) {
+      if (isFinalApto) {
         overallBanner.className = "taf-banner taf-banner-apto";
         overallText.innerHTML = `<i class="fa-solid fa-circle-check"></i> RESULTADO: <strong>APTO NO TAF</strong>`;
-        overallScoreEl.textContent = `Pontuação Geral: ${totalScore.toFixed(1)} / ${maxPossible} pts`;
+        overallScoreEl.textContent = `Pontuação Geral: ${totalScore.toFixed(1)} / ${maxPossible} pts (Mínimo Geral: ${globalMinScore} pts atingido)`;
       } else {
         overallBanner.className = "taf-banner taf-banner-inapto";
-        overallText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> RESULTADO: <strong>INAPTO (Índices a Evoluir)</strong>`;
-        overallScoreEl.textContent = `Pontuação Geral: ${totalScore.toFixed(1)} / ${maxPossible} pts (Atingir todos os mínimos)`;
+        const reason = !meetsGlobalCut && isAllApto 
+          ? `Mínimo global não atingido (${totalScore.toFixed(1)} < ${globalMinScore} pts)` 
+          : `Atingir todos os índices mínimos das provas`;
+        overallText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> RESULTADO: <strong>INAPTO (${reason})</strong>`;
+        overallScoreEl.textContent = `Pontuação Geral: ${totalScore.toFixed(1)} / ${maxPossible} pts (Corte Global: ${globalMinScore} pts)`;
       }
     }
   }
@@ -185,7 +198,8 @@ class TafManager {
     const valAbdominal = parseFloat((document.getElementById("taf-input-abdominal") as HTMLInputElement)?.value) || 0;
     const valSalto = parseFloat((document.getElementById("taf-input-salto") as HTMLInputElement)?.value) || 0;
     const valNatacao = parseFloat((document.getElementById("taf-input-natacao") as HTMLInputElement)?.value) || 0;
-    const notes = (document.getElementById("taf-input-notes") as HTMLInputElement)?.value.trim() || "";
+    const notesInput = document.getElementById("taf-input-notes") as HTMLInputElement | null;
+    const notes = notesInput ? notesInput.value.trim() : "";
 
     const criteria = (DEFAULT_TAF_CRITERIA as any)[this.selectedOrgao]?.genero?.[this.selectedGender];
     const resBarra = this.calculateTestScore(this.selectedOrgao, this.selectedGender, "barra", valBarra);
@@ -209,6 +223,14 @@ class TafManager {
                  (criteria?.salto ? resSalto.score : 0) +
                  (criteria?.natacao ? resNatacao.score : 0);
 
+    let globalMinScore = 0;
+    if (this.selectedOrgao === "pf") globalMinScore = 10.0;
+    else if (this.selectedOrgao === "prf") globalMinScore = 12.0;
+    else if (this.selectedOrgao === "pm") globalMinScore = 200.0;
+    else if (this.selectedOrgao === "pc") globalMinScore = 10.0;
+
+    if (totalScore < globalMinScore) isApto = false;
+
     store.addTafRecord({
       gender: this.selectedGender,
       orgao: this.selectedOrgao,
@@ -222,8 +244,9 @@ class TafManager {
       notes
     });
 
-    showToast(`Treino TAF registrado com sucesso! ${isApto ? "Parabéns, você está APTO! 🎖️" : "Continue treinando para superar os mínimos! 💪"}`, isApto ? "success" : "info");
+    if (notesInput) notesInput.value = "";
     this.renderHistory();
+    showToast(isApto ? "Simulado TAF registrado com APTIDÃO! 🏅" : "Simulado TAF registrado. Continue treinando! 💪", isApto ? "success" : "info");
   }
 
   renderHistory() {

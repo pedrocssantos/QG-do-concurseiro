@@ -194,6 +194,12 @@ class CadernoErrosManager {
         this.renderErrorsList();
       });
     }
+
+    store.subscribe((event) => {
+      if (event === "caderno_erros_updated" || event === "caderno_erros_resolved" || event === "question_answered") {
+        this.renderErrorsList();
+      }
+    });
   }
 }
 

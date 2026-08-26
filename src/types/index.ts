@@ -46,12 +46,14 @@ export interface Topico {
 export interface Disciplina {
   id: string;
   name: string;
-  icon: string;
-  color: string;
-  peso: number;
-  dificuldade: number;
+  icon?: string;
+  color?: string;
+  peso?: number;
+  weight?: number;
+  dificuldade?: number;
+  difficulty?: number;
   ordem?: number;
-  topicos: Topico[];
+  topicos?: Topico[];
 }
 
 export interface Concurso {
@@ -139,9 +141,14 @@ export interface DailyMission {
 
 export interface CicloStep {
   disciplinaId: string;
-  allocatedMinutes: number;
-  completedMinutes: number;
-  completed: boolean;
+  disciplinaName?: string;
+  allocatedMinutes?: number;
+  minutesGoal?: number;
+  completedMinutes?: number;
+  minutesDone?: number;
+  completed?: boolean;
+  color?: string;
+  icon?: string;
 }
 
 export interface Badge {

@@ -26,14 +26,21 @@ export function sanitizeText(text: string): string {
 }
 
 /**
- * Validates whether an imported state object is safe from Prototype Pollution.
+ * Validates whether an imported state object is safe from Prototype Pollution (recursively).
  */
-export function isSafeObject(obj: any): boolean {
+export function isSafeObject(obj: any, visited = new WeakSet()): boolean {
   if (!obj || typeof obj !== "object") return true;
-  if (Object.prototype.hasOwnProperty.call(obj, "__proto__") ||
-      Object.prototype.hasOwnProperty.call(obj, "constructor") ||
-      Object.prototype.hasOwnProperty.call(obj, "prototype")) {
-    return false;
+  if (visited.has(obj)) return true;
+  visited.add(obj);
+
+  for (const key of Object.keys(obj)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") {
+      return false;
+    }
+    const val = obj[key];
+    if (val && typeof val === "object") {
+      if (!isSafeObject(val, visited)) return false;
+    }
   }
   return true;
 }

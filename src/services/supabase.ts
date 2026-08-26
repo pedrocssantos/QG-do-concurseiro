@@ -212,6 +212,19 @@ class SupabaseService {
         });
       }
 
+      // 1.1 SINCRONIZA TABELA DE PERFIL
+      try {
+        await this.client.from("profiles").upsert({
+          id: uid,
+          name: store.data.profile.name,
+          daily_goal_minutes: store.data.profile.dailyGoalMinutes,
+          weekly_goal_hours: store.data.profile.weeklyGoalHours,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "id" });
+      } catch (e) {
+        console.warn("Aviso ao sincronizar perfil com Supabase:", e);
+      }
+
       // 2. SINCRONIZA SESSÕES DE ESTUDO (STUDY_SESSIONS)
       const { data: cloudSessions } = await this.client.from("study_sessions").select("*").eq("user_id", uid);
       const localSessions = store.data.studySessions || [];

@@ -392,8 +392,11 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <h3><i class="fa-solid fa-calendar-days text-accent"></i> Sugestão de Planejamento Semanal</h3>
+            <button class="btn btn-secondary btn-xs" id="btn-reset-weekly-checks" title="Desmarcar todas as tarefas e reiniciar a semana">
+              <i class="fa-solid fa-arrows-rotate"></i> Reiniciar Semana
+            </button>
           </div>
           <div class="card-body">
             <div class="weekly-schedule-grid" id="weekly-schedule-grid">
@@ -888,6 +891,12 @@
               <label><i class="fa-solid fa-book"></i> Matéria Sendo Estudada:</label>
               <select class="form-select" id="pomo-subject-select">
                 <!-- Preenchido dinamicamente -->
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label><i class="fa-solid fa-list-check"></i> Tópico do Edital (Opcional):</label>
+              <select class="form-select" id="pomo-topic-select">
+                <option value="">-- Todos os Tópicos / Geral --</option>
               </select>
             </div>
             <div class="form-group" style="margin-bottom: 0;">

@@ -532,18 +532,33 @@ class Store {
     const concurso = this.data.concursos.find(c => c.id === concursoId) || this.getActiveConcurso();
     if (!concurso) return;
 
-    this.data.ciclo.items = (concurso.disciplinas || []).map(d => {
-      const minutes = (d.weight || 3) * 15 + 15;
+    const weeklyHours = this.data.profile?.weeklyGoalHours || 25;
+    const totalMinutes = weeklyHours * 60;
+    const discs = concurso.disciplinas || [];
+    const totalWeight = discs.reduce((acc, d) => acc + (d.weight || d.peso || 3), 0) || 1;
+
+    this.data.ciclo.items = discs.map(d => {
+      const w = d.weight || d.peso || 3;
+      const allocated = Math.max(30, Math.round(((totalMinutes * (w / totalWeight)) / 15)) * 15);
       return {
         disciplinaId: d.id,
         name: d.name,
-        minutesGoal: minutes,
+        minutesGoal: allocated,
         minutesDone: 0,
         icon: d.icon || "fa-book",
         color: d.color || "#4D7EA8"
       };
     });
     this.data.ciclo.currentSubjectIndex = 0;
+    this.save();
+    this.notify("ciclo_updated", this.data.ciclo);
+  }
+
+  deleteDiscursivaAttempt(id) {
+    if (!Array.isArray(this.data.discursivaAttempts)) return;
+    this.data.discursivaAttempts = this.data.discursivaAttempts.filter(a => a.id !== id);
+    this.save();
+    this.notify("discursiva_updated", this.data.discursivaAttempts);
   }
 
   advanceCiclo(disciplinaId, minutesStudied) {
@@ -939,11 +954,13 @@ class Store {
     const oldLevel = this.data.profile.level || 1;
     const newLevel = this.calculateLevel(this.data.profile.xp);
     this.data.profile.level = newLevel;
+    this.data.profile.title = this.getRankTitle(newLevel);
 
     // Atualiza leaderboard para o usuário
     const userInLb = (this.data.leaderboard || []).find(l => l.isUser);
     if (userInLb) {
       userInLb.xp = this.data.profile.xp;
+      userInLb.badge = this.data.profile.title;
     }
 
     if (newLevel > oldLevel) {
@@ -959,9 +976,9 @@ class Store {
 
   getRankTitle(level) {
     const ranks = [
-      "Recruta", "Aspirante", "Soldado de 1ª Classe", "Cabo de Operações",
-      "Sargento Operacional", "Subtenente Focado", "Tenente Estrategista",
-      "Capitão do QG", "Major da Aprovação", "Coronel Caveira",
+      "Recruta", "Aspirante", "Soldado", "Cabo", "3º Sargento",
+      "2º Sargento", "1º Sargento", "Subtenente", "Tenente", "Capitão",
+      "Major", "Tenente-Coronel", "Coronel", "Delegado Geral",
       "General Aprovado", "Mestre dos Concursos"
     ];
     const safeIdx = Math.max(0, Math.min((level || 1) - 1, ranks.length - 1));
@@ -977,12 +994,12 @@ class Store {
     const overallEdital = this.getEditalOverallProgress();
     const flashcardsReviewed = (this.data.flashcards || []).filter(f => (f.repetitions || 0) > 0).length;
 
-    // Checagem de estudo noturno (sessões entre 20h e 04h)
-    const hasNightStudy = (this.data.studySessions || []).some(s => {
+    // Checagem de estudo noturno (sessões acumuladas >= 120 min entre 20h e 04h)
+    const nightMinutes = (this.data.studySessions || []).filter(s => {
       if (!s.timestamp) return false;
       const hour = new Date(s.timestamp).getHours();
       return hour >= 20 || hour < 4;
-    });
+    }).reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
 
     // Checagem de simulado de alto desempenho
     const hasSimuladoPro = (this.data.studySessions || []).some(s => s.type === "simulado" && (s.accuracy || 0) >= 80) ||
@@ -996,8 +1013,8 @@ class Store {
         if (b.id === "badge-50-questions" && totalQuestions >= 50) shouldUnlock = true;
         if (b.id === "badge-centurion" && totalMinutes >= 6000) shouldUnlock = true;
         if (b.id === "badge-edital-25" && overallEdital.percent >= 25) shouldUnlock = true;
-        if (b.id === "badge-master-srs" && flashcardsReviewed >= 10) shouldUnlock = true;
-        if (b.id === "badge-night-owl" && hasNightStudy) shouldUnlock = true;
+        if (b.id === "badge-master-srs" && flashcardsReviewed >= 20) shouldUnlock = true;
+        if (b.id === "badge-night-owl" && nightMinutes >= 120) shouldUnlock = true;
         if (b.id === "badge-simulado-pro" && hasSimuladoPro) shouldUnlock = true;
 
         if (shouldUnlock) {

@@ -136,7 +136,8 @@ class PomodoroController {
     discs.forEach(d => {
       const opt = document.createElement("option");
       opt.value = d.id;
-      opt.textContent = `${d.name} (Peso ${d.weight || 3})`;
+      const peso = d.weight || d.peso || 3;
+      opt.textContent = `${d.name} (Peso ${peso})`;
       select.appendChild(opt);
     });
 
@@ -145,6 +146,30 @@ class PomodoroController {
     } else if (discs.length > 0) {
       this.selectedDisciplinaId = discs[0].id;
       select.value = this.selectedDisciplinaId;
+    }
+
+    this.updateTopicDropdown();
+  }
+
+  updateTopicDropdown() {
+    const topicSelect = document.getElementById("pomo-topic-select") as HTMLSelectElement | null;
+    if (!topicSelect) return;
+
+    topicSelect.innerHTML = `<option value="">-- Todos os Tópicos / Geral --</option>`;
+    const concurso = store.getActiveConcurso();
+    const disc = (concurso?.disciplinas || []).find(d => d.id === this.selectedDisciplinaId);
+
+    if (disc && disc.topicos && disc.topicos.length > 0) {
+      disc.topicos.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = `${t.title} ${t.teoria ? "✅" : "⏳"}`;
+        topicSelect.appendChild(opt);
+      });
+
+      if (this.selectedTopicoId && disc.topicos.some(t => t.id === this.selectedTopicoId)) {
+        topicSelect.value = this.selectedTopicoId;
+      }
     }
   }
 
@@ -155,8 +180,23 @@ class PomodoroController {
     const modeBtns = document.querySelectorAll(".pomo-mode-btn");
     const zenBtn = document.getElementById("pomo-btn-zen");
     const exitZenBtn = document.getElementById("zen-btn-exit");
-    const subjectSelect = document.getElementById("pomo-subject-select");
+    const subjectSelect = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
+    const topicSelect = document.getElementById("pomo-topic-select") as HTMLSelectElement | null;
     const soundSelect = document.getElementById("pomo-sound-select");
+
+    if (subjectSelect) {
+      subjectSelect.addEventListener("change", () => {
+        this.selectedDisciplinaId = subjectSelect.value;
+        this.selectedTopicoId = null;
+        this.updateTopicDropdown();
+      });
+    }
+
+    if (topicSelect) {
+      topicSelect.addEventListener("change", () => {
+        this.selectedTopicoId = topicSelect.value || null;
+      });
+    }
 
     if (startBtn) startBtn.addEventListener("click", () => this.start());
     if (pauseBtn) pauseBtn.addEventListener("click", () => this.pause());

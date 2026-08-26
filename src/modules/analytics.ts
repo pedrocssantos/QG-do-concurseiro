@@ -26,9 +26,21 @@ class PapiroCharts {
 
   static destroyExisting(canvasId: string) {
     if (activeCharts[canvasId]) {
-      activeCharts[canvasId].destroy();
+      try {
+        activeCharts[canvasId].destroy();
+      } catch (e) {}
       delete activeCharts[canvasId];
     }
+    try {
+      const existing = Chart.getChart(canvasId);
+      if (existing) existing.destroy();
+    } catch (e) {}
+  }
+
+  static destroyAll() {
+    Object.keys(activeCharts).forEach(canvasId => {
+      this.destroyExisting(canvasId);
+    });
   }
 
   // 1. Gráfico de Linha / Área Suave (Horas Estudadas na Semana)
@@ -109,8 +121,11 @@ class PapiroCharts {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const labels = (items || []).map(it => it.label.length > 12 ? it.label.substring(0, 10) + "…" : it.label);
-    const fullLabels = (items || []).map(it => it.label);
+    const labels = (items || []).map(it => {
+      const lbl = it.label || "";
+      return lbl.length > 12 ? lbl.substring(0, 10) + "…" : lbl;
+    });
+    const fullLabels = (items || []).map(it => it.label || "");
     const data = (items || []).map(it => it.value || 0);
     const colors = (items || []).map(it => it.color || "#4D7EA8");
 

@@ -85,6 +85,22 @@ class DiscursivaManager {
     }
   }
 
+  getEstimatedLines(text: string): number {
+    if (!text.trim()) return 0;
+    const paragraphs = text.split("\n");
+    let total = 0;
+    for (const p of paragraphs) {
+      if (!p.trim()) {
+        total += 1;
+        continue;
+      }
+      // Pauta manuscrita padrão A4: ~72 caracteres por linha
+      const linesInParagraph = Math.max(1, Math.ceil(p.length / 72));
+      total += linesInParagraph;
+    }
+    return total;
+  }
+
   updateLineNumbers() {
     const textarea = document.getElementById("discursiva-textarea") as HTMLTextAreaElement | null;
     const gutter = document.getElementById("discursiva-line-gutter");
@@ -95,8 +111,8 @@ class DiscursivaManager {
     if (!textarea) return;
 
     const text = textarea.value;
-    const lines = text.split("\n");
-    const lineCount = Math.max(lines.length, 1);
+    const estimatedLines = this.getEstimatedLines(text);
+    const lineCount = Math.max(estimatedLines, 1);
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     const chars = text.length;
 
@@ -111,7 +127,7 @@ class DiscursivaManager {
     }
 
     if (lineCountEl) {
-      lineCountEl.textContent = `${lineCount} / 30 linhas`;
+      lineCountEl.textContent = `${lineCount} / 30 linhas est.`;
       lineCountEl.className = lineCount > 30 ? "text-danger" : (lineCount >= 25 ? "text-success" : "text-warning");
     }
 
@@ -250,13 +266,18 @@ class DiscursivaManager {
         <div class="discursiva-history-header">
           <div>
             <strong>${att.temaTitulo}</strong>
-            <span class="discursiva-history-date"><i class="fa-regular fa-calendar"></i> ${att.data}</span>
+            <span class="discursiva-history-date"><i class="fa-regular fa-calendar"></i> ${att.data || 'Hoje'}</span>
           </div>
-          <div class="discursiva-history-score-badge">
-            Nota: <strong>${att.autoAvaliacao?.total || 0} pts</strong>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="discursiva-history-score-badge">
+              Nota: <strong>${att.autoAvaliacao?.total || 0} pts</strong>
+            </div>
+            <button class="action-btn-icon delete-btn" title="Excluir Redação" onclick="discursivaManager.deleteAttempt('${att.id}')">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
           </div>
         </div>
-        <p class="discursiva-history-preview">${att.texto.substring(0, 180)}...</p>
+        <p class="discursiva-history-preview">${(att.texto || '').substring(0, 180)}...</p>
         <div class="discursiva-history-footer">
           <span><i class="fa-solid fa-align-left"></i> ${att.totalLinhas} linhas</span>
           <span><i class="fa-solid fa-clock"></i> ${Math.round(att.tempoGastoSegundos / 60)} min gastos</span>
@@ -264,6 +285,14 @@ class DiscursivaManager {
       `;
       list.appendChild(card);
     });
+  }
+
+  deleteAttempt(id: string) {
+    if (confirm("Tem certeza que deseja remover esta redação do histórico?")) {
+      store.deleteDiscursivaAttempt(id);
+      this.renderHistory();
+      showToast("Redação removida do histórico.", "info");
+    }
   }
 
   bindEvents() {
@@ -292,6 +321,7 @@ class DiscursivaManager {
 
   destroy() {
     if (this.timerInterval) clearInterval(this.timerInterval);
+    this.isTimerRunning = false;
   }
 }
 

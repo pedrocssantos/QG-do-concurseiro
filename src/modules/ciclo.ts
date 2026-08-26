@@ -239,17 +239,38 @@ class CicloManager {
     showToast(`Ciclo recalculado com sucesso para ${weeklyHours}h semanais! 🔄`, "success");
   }
 
+  resetWeeklyPlannerChecks() {
+    if (confirm("Deseja desmarcar todas as tarefas semanais para reiniciar a semana de estudos?")) {
+      store.data.cicloWeeklyChecks = {};
+      store.save();
+      this.renderWeeklyPlanner();
+      showToast("Planejamento semanal reiniciado com sucesso! 📅", "success");
+    }
+  }
+
   bindEvents() {
     const recalibrateBtn = document.getElementById("btn-recalibrate-ciclo");
     if (recalibrateBtn) {
       recalibrateBtn.addEventListener("click", () => this.openRecalibrateModal());
     }
+
+    const resetWeeklyBtn = document.getElementById("btn-reset-weekly-checks");
+    if (resetWeeklyBtn) {
+      resetWeeklyBtn.addEventListener("click", () => this.resetWeeklyPlannerChecks());
+    }
+
+    store.subscribe((event) => {
+      if (event === "ciclo_updated" || event === "session_added" || event === "concurso_changed") {
+        this.renderCicloVisual();
+        this.renderWeeklyPlanner();
+      }
+    });
   }
 }
 
 const cicloManager = new CicloManager();
 export { CicloManager, cicloManager };
 if (typeof window !== "undefined") {
-  window.CicloManager = CicloManager;
-  window.cicloManager = cicloManager;
+  (window as any).CicloManager = CicloManager;
+  (window as any).cicloManager = cicloManager;
 }

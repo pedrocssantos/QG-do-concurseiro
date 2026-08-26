@@ -546,10 +546,12 @@ class QuestionsManager {
     const simuladoBar = document.getElementById("simulado-active-bar");
     const filtersBar = document.getElementById("questions-filter-toolbar");
     if (simuladoBar) simuladoBar.classList.remove("hidden");
-    if (filtersBar) filtersBar.classList.add("hidden");
+    const startTime = Date.now();
+    const totalDuration = totalSeconds;
 
     this.simuladoTimer = setInterval(() => {
-      this.simuladoSecondsLeft--;
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      this.simuladoSecondsLeft = Math.max(0, totalDuration - elapsed);
       const timeDisplay = document.getElementById("simulado-timer-text");
       if (timeDisplay) {
         const mins = Math.max(0, Math.floor(this.simuladoSecondsLeft / 60));

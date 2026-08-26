@@ -150,9 +150,16 @@ class LeisManager {
       verso += "\n\n" + art.incisos.join("\n");
     }
 
+    const concurso = store.getActiveConcurso();
+    const catLower = (currentLei?.categoria || "").toLowerCase();
+    const matchedDisc = (concurso?.disciplinas || []).find(d => 
+      d.name.toLowerCase().includes(catLower) || catLower.includes(d.name.toLowerCase())
+    );
+    const targetDiscId = matchedDisc ? matchedDisc.id : (concurso?.disciplinas?.[0]?.id || "pf-geral");
+
     store.importFlashcardsBatch(
       [{ frente, verso }],
-      "pf-geral",
+      targetDiscId,
       currentLei?.categoria || "Legislação"
     );
 
