@@ -131,8 +131,38 @@
           </div>
           <div class="hero-quick-actions">
             <a href="#pomodoro" class="btn btn-primary btn-sm"><i class="fa-solid fa-stopwatch"></i> Iniciar Foco</a>
+            <button class="btn btn-secondary btn-sm" id="btn-open-manual-study-modal" onclick="dashboardManager.openManualStudyModal()" title="Registrar estudo de livro, aula ou questões feitas fora">
+              <i class="fa-solid fa-pen-to-square text-primary"></i> Registro Rápido
+            </button>
             <a href="#questoes" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-question"></i> Resolver Questões</a>
             <a href="#flashcards" class="btn btn-secondary btn-sm"><i class="fa-solid fa-layer-group"></i> Revisar Cards</a>
+          </div>
+        </div>
+
+        <!-- Card de Previsão de Conclusão do Edital (Passagens) -->
+        <div class="card edital-forecast-card" id="dash-edital-forecast-card" style="margin-bottom: clamp(1rem, 1.5vw, 1.25rem); padding: 14px 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div class="kpi-icon-box" style="background: var(--color-primary-tint); color: var(--color-primary); width: 38px; height: 38px; border-radius: var(--radius-sm); font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-route"></i>
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <strong style="font-size: 0.95rem; color: var(--text-main);">Projeção da 1ª Passagem no Edital</strong>
+                  <span class="badge badge-primary" id="dash-forecast-status-badge">No Ritmo</span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;" id="dash-forecast-text">
+                  Calculando projeção do edital ativo...
+                </p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="text-align: right;">
+                <span style="font-size: 0.70rem; color: var(--text-dimmed); text-transform: uppercase; font-weight: 600;">Meta de Horas</span>
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);" id="dash-forecast-hours-meta">Semanal: 0h / 25h</span>
+              </div>
+              <a href="#edital" class="btn btn-secondary btn-xs"><i class="fa-solid fa-arrow-right"></i> Ver Edital</a>
+            </div>
           </div>
         </div>
 
@@ -195,12 +225,12 @@
           </div>
         </div>
 
-        <!-- Painel de Alertas & Revisões Pendentes -->
+        <!-- Card Ataque suas Fraquezas & Alertas -->
         <div class="dash-alerts-grid">
           <!-- Card de Alertas & Recomendações -->
           <div class="card" id="dash-insights-card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-bell text-warning"></i> Alertas e Recomendações</h3>
+              <h3><i class="fa-solid fa-crosshairs text-danger"></i> Diagnóstico Tático & Fraquezas</h3>
               <span class="badge badge-warning" id="dash-insights-badge">3 Alertas</span>
             </div>
             <div class="card-body" id="dash-insights-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -208,11 +238,11 @@
             </div>
           </div>
 
-          <!-- Card de Revisões Pendentes -->
+          <!-- Card de Revisões Pendentes & Reset do Ranking -->
           <div class="card" id="dash-revisoes-card">
             <div class="card-header">
-              <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Revisões Pendentes</h3>
-              <span class="badge badge-primary" id="dash-revisoes-badge">0 Pendências</span>
+              <h3><i class="fa-solid fa-clock-rotate-left text-primary"></i> Revisões & Modo Guerra</h3>
+              <span class="badge badge-primary" id="dash-ranking-reset-badge"><i class="fa-solid fa-fire text-warning"></i> Reset em 4d</span>
             </div>
             <div class="card-body" id="dash-revisoes-content" style="display: flex; flex-direction: column; gap: 10px;">
               <!-- Gerado dinamicamente via dashboardManager -->
@@ -1726,6 +1756,82 @@ INFORMÁTICA (Peso 5):
       <div class="modal-footer">
         <form method="dialog"><button class="btn btn-secondary">Cancelar</button></form>
         <button class="btn btn-primary" onclick="editalManager.saveTopicosBatch()">Adicionar Todos os Tópicos</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Registrar Estudo Manual (Avulso) -->
+  <dialog class="modal-dialog" id="modal-manual-study" aria-labelledby="manual-study-title">
+    <div class="modal-box" style="max-width: 600px; width: 95%;">
+      <div class="modal-header">
+        <h3 id="manual-study-title"><i class="fa-solid fa-pen-to-square text-primary"></i> Registrar Estudo Manual / Avulso</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 14px; font-size: 0.85rem;">
+          Registre sessões de estudo realizadas em livros físicos, videoaulas ou baterias de questões externas:
+        </p>
+        <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-date">Data do Estudo:</label>
+            <input type="date" class="form-input" id="manual-study-date">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-type">Tipo de Atividade:</label>
+            <select class="form-select" id="manual-study-type">
+              <option value="teoria">📖 Teoria / Videoaula / PDF</option>
+              <option value="questoes">🎯 Bateria de Questões</option>
+              <option value="revisao">🔄 Revisão de Conteúdo</option>
+              <option value="simulado">📝 Simulado Completo</option>
+              <option value="lei_seca">⚖️ Leitura de Lei Seca</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="manual-study-disciplina">Disciplina Estudada:</label>
+          <select class="form-select" id="manual-study-disciplina" onchange="dashboardManager.onManualSubjectChange(this.value)">
+            <!-- Preenchido dinamicamente -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="manual-study-topico">Tópico do Edital (Opcional):</label>
+          <select class="form-select" id="manual-study-topico">
+            <option value="">Geral / Sem vínculo a tópico específico</option>
+          </select>
+        </div>
+
+        <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-hours">Horas:</label>
+            <input type="number" class="form-input" id="manual-study-hours" min="0" max="24" value="1">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-mins">Minutos:</label>
+            <input type="number" class="form-input" id="manual-study-mins" min="0" max="59" value="0">
+          </div>
+        </div>
+
+        <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-q-total">Questões Realizadas (Opcional):</label>
+            <input type="number" class="form-input" id="manual-study-q-total" min="0" placeholder="0">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="manual-study-q-correct">Acertos:</label>
+            <input type="number" class="form-input" id="manual-study-q-correct" min="0" placeholder="0">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="manual-study-notes">Observações / Anotações:</label>
+          <input type="text" class="form-input" id="manual-study-notes" placeholder="Ex: Páginas 40 a 65 do livro de Constitucional">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="dialog"><button class="btn btn-secondary">Cancelar</button></form>
+        <button class="btn btn-primary" onclick="dashboardManager.saveManualStudy()"><i class="fa-solid fa-check"></i> Salvar Registro</button>
       </div>
     </div>
   </dialog>

@@ -22,9 +22,11 @@ class DashboardManager {
 
   init() {
     this.renderHeaderInfo();
+    this.renderEditalForecast();
     this.renderKPICards();
     this.renderTacticalInsights();
     this.renderPendingReviews();
+    this.renderRankingCountdown();
     this.renderDailyMissions();
     this.renderCharts();
     this.renderMotivationalQuote();
@@ -61,7 +63,6 @@ class DashboardManager {
     if (userLevelEl) userLevelEl.textContent = `Nível ${profile.level || 1}`;
     if (streakCountEl) streakCountEl.textContent = `${profile.streak || 0}`;
 
-    // Saudação direta e amigável no Hero do Dashboard
     const greetingTitle = document.getElementById("dash-greeting-title");
     const greetingSubtitle = document.getElementById("dash-greeting-subtitle");
     if (greetingTitle) {
@@ -76,7 +77,6 @@ class DashboardManager {
       }
     }
 
-    // Atualiza o visual progressivo do Streak
     const streak = profile.streak || 0;
     const streakInfo = this.getStreakTier(streak);
     const streakPill = document.querySelector(".streak-pill") as HTMLElement | null;
@@ -89,7 +89,6 @@ class DashboardManager {
       }
     }
 
-    // Atualiza perfil na barra lateral (Sidebar Footer)
     const sidebarAvatar = document.getElementById("user-avatar-text");
     const sidebarName = document.getElementById("user-profile-name") || document.getElementById("dash-user-name");
     const sidebarRank = document.getElementById("user-profile-rank") || document.getElementById("dash-user-rank");
@@ -97,7 +96,6 @@ class DashboardManager {
     if (sidebarName) sidebarName.textContent = profile.name || "Concurseiro";
     if (sidebarRank) sidebarRank.textContent = rankTitle;
 
-    // Popula o Seletor de Concurso Ativo no Header
     if (concursoSelect) {
       concursoSelect.innerHTML = "";
       store.data.concursos.forEach(c => {
@@ -109,7 +107,6 @@ class DashboardManager {
       });
     }
 
-    // Atualiza a pílula de meta no Hero do Dashboard
     const targetPillText = document.getElementById("dash-target-text");
     if (targetPillText && activeConcurso) {
       if (activeConcurso.targetDate) {
@@ -127,6 +124,51 @@ class DashboardManager {
     }
   }
 
+  // ================= PREVISÃO DE CONCLUSÃO DO EDITAL (PASSAGENS) =================
+  renderEditalForecast() {
+    const forecast = store.getEditalForecast();
+    const statusBadge = document.getElementById("dash-forecast-status-badge");
+    const forecastText = document.getElementById("dash-forecast-text");
+    const hoursMeta = document.getElementById("dash-forecast-hours-meta");
+
+    const weeklyStats = store.getWeeklyStats();
+    const weeklyGoal = store.data.profile.weeklyGoalHours || 25;
+    const weeklyDoneHours = weeklyStats.hours.reduce((acc: number, h: number) => acc + h, 0).toFixed(1);
+
+    if (hoursMeta) {
+      hoursMeta.textContent = `Semanal: ${weeklyDoneHours}h / ${weeklyGoal}h`;
+    }
+
+    if (!forecastText) return;
+
+    if (forecast.remainingTopics === 0) {
+      if (statusBadge) {
+        statusBadge.textContent = "100% Concluído";
+        statusBadge.className = "badge badge-success";
+      }
+      forecastText.innerHTML = `🎉 <strong>Parabéns!</strong> Você já fechou todos os tópicos deste edital. Mantenha o foco em baterias de questões e revisões SRS!`;
+      return;
+    }
+
+    if (forecast.isOnTrack) {
+      if (statusBadge) {
+        statusBadge.textContent = "No Ritmo Ideal";
+        statusBadge.className = "badge badge-success";
+      }
+      const beforeText = forecast.daysBeforeExam 
+        ? `<strong>${forecast.daysBeforeExam} dias de folga antes da prova</strong> para revisões finais!` 
+        : "com antecedência.";
+      forecastText.innerHTML = `No seu ritmo atual (~${forecast.avgDailyHours}h/dia), você concluirá a 1ª passagem em <strong>${forecast.projectedDateStr}</strong> (${beforeText})`;
+    } else {
+      if (statusBadge) {
+        statusBadge.textContent = "Aumentar Ritmo";
+        statusBadge.className = "badge badge-danger";
+      }
+      forecastText.innerHTML = `⚠️ No ritmo atual (~${forecast.avgDailyHours}h/dia), o edital termina em <strong>${forecast.projectedDateStr}</strong> (após a prova). Recomendamos elevar a meta para fechar a tempo!`;
+    }
+  }
+
+  // ================= DIAGNÓSTICO TÁTICO & ATAQUE SUAS FRAQUEZAS =================
   renderTacticalInsights() {
     const list = document.getElementById("dash-insights-list");
     const badge = document.getElementById("dash-insights-badge");
@@ -135,22 +177,25 @@ class DashboardManager {
 
     const concurso = store.getActiveConcurso();
     const sessions = store.data.studySessions || [];
-    const questions = store.data.questionHistory || [];
-    const insights = [];
+    const insights: any[] = [];
 
-    // 1. Contagem Regressiva para a Prova
-    if (concurso.targetDate) {
-      const target = new Date(concurso.targetDate);
-      const today = new Date();
-      const diffDays = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      if (diffDays > 0) {
-        insights.push({
-          type: diffDays < 30 ? "danger" : "info",
-          icon: "fa-hourglass-half",
-          title: `Faltam ${diffDays} Dias até a Prova`,
-          text: `A prova de ${concurso.shortTitle || concurso.title} está se aproximando. Mantenha o ritmo de estudos diário!`
-        });
-      }
+    // 1. Destaque Especial: "Ataque suas Fraquezas" (Pior Matéria / Erros)
+    const weakest = store.getWeakestSubject();
+    if (weakest) {
+      insights.push({
+        type: "danger",
+        icon: "fa-crosshairs",
+        title: `Ataque suas Fraquezas: ${weakest.name}`,
+        text: `Aproveitamento de ${weakest.accuracy}% em ${weakest.total} questões (${weakest.pendingErrors} erros pendentes). Reforce agora!`,
+        actionHtml: `
+          <div style="display: flex; gap: 8px; margin-top: 6px;">
+            <button class="btn btn-secondary btn-xs" onclick="questionsManager.filterByDisciplina('${weakest.id}'); window.location.hash = '#questoes';">
+              <i class="fa-solid fa-bullseye"></i> Treinar ${weakest.name}
+            </button>
+            <a href="#erros" class="btn btn-secondary btn-xs"><i class="fa-solid fa-book-bookmark"></i> Caderno de Erros</a>
+          </div>
+        `
+      });
     }
 
     // 2. Análise de Disciplinas Negligenciadas
@@ -178,37 +223,12 @@ class DashboardManager {
       }
     });
 
-    // 3. Análise de Aproveitamento por Disciplina
-    (concurso.disciplinas || []).forEach(d => {
-      const discQuestions = questions.filter(q => q.disciplinaId === d.id);
-      if (discQuestions.length >= 5) {
-        const correct = discQuestions.filter(q => q.isCorrect).length;
-        const acc = Math.round((correct / discQuestions.length) * 100);
-        if (acc < 70) {
-          insights.push({
-            type: "danger",
-            icon: "fa-shield-heart",
-            title: `Atenção em ${d.name}: ${acc}% de Acertos`,
-            text: `Seu aproveitamento está abaixo de 70%. Recomendamos revisar o Caderno de Erros dessa matéria.`
-          });
-        } else if (acc >= 85 && discQuestions.length >= 10) {
-          insights.push({
-            type: "success",
-            icon: "fa-circle-check",
-            title: `Ponto Forte: ${d.name} com ${acc}% de Acertos!`,
-            text: `Excelente aproveitamento em ${discQuestions.length} questões resolvidas. Continue praticando regularmente.`
-          });
-        }
-      }
-    });
-
-    // Se não houver alertas críticos, dá um feedback positivo
     if (insights.length === 0) {
       insights.push({
         type: "success",
         icon: "fa-circle-check",
-        title: "Planejamento em Dia",
-        text: "Todas as suas disciplinas estão equilibradas. Continue avançando no ciclo de estudos!"
+        title: "Planejamento Tático em Dia",
+        text: "Todas as disciplinas estão equilibradas. Continue avançando no ciclo de estudos!"
       });
     }
 
@@ -226,16 +246,129 @@ class DashboardManager {
         </div>
         <div class="insight-text">
           <strong>${ins.title}</strong>
-          <p>${ins.text}</p>
+          <p style="margin: 0;">${ins.text}</p>
+          ${ins.actionHtml || ""}
         </div>
       `;
       list.appendChild(el);
     });
   }
 
+  // ================= TEMPORIZADOR DO RESET DO RANKING SEMANAL =================
+  renderRankingCountdown() {
+    const badge = document.getElementById("dash-ranking-reset-badge");
+    if (!badge) return;
+    const cd = store.getRankingResetCountdown();
+    badge.innerHTML = `<i class="fa-solid fa-fire text-warning"></i> Reset em ${cd.text}`;
+    badge.title = "A rodada do ranking fecha todos os domingos às 23:59";
+  }
+
+  // ================= REGISTRO MANUAL DE ESTUDO (AVULSO) =================
+  openManualStudyModal() {
+    const modal = document.getElementById("modal-manual-study") as HTMLDialogElement | null;
+    if (!modal) return;
+
+    const dateInput = document.getElementById("manual-study-date") as HTMLInputElement | null;
+    if (dateInput) dateInput.value = store.getLocalDateString();
+
+    const discSelect = document.getElementById("manual-study-disciplina") as HTMLSelectElement | null;
+    const concurso = store.getActiveConcurso();
+    if (discSelect && concurso) {
+      discSelect.innerHTML = (concurso.disciplinas || []).map(d => `
+        <option value="${d.id}">${d.name} (Peso ${d.weight})</option>
+      `).join("");
+
+      if (concurso.disciplinas && concurso.disciplinas.length > 0) {
+        this.onManualSubjectChange(concurso.disciplinas[0].id);
+      }
+    }
+
+    const hoursInput = document.getElementById("manual-study-hours") as HTMLInputElement | null;
+    const minsInput = document.getElementById("manual-study-mins") as HTMLInputElement | null;
+    const qTotalInput = document.getElementById("manual-study-q-total") as HTMLInputElement | null;
+    const qCorrectInput = document.getElementById("manual-study-q-correct") as HTMLInputElement | null;
+    const notesInput = document.getElementById("manual-study-notes") as HTMLInputElement | null;
+
+    if (hoursInput) hoursInput.value = "1";
+    if (minsInput) minsInput.value = "0";
+    if (qTotalInput) qTotalInput.value = "";
+    if (qCorrectInput) qCorrectInput.value = "";
+    if (notesInput) notesInput.value = "";
+
+    modal.showModal();
+  }
+
+  onManualSubjectChange(discId: string) {
+    const topicoSelect = document.getElementById("manual-study-topico") as HTMLSelectElement | null;
+    if (!topicoSelect) return;
+
+    const concurso = store.getActiveConcurso();
+    const disc = (concurso?.disciplinas || []).find(d => d.id === discId);
+    if (!disc || !disc.topicos || disc.topicos.length === 0) {
+      topicoSelect.innerHTML = `<option value="">Geral / Sem vínculo a tópico específico</option>`;
+      return;
+    }
+
+    topicoSelect.innerHTML = `
+      <option value="">Geral / Sem vínculo a tópico específico</option>
+      ${disc.topicos.map(t => `<option value="${t.id}">${t.title}</option>`).join("")}
+    `;
+  }
+
+  saveManualStudy() {
+    const dateInput = document.getElementById("manual-study-date") as HTMLInputElement | null;
+    const typeSelect = document.getElementById("manual-study-type") as HTMLSelectElement | null;
+    const discSelect = document.getElementById("manual-study-disciplina") as HTMLSelectElement | null;
+    const topicoSelect = document.getElementById("manual-study-topico") as HTMLSelectElement | null;
+    const hoursInput = document.getElementById("manual-study-hours") as HTMLInputElement | null;
+    const minsInput = document.getElementById("manual-study-mins") as HTMLInputElement | null;
+    const qTotalInput = document.getElementById("manual-study-q-total") as HTMLInputElement | null;
+    const qCorrectInput = document.getElementById("manual-study-q-correct") as HTMLInputElement | null;
+    const notesInput = document.getElementById("manual-study-notes") as HTMLInputElement | null;
+
+    const hours = parseInt(hoursInput?.value || "0", 10) || 0;
+    const mins = parseInt(minsInput?.value || "0", 10) || 0;
+    const totalMinutes = (hours * 60) + mins;
+
+    if (totalMinutes <= 0) {
+      showToast("Informe a duração do estudo (ao menos 1 minuto)!", "warning");
+      return;
+    }
+
+    const discId = discSelect?.value;
+    if (!discId) {
+      showToast("Selecione a disciplina estudada!", "warning");
+      return;
+    }
+
+    const qTotal = parseInt(qTotalInput?.value || "0", 10) || 0;
+    const qCorrect = parseInt(qCorrectInput?.value || "0", 10) || 0;
+
+    if (qCorrect > qTotal) {
+      showToast("O número de acertos não pode ser maior que o total de questões!", "warning");
+      return;
+    }
+
+    store.recordManualStudySession({
+      date: dateInput?.value || store.getLocalDateString(),
+      disciplinaId: discId,
+      topicoId: topicoSelect?.value || undefined,
+      durationMinutes: totalMinutes,
+      type: typeSelect?.value || "teoria",
+      questionsTotal: qTotal > 0 ? qTotal : undefined,
+      questionsCorrect: qTotal > 0 ? qCorrect : undefined,
+      notes: notesInput?.value?.trim() || ""
+    });
+
+    const modal = document.getElementById("modal-manual-study") as HTMLDialogElement | null;
+    if (modal) modal.close();
+
+    this.init();
+    showToast(`Estudo manual de ${hours > 0 ? `${hours}h ` : ""}${mins}m registrado com sucesso! 📝`, "success");
+  }
+
   renderPendingReviews() {
     const content = document.getElementById("dash-revisoes-content");
-    const badge = document.getElementById("dash-revisoes-badge");
     if (!content) return;
     content.innerHTML = "";
 
@@ -244,7 +377,7 @@ class DashboardManager {
     const cardsDue = cards.filter(c => c.dueDate <= today);
 
     const concurso = store.getActiveConcurso();
-    const pendingReviewTopics = [];
+    const pendingReviewTopics: any[] = [];
     const todayObj = new Date();
 
     (concurso.disciplinas || []).forEach(d => {
@@ -294,194 +427,136 @@ class DashboardManager {
 
     const totalPending = cardsDue.length + pendingReviewTopics.length;
 
-    if (badge) {
-      badge.textContent = `${totalPending} Pendências`;
-      badge.className = `badge ${totalPending > 0 ? "badge-primary" : "badge-success"}`;
-    }
-
     if (totalPending === 0) {
       content.innerHTML = `
-        <div style="text-align: center; padding: 16px 0; color: var(--text-muted);">
-          <div style="font-size: 1.8rem; margin-bottom: 6px;">🛡️</div>
-          <strong style="color: var(--text-main); font-size: 0.9rem;">Todas as Revisões em Dia!</strong>
-          <p style="font-size: 0.8rem; margin-top: 4px;">Nenhum flashcard ou ciclo de revisão pendente para hoje.</p>
+        <div style="text-align: center; padding: 20px; color: var(--color-accent);">
+          <i class="fa-solid fa-circle-check" style="font-size: 2rem; margin-bottom: 8px;"></i>
+          <p style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Tudo Revisado!</p>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Você não tem flashcards ou tópicos pendentes para hoje.</span>
         </div>
       `;
       return;
     }
 
-    // Card de Flashcards SRS se houver
     if (cardsDue.length > 0) {
-      const item = document.createElement("div");
-      item.className = "revisao-item";
-      item.innerHTML = `
-        <div class="revisao-info">
-          <strong><i class="fa-solid fa-layer-group text-warning"></i> ${cardsDue.length} Flashcards SRS Vencidos</strong>
-          <span>Repetição Espaçada • SuperMemo SM-2</span>
+      const el = document.createElement("div");
+      el.className = "review-item";
+      el.innerHTML = `
+        <div class="review-item-info">
+          <strong><i class="fa-solid fa-layer-group text-amber"></i> ${cardsDue.length} Flashcards para Hoje</strong>
+          <span>Fila de repetição espaçada SM-2</span>
         </div>
-        <a href="#flashcards" class="btn btn-primary btn-xs" style="padding: 4px 10px; font-size: 0.75rem;">
-          Revisar <i class="fa-solid fa-arrow-right"></i>
-        </a>
+        <a href="#flashcards" class="btn btn-secondary btn-xs"><i class="fa-solid fa-play"></i> Revisar</a>
       `;
-      content.appendChild(item);
+      content.appendChild(el);
     }
 
-    // Até 2 tópicos prioritários de revisão
-    pendingReviewTopics.slice(0, 2).forEach(rev => {
-      const item = document.createElement("div");
-      item.className = "revisao-item";
-      item.innerHTML = `
-        <div class="revisao-info">
-          <strong><i class="fa-solid fa-book-bookmark text-primary"></i> ${rev.topico}</strong>
-          <span>${rev.disciplina} • Ciclo ${rev.revType}</span>
+    pendingReviewTopics.slice(0, 3).forEach(r => {
+      const el = document.createElement("div");
+      el.className = "review-item";
+      el.innerHTML = `
+        <div class="review-item-info">
+          <strong>${r.topico}</strong>
+          <span>${r.disciplina} • Revisão ${r.revType}</span>
         </div>
-        <a href="#edital" class="btn btn-secondary btn-xs" style="padding: 4px 10px; font-size: 0.75rem;">
-          Ver no Edital <i class="fa-solid fa-arrow-right"></i>
-        </a>
+        <a href="#pomodoro" class="btn btn-secondary btn-xs" onclick="pomodoro.selectedDisciplinaId = '${r.disciplinaId}'; pomodoro.selectedTopicoId = '${r.topicoId}';"><i class="fa-solid fa-stopwatch"></i> Foco</a>
       `;
-      content.appendChild(item);
+      content.appendChild(el);
     });
   }
 
   renderKPICards() {
-    const stats = store.getTodayStats();
-    const overall = store.getEditalOverallProgress();
+    const today = store.getTodayStats();
+    const edital = store.getEditalOverallProgress();
+    const todayStr = store.getLocalDateString();
+    const cardsDue = (store.data.flashcards || []).filter(c => c.dueDate <= todayStr).length;
 
-    // Horas Estudadas Hoje
-    const hoursEl = document.getElementById("kpi-hours-today");
+    const hoursTodayEl = document.getElementById("kpi-hours-today");
     const hoursGoalEl = document.getElementById("kpi-hours-goal");
     const hoursBarEl = document.getElementById("kpi-hours-bar");
-    if (hoursEl) hoursEl.textContent = `${stats.hoursToday}h`;
-    if (hoursGoalEl) hoursGoalEl.textContent = `Meta: ${(stats.goalMinutes / 60).toFixed(1)}h (${stats.percentGoal}%)`;
-    if (hoursBarEl) hoursBarEl.style.width = `${stats.percentGoal}%`;
+    const dailyGoalHours = (today.goalMinutes / 60).toFixed(1);
+    if (hoursTodayEl) hoursTodayEl.textContent = `${today.hoursToday}h`;
+    if (hoursGoalEl) hoursGoalEl.textContent = `Meta: ${dailyGoalHours}h (${today.percentGoal}%)`;
+    if (hoursBarEl) hoursBarEl.style.width = `${today.percentGoal}%`;
 
-    // Questões Resolvidas Hoje
-    const qCountEl = document.getElementById("kpi-questions-today");
-    const qAccEl = document.getElementById("kpi-questions-accuracy");
-    if (qCountEl) qCountEl.textContent = stats.questionsCount;
-    if (qAccEl) qAccEl.innerHTML = stats.questionsCount > 0
-      ? `<i class="fa-solid fa-arrow-trend-up"></i> ${stats.accuracy}% de acertos`
-      : `Nenhuma questão feita hoje`;
+    const questionsTodayEl = document.getElementById("kpi-questions-today");
+    const questionsAccEl = document.getElementById("kpi-questions-accuracy");
+    if (questionsTodayEl) questionsTodayEl.textContent = `${today.questionsCount}`;
+    if (questionsAccEl) questionsAccEl.textContent = `${today.accuracy}% acertos`;
 
-    // Flashcards Pendentes
-    const cardsEl = document.getElementById("kpi-flashcards-due");
-    if (cardsEl) cardsEl.textContent = stats.cardsDue;
+    const flashcardsDueEl = document.getElementById("kpi-flashcards-due");
+    if (flashcardsDueEl) flashcardsDueEl.textContent = `${cardsDue}`;
 
-    // Progresso do Edital
     const editalPercentEl = document.getElementById("kpi-edital-percent");
     const editalSummaryEl = document.getElementById("kpi-edital-summary");
     const editalBarEl = document.getElementById("kpi-edital-bar");
-    if (editalPercentEl) editalPercentEl.textContent = `${overall.percent}%`;
-    if (editalSummaryEl) editalSummaryEl.textContent = `${overall.concluidos}/${overall.totalTopicos} tópicos`;
-    if (editalBarEl) editalBarEl.style.width = `${overall.percent}%`;
+    if (editalPercentEl) editalPercentEl.textContent = `${edital.percent}%`;
+    if (editalSummaryEl) editalSummaryEl.textContent = `${edital.concluidos}/${edital.totalTopicos} tópicos`;
+    if (editalBarEl) editalBarEl.style.width = `${edital.percent}%`;
   }
 
   renderDailyMissions() {
-    const container = document.getElementById("dash-missions-list");
-    const summaryBadge = document.getElementById("dash-missions-summary");
-    if (!container) return;
-    container.innerHTML = "";
+    const list = document.getElementById("dash-missions-list");
+    const summary = document.getElementById("dash-missions-summary");
+    if (!list) return;
+    list.innerHTML = "";
 
     const missions = store.data.dailyMissions || [];
-    const completedCount = missions.filter(m => m.completed).length;
+    const completed = missions.filter((m: any) => m.completed).length;
 
-    if (summaryBadge) {
-      summaryBadge.textContent = `${completedCount}/${missions.length} Concluídas`;
+    if (summary) {
+      summary.textContent = `${completed}/${missions.length} Concluídas`;
     }
 
-    missions.forEach(m => {
-      const item = document.createElement("div");
-      item.className = `mission-item-card ${m.completed ? "mission-completed" : ""}`;
-
-      let typeIcon = "fa-book-open";
-      let actionLabel = "Iniciar";
-      let actionTarget = "#pomodoro";
-
-      if (m.type === "questoes") {
-        typeIcon = "fa-circle-question";
-        actionLabel = "Praticar";
-        actionTarget = "#questoes";
-      } else if (m.type === "flashcards") {
-        typeIcon = "fa-layer-group";
-        actionLabel = "Revisar";
-        actionTarget = "#flashcards";
-      } else if (m.type === "pomodoro") {
-        typeIcon = "fa-stopwatch";
-        actionLabel = "Focar";
-        actionTarget = "#pomodoro";
-      }
-
-      item.innerHTML = `
-        <div class="mission-left">
-          <input type="checkbox" class="mission-checkbox" ${m.completed ? "checked" : ""} onchange="dashboardManager.toggleMission('${m.id}')">
-          <div class="mission-icon"><i class="fa-solid ${typeIcon}"></i></div>
+    missions.forEach((m: any) => {
+      const el = document.createElement("div");
+      el.className = `mission-item-card ${m.completed ? 'completed' : ''}`;
+      el.innerHTML = `
+        <div class="mission-item-left">
+          <input type="checkbox" class="custom-chk" ${m.completed ? 'checked' : ''} onchange="dashboardManager.toggleMission('${m.id}')">
           <div class="mission-texts">
-            <h4 class="mission-title">${m.title}</h4>
-            <p class="mission-desc">${m.desc}</p>
+            <h4 style="margin: 0; font-size: 0.85rem; color: var(--text-main);">${m.title}</h4>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">${m.progress}/${m.target} • +${m.xpReward} XP</span>
           </div>
         </div>
-        <div class="mission-right">
-          <span class="mission-xp-badge">+${m.xpReward} XP</span>
-          ${!m.completed ? `
-            <button class="btn btn-secondary btn-sm" onclick="dashboardManager.startMissionAction('${actionTarget}', '${m.disciplinaId || ''}')">
-              ${actionLabel} <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          ` : `
-            <span class="badge-done"><i class="fa-solid fa-check"></i> Concluída</span>
-          `}
+        <div class="mission-xp-tag">
+          <i class="fa-solid fa-bolt text-warning"></i> +${m.xpReward} XP
         </div>
       `;
-
-      container.appendChild(item);
+      list.appendChild(el);
     });
   }
 
-  toggleMission(id) {
-    store.toggleMission(id);
-    this.renderDailyMissions();
-    this.renderHeaderInfo();
-  }
-
-  startMissionAction(route, disciplinaId) {
-    window.location.hash = route;
-    if (disciplinaId) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (route === "#pomodoro") {
-            const select = document.getElementById("pomo-subject-select") as HTMLSelectElement | null;
-            if (select) {
-              select.value = disciplinaId;
-              if (typeof pomodoro !== "undefined") pomodoro.selectedDisciplinaId = disciplinaId;
-            }
-          } else if (route === "#questoes") {
-            if (typeof questionsManager !== "undefined") {
-              questionsManager.setDisciplinaFilter(disciplinaId);
-            }
-          } else if (route === "#flashcards") {
-            if (typeof flashcardsManager !== "undefined") {
-              flashcardsManager.selectDeck(disciplinaId);
-            }
-          }
-        });
-      });
+  toggleMission(id: string) {
+    const mission = (store.data.dailyMissions || []).find((m: any) => m.id === id);
+    if (mission) {
+      mission.completed = !mission.completed;
+      if (mission.completed) {
+        store.addXP(mission.xpReward, `Missão Diária Concluída: ${mission.title}! 🎯`);
+        showToast(`Missão cumprida! +${mission.xpReward} XP`, "success");
+      }
+      store.save();
+      this.renderDailyMissions();
+      this.renderHeaderInfo();
     }
   }
 
   renderCharts() {
-    // 1. Gráfico Semanal de Horas
     const weekly = store.getWeeklyStats();
-    PapiroCharts.renderLineAreaChart("chart-weekly-hours", weekly.labels, weekly.hours);
+    PapiroCharts.renderLineAreaChart(
+      "chart-weekly-hours",
+      weekly.labels,
+      weekly.hours
+    );
 
-    // 2. Gráfico Donut de Disciplinas
-    const subjectDist = store.getSubjectDistribution();
-    const donutItems = (subjectDist as any[]).map((s: any) => ({
+    const subjectStats = store.getSubjectDistribution();
+    const donutItems = (subjectStats as any[]).map(s => ({
       label: s.name,
-      value: s.minutes,
+      value: Number((s.minutes / 60).toFixed(1)),
       color: s.color
     }));
     PapiroCharts.renderDonutChart("chart-subject-donut", donutItems);
 
-    // 3. Gráfico Radar de Domínio
     const activeConcurso = store.getActiveConcurso();
     const radarItems = (activeConcurso.disciplinas || []).map(d => {
       const topicos = d.topicos || [];
@@ -492,7 +567,6 @@ class DashboardManager {
     });
     PapiroCharts.renderRadarChart("chart-domain-radar", radarItems);
 
-    // 4. Heatmap de Constância
     PapiroCharts.renderConsistencyHeatmap("dash-consistency-heatmap", store.data.studySessions);
   }
 
@@ -501,7 +575,6 @@ class DashboardManager {
     const authorEl = document.getElementById("dash-quote-author");
     if (!quoteEl || !authorEl) return;
 
-    // Escolhe citação baseada no dia
     const idx = new Date().getDate() % MOTIVATIONAL_QUOTES.length;
     const q = MOTIVATIONAL_QUOTES[idx];
     quoteEl.textContent = `"${q.quote}"`;
@@ -523,6 +596,6 @@ class DashboardManager {
 const dashboardManager = new DashboardManager();
 export { DashboardManager, dashboardManager };
 if (typeof window !== "undefined") {
-  window.DashboardManager = DashboardManager;
-  window.dashboardManager = dashboardManager;
+  (window as any).DashboardManager = DashboardManager;
+  (window as any).dashboardManager = dashboardManager;
 }

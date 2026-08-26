@@ -855,6 +855,171 @@ class Store {
     this.notify("discursiva_updated", this.data.discursivaAttempts);
   }
 
+  getEditalForecast() {
+    const activeConcurso = this.getActiveConcurso();
+    const overall = this.getEditalOverallProgress();
+    const remainingTopics = Math.max(0, overall.totalTopicos - overall.concluidos);
+
+    // Média de estudo dos últimos 7 dias ou meta diária
+    const recentSessions = (this.data.studySessions || []).filter((s: any) => {
+      if (!s.timestamp) return false;
+      const diffDays = (Date.now() - s.timestamp) / (1000 * 60 * 60 * 24);
+      return diffDays <= 7;
+    });
+
+    const totalMinutesLast7Days = recentSessions.reduce((acc: number, s: any) => acc + (s.durationMinutes || 0), 0);
+    const avgDailyMinutes = totalMinutesLast7Days > 0 
+      ? Math.round(totalMinutesLast7Days / 7) 
+      : (this.data.profile.dailyGoalMinutes || 240);
+
+    // Média estimada de 75 min por tópico novo (teoria + fixação)
+    const estMinutesNeeded = remainingTopics * 75;
+    const daysNeeded = avgDailyMinutes > 0 ? Math.ceil(estMinutesNeeded / avgDailyMinutes) : 30;
+
+    const projectedDate = new Date();
+    projectedDate.setDate(projectedDate.getDate() + daysNeeded);
+
+    const targetDate = activeConcurso?.targetDate ? new Date(activeConcurso.targetDate) : null;
+    let daysBeforeExam: number | null = null;
+    let isOnTrack = true;
+
+    if (targetDate) {
+      daysBeforeExam = Math.ceil((targetDate.getTime() - projectedDate.getTime()) / (1000 * 60 * 60 * 24));
+      isOnTrack = daysBeforeExam >= 0;
+    }
+
+    return {
+      remainingTopics,
+      avgDailyMinutes,
+      avgDailyHours: (avgDailyMinutes / 60).toFixed(1),
+      daysNeeded,
+      projectedDateStr: projectedDate.toLocaleDateString("pt-BR"),
+      daysBeforeExam,
+      isOnTrack,
+      targetDateStr: targetDate ? targetDate.toLocaleDateString("pt-BR") : null
+    };
+  }
+
+  getWeakestSubject() {
+    const concurso = this.getActiveConcurso();
+    const questions = this.data.questionHistory || [];
+    const erros = this.data.cadernoErros || [];
+
+    const statsByDisc = (concurso?.disciplinas || []).map((d: any) => {
+      const qList = questions.filter((q: any) => q.disciplinaId === d.id);
+      const total = qList.length;
+      const correct = qList.filter((q: any) => q.isCorrect).length;
+      const accuracy = total > 0 ? Math.round((correct / total) * 100) : 100;
+      const pendingErrors = erros.filter((e: any) => {
+        const q = (this.data.questions || []).find((x: any) => x.id === e.questionId);
+        return q && q.disciplinaId === d.id && !e.resolved;
+      }).length;
+
+      return {
+        id: d.id,
+        name: d.name,
+        color: d.color,
+        icon: d.icon,
+        total,
+        correct,
+        accuracy,
+        pendingErrors
+      };
+    });
+
+    const withActivity = statsByDisc.filter((s: any) => s.total >= 3 || s.pendingErrors > 0);
+    if (withActivity.length === 0) return null;
+
+    withActivity.sort((a: any, b: any) => (a.accuracy - b.accuracy) || (b.pendingErrors - a.pendingErrors));
+    return withActivity[0];
+  }
+
+  getRankingResetCountdown() {
+    const now = new Date();
+    const day = now.getDay(); // 0 = Domingo
+    const daysUntilSunday = (7 - day) % 7;
+    const sunday = new Date(now);
+    sunday.setDate(now.getDate() + daysUntilSunday);
+    sunday.setHours(23, 59, 59, 999);
+
+    const diff = sunday.getTime() - now.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { days, hours, mins, text: `${days}d ${hours}h ${mins}m` };
+  }
+
+  recordManualStudySession(params: {
+    date: string;
+    concursoId?: string;
+    disciplinaId: string;
+    topicoId?: string;
+    durationMinutes: number;
+    type: string;
+    questionsTotal?: number;
+    questionsCorrect?: number;
+    notes?: string;
+  }) {
+    const session = {
+      id: `sess-${Date.now()}`,
+      concursoId: params.concursoId || this.data.activeConcursoId,
+      disciplinaId: params.disciplinaId,
+      topicoId: params.topicoId || null,
+      durationMinutes: Math.round(params.durationMinutes),
+      type: params.type || "teoria",
+      date: params.date || this.getLocalDateString(),
+      timestamp: new Date(params.date + "T12:00:00").getTime() || Date.now(),
+      notes: params.notes || ""
+    };
+
+    this.data.studySessions.push(session);
+
+    if (params.questionsTotal && params.questionsTotal > 0) {
+      const correct = Math.min(params.questionsTotal, params.questionsCorrect || 0);
+      const concurso = this.data.concursos.find((c: any) => c.id === session.concursoId);
+      const disc = (concurso?.disciplinas || []).find((d: any) => d.id === session.disciplinaId);
+
+      for (let i = 0; i < params.questionsTotal; i++) {
+        const isCorr = i < correct;
+        this.data.questionHistory.push({
+          questionId: `manual-q-${Date.now()}-${i}`,
+          disciplinaId: session.disciplinaId,
+          disciplinaName: disc ? disc.name : "Geral",
+          assunto: params.notes || "Estudo Manual",
+          selectedOption: isCorr ? "C" : "E",
+          isCorrect: isCorr,
+          timeSpentSeconds: 60,
+          date: session.date,
+          timestamp: session.timestamp + i * 1000
+        });
+      }
+    }
+
+    if (session.topicoId && session.concursoId) {
+      const concurso = this.data.concursos.find((c: any) => c.id === session.concursoId);
+      const disc = (concurso?.disciplinas || []).find((d: any) => d.id === session.disciplinaId);
+      const topico = (disc?.topicos || []).find((t: any) => t.id === session.topicoId);
+      if (topico) {
+        topico.teoria = true;
+        if (!topico.teoriaDate) topico.teoriaDate = session.date;
+        if (params.questionsTotal) {
+          topico.questoesFeitas = (topico.questoesFeitas || 0) + params.questionsTotal;
+          topico.questoesAcertos = (topico.questoesAcertos || 0) + (params.questionsCorrect || 0);
+        }
+      }
+    }
+
+    const xpGained = Math.max(10, Math.round(params.durationMinutes * 2));
+    this.addXP(xpGained, "Registro de Estudo Manual 📝");
+    this.updateStreak();
+    this.advanceCiclo(session.disciplinaId, session.durationMinutes);
+    this.checkBadges();
+    this.save();
+    this.notify("study_session_added", session);
+    return session;
+  }
+
   advanceCiclo(disciplinaId, minutesStudied) {
     if (!this.data.ciclo || !this.data.ciclo.items || this.data.ciclo.items.length === 0) return;
     const items = this.data.ciclo.items;
