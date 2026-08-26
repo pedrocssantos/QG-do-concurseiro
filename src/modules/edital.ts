@@ -12,10 +12,16 @@ import { showToast } from "../app";
 class EditalManager {
   selectedDisciplinaId: string | null;
   eventsBound: boolean;
+  searchQuery: string;
+  statusFilter: string;
+  allExpanded: boolean;
 
   constructor() {
     this.selectedDisciplinaId = null;
     this.eventsBound = false;
+    this.searchQuery = "";
+    this.statusFilter = "all";
+    this.allExpanded = false;
   }
 
   init() {
@@ -66,11 +72,14 @@ class EditalManager {
 
     disciplinas.forEach((disc) => {
       const totalTopicos = disc.topicos?.length || 0;
-      const doneTopicos = disc.topicos?.filter(t => t.teoria && t.resumo).length || 0;
+      const doneTopicos = disc.topicos?.filter(t => t.teoria || (t.dominio && t.dominio >= 4)).length || 0;
       const percent = totalTopicos > 0 ? Math.round((doneTopicos / totalTopicos) * 100) : 0;
 
+      const hasActiveFilter = this.statusFilter !== "all" || this.searchQuery.trim() !== "";
+      const isExpanded = this.allExpanded || hasActiveFilter;
+
       const card = document.createElement("div");
-      card.className = "edital-disc-card";
+      card.className = `edital-disc-card ${isExpanded ? "expanded" : ""}`;
       card.id = `disc-card-${disc.id}`;
 
       card.innerHTML = `
@@ -97,7 +106,7 @@ class EditalManager {
             <button class="accordion-chevron-btn"><i class="fa-solid fa-chevron-down"></i></button>
           </div>
         </div>
-        <div class="edital-disc-body hidden" id="disc-body-${disc.id}">
+        <div class="edital-disc-body ${isExpanded ? "" : "hidden"}" id="disc-body-${disc.id}">
           <div class="topics-table-wrapper">
             <table class="topics-table">
               <thead>
@@ -131,11 +140,35 @@ class EditalManager {
   }
 
   renderTopicsRows(concursoId, disc) {
-    if (!disc.topicos || disc.topicos.length === 0) {
+    let topicos = disc.topicos || [];
+    if (topicos.length === 0) {
       return `<tr><td colspan="9" class="text-center text-muted" style="padding: 20px;">Nenhum tópico cadastrado nesta disciplina.</td></tr>`;
     }
 
-    return disc.topicos.map(t => {
+    // Aplica filtro por status
+    if (this.statusFilter === "teoria_pendente") {
+      topicos = topicos.filter(t => !t.teoria);
+    } else if (this.statusFilter === "resumo_pendente") {
+      topicos = topicos.filter(t => !t.resumo);
+    } else if (this.statusFilter === "revisoes_pendentes") {
+      topicos = topicos.filter(t => !t.r24h || !t.r7d || !t.r30d);
+    } else if (this.statusFilter === "baixo_dominio") {
+      topicos = topicos.filter(t => !t.dominio || t.dominio <= 2);
+    } else if (this.statusFilter === "concluidos") {
+      topicos = topicos.filter(t => t.dominio && t.dominio >= 4);
+    }
+
+    // Aplica busca por texto
+    if (this.searchQuery.trim() !== "") {
+      const q = this.searchQuery.toLowerCase().trim();
+      topicos = topicos.filter(t => (t.title || "").toLowerCase().includes(q));
+    }
+
+    if (topicos.length === 0) {
+      return `<tr><td colspan="9" class="text-center text-muted" style="padding: 16px; font-size: 0.85rem;">Nenhum tópico corresponde ao filtro atual.</td></tr>`;
+    }
+
+    return topicos.map(t => {
       const qTotal = t.questoesFeitas || 0;
       const qCorrect = t.questoesAcertos || 0;
       const qPercent = qTotal > 0 ? Math.round((qCorrect / qTotal) * 100) : 0;
@@ -203,6 +236,28 @@ class EditalManager {
     }
   }
 
+  toggleExpandAll() {
+    this.allExpanded = !this.allExpanded;
+    const bodies = document.querySelectorAll(".edital-disc-body");
+    const cards = document.querySelectorAll(".edital-disc-card");
+    const btn = document.getElementById("edital-btn-expand-all");
+
+    bodies.forEach(b => {
+      if (this.allExpanded) b.classList.remove("hidden");
+      else b.classList.add("hidden");
+    });
+    cards.forEach(c => {
+      if (this.allExpanded) c.classList.add("expanded");
+      else c.classList.remove("expanded");
+    });
+
+    if (btn) {
+      btn.innerHTML = this.allExpanded 
+        ? `<i class="fa-solid fa-down-left-and-up-right-to-center"></i> Recolher Todos`
+        : `<i class="fa-solid fa-up-right-and-down-left-from-center"></i> Expandir Todos`;
+    }
+  }
+
   handleCheckToggle(concursoId, discId, topicoId, fieldName, isChecked) {
     store.updateTopico(concursoId, discId, topicoId, { [fieldName]: isChecked });
     this.renderHeader();
@@ -210,7 +265,7 @@ class EditalManager {
     const disc = (concurso?.disciplinas || []).find(d => d.id === discId);
     if (disc) {
       const totalTopicos = disc.topicos?.length || 0;
-      const doneTopicos = disc.topicos?.filter(t => t.teoria && t.resumo).length || 0;
+      const doneTopicos = disc.topicos?.filter(t => t.teoria || (t.dominio && t.dominio >= 4)).length || 0;
       const percent = totalTopicos > 0 ? Math.round((doneTopicos / totalTopicos) * 100) : 0;
       const card = document.getElementById(`disc-card-${discId}`);
       if (card) {
@@ -226,6 +281,7 @@ class EditalManager {
 
   handleDominioChange(concursoId, discId, topicoId, value) {
     store.updateTopico(concursoId, discId, topicoId, { dominio: parseInt(value, 10) });
+    this.renderHeader();
   }
 
   deleteTopico(concursoId, discId, topicoId) {
@@ -317,6 +373,27 @@ class EditalManager {
         const modal = document.getElementById("modal-add-disciplina") as HTMLDialogElement | null;
         if (modal) modal.showModal();
       });
+    }
+
+    const searchInput = document.getElementById("edital-search-input") as HTMLInputElement | null;
+    if (searchInput) {
+      searchInput.addEventListener("input", (e: any) => {
+        this.searchQuery = e.target.value || "";
+        this.renderDisciplinasList();
+      });
+    }
+
+    const filterStatus = document.getElementById("edital-filter-status") as HTMLSelectElement | null;
+    if (filterStatus) {
+      filterStatus.addEventListener("change", (e: any) => {
+        this.statusFilter = e.target.value || "all";
+        this.renderDisciplinasList();
+      });
+    }
+
+    const expandBtn = document.getElementById("edital-btn-expand-all");
+    if (expandBtn) {
+      expandBtn.addEventListener("click", () => this.toggleExpandAll());
     }
   }
 

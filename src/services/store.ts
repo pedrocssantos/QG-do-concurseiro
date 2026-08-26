@@ -379,8 +379,12 @@ class Store {
     if (fields.r7d === true && !topico.r7d) {
       topico.r7dDate = this.getLocalDateString();
     }
+    if (fields.r30d === true && !topico.r30d) {
+      topico.r30dDate = this.getLocalDateString();
+    }
 
     Object.assign(topico, fields);
+    this.save();
 
     if (typeof db !== "undefined" && db.saveTopicoProgressToCloud) {
       db.saveTopicoProgressToCloud(topico, disciplinaId);
@@ -398,6 +402,7 @@ class Store {
     if (!concurso.disciplinas) concurso.disciplinas = [];
     concurso.disciplinas.push(disciplina);
     this.rebuildCicloForConcurso(concursoId);
+    this.save();
     this.notify("disciplina_added", { concursoId, disciplina });
   }
 
@@ -409,6 +414,7 @@ class Store {
     if (!topico.id) topico.id = `top-${Date.now()}`;
     if (!disc.topicos) disc.topicos = [];
     disc.topicos.push(topico);
+    this.save();
     this.notify("topico_added", { concursoId, disciplinaId, topico });
   }
 
@@ -418,6 +424,7 @@ class Store {
     const disc = (concurso.disciplinas || []).find(d => d.id === disciplinaId);
     if (!disc) return;
     disc.topicos = (disc.topicos || []).filter(t => t.id !== topicoId);
+    this.save();
     this.notify("topico_deleted", { concursoId, disciplinaId, topicoId });
   }
 
