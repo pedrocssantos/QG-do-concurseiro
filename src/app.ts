@@ -89,7 +89,7 @@ class App {
     });
   }
 
-  checkPaymentReturn() {
+  async checkPaymentReturn() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const isSuccess = urlParams.get("payment") === "success" || 
@@ -98,26 +98,27 @@ class App {
                         urlParams.get("session_id");
 
       if (isSuccess) {
-        // Ativa o plano PRO no Store local
+        // Limpa os parâmetros da URL imediatamente para evitar reutilização de links
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        // Se logado no Supabase, atualiza perfil a partir da nuvem
+        if (typeof db !== "undefined" && db.client && db.currentUser) {
+          try {
+            if (db.loadUserProfile) await db.loadUserProfile(db.currentUser.id);
+          } catch (err) {
+            console.warn("Aguardando confirmação do webhook do Supabase...", err);
+          }
+        }
+
+        // Ativação local e celebração tática
         store.data.profile.plan_tier = "pro";
         store.save();
-
-        // Se logado no Supabase, sincroniza na nuvem
-        if (typeof db !== "undefined" && db.client && db.currentUser) {
-          (db.client.from("profiles").update({ plan_tier: "pro" }).eq("id", db.currentUser.id) as any).then(() => {
-            if (db.loadUserProfile) db.loadUserProfile(db.currentUser.id);
-          }).catch((err: any) => console.warn("Erro ao sincronizar PRO no Supabase:", err));
-        }
 
         if (typeof db !== "undefined" && db.updateAuthUI) {
           db.updateAuthUI();
         }
 
-        // Limpa os parâmetros da URL sem recarregar a página
-        const cleanUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, document.title, cleanUrl);
-
-        // Recompensa e celebração tática
         store.addXP(500, "Ativação do Plano Caveira PRO! 🏆");
         setTimeout(() => {
           showToast("🎖️ PARABÉNS GUERREIRO(A)! Seu Plano Caveira PRO foi ativado com sucesso! Todas as ferramentas foram desbloqueadas.", "success", 8000);

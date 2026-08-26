@@ -1,31 +1,11 @@
-// ==========================================================================
-// QG DO CONCURSEIRO - QUESTIONS MANAGER (ESM)
-// ==========================================================================
 import { store } from "../services/store";
 import { audio } from "../services/audio";
 import { showToast, openUpgradeModal } from "../app";
+import { sanitizeHTML } from "../services/security";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - MOTOR DE BANCO DE QUESTÕES E SIMULADOS
 // ==========================================================================
-
-function sanitizeHTML(html: string): string {
-  if (!html) return "";
-  return String(html).replace(/<\/?([a-zA-Z0-9\-]+)([^>]*)>/g, (match, tag, attrs) => {
-    const t = tag.toLowerCase();
-    const allowed = ['strong', 'em', 'br', 'p', 'code', 'ul', 'li', 'ol'];
-    
-    if (t === 'script' || /on[a-z]+\s*=/i.test(attrs)) {
-      return match.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-    
-    if (allowed.includes(t)) {
-      return match.startsWith('</') ? `</${t}>` : `<${t}>`;
-    }
-    
-    return '';
-  });
-}
 
 class QuestionsManager {
   _searchDebounce: any;

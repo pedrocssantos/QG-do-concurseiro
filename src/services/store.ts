@@ -5,6 +5,7 @@ import { DEFAULT_CONCURSOS, DEFAULT_QUESTIONS, DEFAULT_FLASHCARDS, DEFAULT_BADGE
 import { db } from "./supabase";
 import { localDB } from "./dexie";
 import { showToast } from "../app";
+import { isSafeObject, sanitizeText } from "./security";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - GERENCIADOR DE ESTADO E LOCALSTORAGE (STORE)
@@ -165,7 +166,7 @@ class Store {
   }
 
   sanitizeState(state) {
-    if (!state || typeof state !== "object") return this.getDefaultState();
+    if (!state || typeof state !== "object" || !isSafeObject(state)) return this.getDefaultState();
 
     if (state._schemaVersion === undefined || state._schemaVersion < 2) {
       if (Array.isArray(state.concursos)) {
@@ -209,17 +210,20 @@ class Store {
     if (!Array.isArray(state.questionHistory)) {
       state.questionHistory = [];
     }
-    if (!state.profile || typeof state.profile !== "object") {
+    if (!state.profile || typeof state.profile !== "object" || !isSafeObject(state.profile)) {
       state.profile = this.getDefaultState().profile;
     }
 
-    // Garante propriedades numéricas e seguras no perfil
-    state.profile.xp = typeof state.profile.xp === "number" && !isNaN(state.profile.xp) ? state.profile.xp : 0;
+    // Sanitiza strings do perfil e garante propriedades numéricas seguras
+    if (state.profile.name) state.profile.name = sanitizeText(state.profile.name).substring(0, 80);
+    if (state.profile.avatar) state.profile.avatar = sanitizeText(state.profile.avatar).substring(0, 10);
+    if (state.profile.title) state.profile.title = sanitizeText(state.profile.title).substring(0, 50);
+    state.profile.xp = typeof state.profile.xp === "number" && !isNaN(state.profile.xp) ? Math.max(0, state.profile.xp) : 0;
     state.profile.level = state.profile.level || this.calculateLevel(state.profile.xp);
-    state.profile.streak = typeof state.profile.streak === "number" ? state.profile.streak : 0;
+    state.profile.streak = typeof state.profile.streak === "number" ? Math.max(0, state.profile.streak) : 0;
     state.profile.dailyGoalMinutes = state.profile.dailyGoalMinutes || 180;
     state.profile.weeklyGoalHours = state.profile.weeklyGoalHours || 20;
-    state.profile.plan_tier = state.profile.plan_tier || "free";
+    state.profile.plan_tier = state.profile.plan_tier === "pro" ? "pro" : "free";
     if (state.profile.onboardingCompleted === undefined) {
       state.profile.onboardingCompleted = false;
     }
@@ -1078,7 +1082,7 @@ class Store {
   importBackup(jsonString) {
     try {
       const parsed = JSON.parse(jsonString);
-      if (!parsed || typeof parsed !== "object" || !parsed.profile || !Array.isArray(parsed.concursos)) {
+      if (!parsed || typeof parsed !== "object" || !isSafeObject(parsed) || !parsed.profile || !Array.isArray(parsed.concursos)) {
         throw new Error("Formato de arquivo JSON incompatível com o sistema.");
       }
       this.data = this.sanitizeState(parsed);
