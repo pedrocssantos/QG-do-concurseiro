@@ -13,6 +13,10 @@ import { showToast } from "../app";
 const STORAGE_KEY = "foco_no_papiro_v1";
 
 class Store {
+  data: any;
+  listeners: Function[];
+  _isSaving: boolean;
+
   constructor() {
     this.listeners = [];
     this._isSaving = false;

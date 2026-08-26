@@ -10,11 +10,12 @@ import { questionsManager } from "./modules/questions";
 import { flashcardsManager } from "./modules/flashcards";
 import { cadernoManager } from "./modules/errors";
 import { gamificationManager } from "./modules/gamification";
-import { pomodoro } from "./modules/pomodoro";
+import { pomodoro, pomodoroManager } from "./modules/pomodoro";
 import { PapiroCharts } from "./modules/analytics";
 import { tafManager } from "./modules/taf";
 import { discursivaManager } from "./modules/discursiva";
 import { leisManager } from "./modules/leis";
+import { audio } from "./services/audio";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - SPA ROUTER & APLICAÇÃO PRINCIPAL

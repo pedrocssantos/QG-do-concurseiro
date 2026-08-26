@@ -7,6 +7,7 @@ import { pomodoro } from "./pomodoro";
 import { questionsManager } from "./questions";
 import { flashcardsManager } from "./flashcards";
 import { MOTIVATIONAL_QUOTES } from "../data/data";
+import { showToast } from "../app";
 
 // ==========================================================================
 // QG DO CONCURSEIRO - CONTROLLER DO DASHBOARD PRINCIPAL

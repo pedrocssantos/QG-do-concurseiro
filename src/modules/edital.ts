@@ -2,6 +2,7 @@
 // QG DO CONCURSEIRO - EDITAL MANAGER (ESM)
 // ==========================================================================
 import { store } from "../services/store";
+import { pomodoro } from "./pomodoro";
 import { showToast } from "../app";
 
 // ==========================================================================
