@@ -2172,54 +2172,180 @@ Art. 5º, XI CF - Casa asilo inviolável;Salvo flagrante, desastre, socorro ou o
     </div>
   </dialog>
 
-  <!-- Modal: Autenticação (Login e Cadastro) -->
+  <!-- Modal: Autenticação (Login, Cadastro & Recuperação de Senha) -->
   <dialog class="modal-dialog" id="modal-auth" aria-labelledby="auth-modal-title">
-    <div class="modal-box" style="max-width: 440px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color-light); position: relative;">
-      <div class="modal-header" style="flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 24px 20px 14px; position: relative;">
-        <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--color-primary-tint); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 4px;">
+    <div class="modal-box" style="max-width: 440px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color-light); position: relative;">
+      <div class="modal-header" style="flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 22px 20px 12px; position: relative;">
+        <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--color-primary-tint); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 2px;">
           <i class="fa-solid fa-shield-halved"></i>
         </div>
-        <h3 id="auth-modal-title" style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">QG do Concurseiro</h3>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Faça login ou crie sua conta para acessar a plataforma.</p>
+        <h3 id="auth-modal-title" style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin: 0;">Entrar no QG do Concurseiro</h3>
+        <p id="auth-modal-subtitle" style="font-size: 0.80rem; color: var(--text-muted); margin: 0;">Faça login para sincronizar seu progresso na nuvem.</p>
         <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela" style="position: absolute; top: 14px; right: 14px;">&times;</button></form>
       </div>
-      <div class="modal-body" style="padding: 10px 20px 24px;">
+      <div class="modal-body" style="padding: 8px 20px 22px;">
         <!-- Abas Login / Cadastro -->
-        <div class="auth-tabs-row" style="display: flex; gap: 8px; margin-bottom: 18px;">
+        <div class="auth-tabs-row" id="auth-tabs-container" style="display: flex; gap: 8px; margin-bottom: 16px;">
           <button type="button" class="btn btn-secondary btn-sm active" id="tab-login" onclick="switchAuthTab('login')" style="flex: 1;">Entrar</button>
           <button type="button" class="btn btn-secondary btn-sm" id="tab-signup" onclick="switchAuthTab('signup')" style="flex: 1;">Criar Conta</button>
         </div>
 
-        <!-- Caixa de Alerta de Erro de Validação -->
-        <div class="feedback-box hidden" id="auth-error-box" style="margin-bottom: 14px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.82rem;">
-          <i class="fa-solid fa-circle-exclamation"></i> <span id="auth-error-text"></span>
+        <!-- Feedback de Erro -->
+        <div class="feedback-box hidden" id="auth-error-box" style="margin-bottom: 12px; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); color: var(--color-danger); padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; display: flex; align-items: flex-start; gap: 8px;">
+          <i class="fa-solid fa-circle-exclamation" style="margin-top: 2px;"></i> <span id="auth-error-text"></span>
+        </div>
+
+        <!-- Feedback de Sucesso (E-mail Enviado) -->
+        <div class="feedback-box hidden" id="auth-success-box" style="margin-bottom: 12px; background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.3); color: var(--color-accent); padding: 12px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; text-align: center;">
+          <div style="font-size: 1.8rem; margin-bottom: 6px;">📧</div>
+          <strong id="auth-success-title" style="display: block; margin-bottom: 4px;">E-mail Enviado!</strong>
+          <span id="auth-success-text">Verifique sua caixa de entrada e spam para continuar.</span>
         </div>
 
         <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <!-- Nome (Apenas Cadastro) -->
           <div class="form-group hidden" id="group-auth-name">
             <label for="auth-name">Nome Completo:</label>
-            <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Santos" autocomplete="name">
+            <input type="text" class="form-input" id="auth-name" placeholder="Ex: Pedro Silva" autocomplete="name">
           </div>
-          <div class="form-group">
-            <label for="auth-email">E-mail Institucional ou Pessoal:</label>
+
+          <!-- E-mail -->
+          <div class="form-group" id="group-auth-email">
+            <label for="auth-email">Seu E-mail:</label>
             <input type="email" class="form-input" id="auth-email" placeholder="seuemail@exemplo.com" required autocomplete="email">
           </div>
-          <div class="form-group">
-            <label for="auth-password">Senha:</label>
-            <input type="password" class="form-input" id="auth-password" placeholder="Mínimo de 6 caracteres" minlength="6" required autocomplete="current-password">
+
+          <!-- Senha -->
+          <div class="form-group" id="group-auth-password">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="auth-password" style="margin: 0;">Senha:</label>
+              <button type="button" id="link-forgot-password" onclick="switchAuthTab('forgot')" style="background: none; border: none; font-size: 0.75rem; color: var(--color-primary); cursor: pointer; padding: 0;">
+                Esqueci minha senha
+              </button>
+            </div>
+            <div style="position: relative;">
+              <input type="password" class="form-input" id="auth-password" placeholder="Mínimo de 6 caracteres" minlength="6" autocomplete="current-password" oninput="checkPasswordStrength(this.value)" style="padding-right: 38px;">
+              <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('auth-password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dimmed); cursor: pointer; padding: 4px;" title="Ver/ocultar senha">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+
+            <!-- Indicador de Força de Senha (Cadastro) -->
+            <div class="password-strength-container hidden" id="group-auth-strength" style="margin-top: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.70rem; color: var(--text-dimmed); margin-bottom: 3px;">
+                <span>Segurança da Senha:</span>
+                <span id="password-strength-label" style="font-weight: 600;">Fraca</span>
+              </div>
+              <div style="width: 100%; height: 4px; background: var(--bg-surface-inset); border-radius: var(--radius-full); overflow: hidden;">
+                <div id="password-strength-bar" style="height: 100%; width: 25%; background: var(--color-danger); transition: all 0.3s ease;"></div>
+              </div>
+            </div>
           </div>
+
+          <!-- Confirmar Senha (Apenas Cadastro) -->
           <div class="form-group hidden" id="group-auth-confirm-password">
             <label for="auth-password-confirm">Confirmar Senha:</label>
-            <input type="password" class="form-input" id="auth-password-confirm" placeholder="Repita a senha digitada" minlength="6" autocomplete="new-password">
+            <div style="position: relative;">
+              <input type="password" class="form-input" id="auth-password-confirm" placeholder="Repita a senha digitada" minlength="6" autocomplete="new-password" style="padding-right: 38px;">
+              <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('auth-password-confirm', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dimmed); cursor: pointer; padding: 4px;" title="Ver/ocultar senha">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
           </div>
-          <div class="form-group hidden" id="group-auth-terms" style="margin-top: 10px; margin-bottom: 8px;">
+
+          <!-- Termos (Apenas Cadastro) -->
+          <div class="form-group hidden" id="group-auth-terms" style="margin-top: 8px; margin-bottom: 8px;">
             <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.78rem; color: var(--text-muted); cursor: pointer;">
-              <input type="checkbox" id="auth-terms" style="margin-top: 3px;">
+              <input type="checkbox" id="auth-terms" class="custom-chk-sm" style="margin-top: 2px;">
               <span>Concordo com os Termos de Uso e Política de Privacidade do QG do Concurseiro.</span>
             </label>
           </div>
-          <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 14px;">
+
+          <!-- Widget Google reCAPTCHA ("Não sou um robô") -->
+          <div class="recaptcha-box-wrapper" style="margin: 12px 0 6px;">
+            <div class="google-recaptcha-card" id="google-recaptcha-widget" onclick="handleRecaptchaClick()">
+              <div class="recaptcha-left">
+                <div class="recaptcha-checkbox-box" id="recaptcha-checkbox-box">
+                  <div class="recaptcha-spinner hidden" id="recaptcha-spinner"></div>
+                  <i class="fa-solid fa-check recaptcha-check-mark hidden" id="recaptcha-check-mark"></i>
+                </div>
+                <span class="recaptcha-text-label">Não sou um robô</span>
+              </div>
+              <div class="recaptcha-right">
+                <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="Google reCAPTCHA" class="recaptcha-badge-icon" width="28" height="28">
+                <div class="recaptcha-brand-info">
+                  <span>reCAPTCHA</span>
+                  <small>Privacidade - Termos</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão de Ação -->
+          <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 10px;">
             <i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma
+          </button>
+
+          <!-- Link de Retorno ao Login (Recuperação de Senha) -->
+          <div class="hidden" id="group-auth-back-login" style="text-align: center; margin-top: 12px;">
+            <button type="button" onclick="switchAuthTab('login')" style="background: none; border: none; font-size: 0.8rem; color: var(--color-primary); cursor: pointer;">
+              <i class="fa-solid fa-arrow-left"></i> Voltar para a tela de Login
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Modal: Redefinir Nova Senha -->
+  <dialog class="modal-dialog" id="modal-reset-password" aria-labelledby="reset-password-title">
+    <div class="modal-box" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 id="reset-password-title"><i class="fa-solid fa-key text-primary"></i> Definir Nova Senha</h3>
+        <form method="dialog"><button class="modal-close-btn" aria-label="Fechar janela">&times;</button></form>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom: 14px; font-size: 0.85rem;">
+          Digite sua nova senha de acesso ao QG do Concurseiro:
+        </p>
+
+        <!-- Feedback de Erro Reset -->
+        <div class="feedback-box hidden" id="reset-error-box" style="margin-bottom: 12px; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); color: var(--color-danger); padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.82rem;">
+          <i class="fa-solid fa-circle-exclamation"></i> <span id="reset-error-text"></span>
+        </div>
+
+        <form id="reset-password-form" onsubmit="handleResetPasswordSubmit(event)">
+          <div class="form-group">
+            <label for="reset-new-password">Nova Senha:</label>
+            <div style="position: relative;">
+              <input type="password" class="form-input" id="reset-new-password" placeholder="Mínimo 6 caracteres" minlength="6" required oninput="checkResetPasswordStrength(this.value)" style="padding-right: 38px;">
+              <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('reset-new-password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dimmed); cursor: pointer; padding: 4px;">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <div class="password-strength-container" style="margin-top: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.70rem; color: var(--text-dimmed); margin-bottom: 3px;">
+                <span>Segurança:</span>
+                <span id="reset-strength-label" style="font-weight: 600;">Fraca</span>
+              </div>
+              <div style="width: 100%; height: 4px; background: var(--bg-surface-inset); border-radius: var(--radius-full); overflow: hidden;">
+                <div id="reset-strength-bar" style="height: 100%; width: 25%; background: var(--color-danger); transition: all 0.3s ease;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reset-confirm-password">Confirmar Nova Senha:</label>
+            <div style="position: relative;">
+              <input type="password" class="form-input" id="reset-confirm-password" placeholder="Repita a nova senha" minlength="6" required style="padding-right: 38px;">
+              <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('reset-confirm-password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-dimmed); cursor: pointer; padding: 4px;">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="btn-reset-submit" style="width: 100%; margin-top: 10px;">
+            <i class="fa-solid fa-check"></i> Salvar Nova Senha
           </button>
         </form>
       </div>

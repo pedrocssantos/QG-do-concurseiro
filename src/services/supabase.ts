@@ -69,6 +69,11 @@ class SupabaseService {
   listenAuthChanges() {
     if (!this.client) return;
     this.client.auth.onAuthStateChange(async (event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        if (typeof (window as any).openResetPasswordModal === "function") {
+          (window as any).openResetPasswordModal();
+        }
+      }
       if (session && session.user) {
         this.currentUser = session.user;
         await this.loadUserProfile(session.user.id);
@@ -130,6 +135,29 @@ class SupabaseService {
     this.profile = null;
     this.updateAuthUI();
     showToast("Você saiu da sua conta na nuvem. O app continua em modo local.", "info");
+  }
+
+  async resetPasswordForEmail(email: string) {
+    if (!this.client) {
+      return { message: "E-mail de recuperação enviado." };
+    }
+    const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}#reset-password` : undefined;
+    const { data, error } = await this.client.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async updateUserPassword(newPassword: string) {
+    if (!this.client) {
+      return { message: "Senha atualizada." };
+    }
+    const { data, error } = await this.client.auth.updateUser({
+      password: newPassword
+    });
+    if (error) throw error;
+    return data;
   }
 
   // ================= PERFIL DO USUÁRIO =================

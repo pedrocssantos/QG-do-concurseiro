@@ -187,6 +187,18 @@ class App {
 
   handleRoute() {
     const rawHash = window.location.hash.replace("#", "").trim();
+    
+    // Suporte a rotas modais de autenticação e recuperação de senha
+    if (rawHash === "login") {
+      openAuthModal("login");
+    } else if (rawHash === "signup") {
+      openAuthModal("signup");
+    } else if (rawHash === "recuperar-senha" || rawHash === "forgot") {
+      openAuthModal("forgot");
+    } else if (rawHash === "reset-password" || rawHash.includes("type=recovery")) {
+      openResetPasswordModal();
+    }
+
     const route = this.routes.includes(rawHash) ? rawHash : "dashboard";
 
     this.currentRoute = route;
@@ -823,46 +835,160 @@ function showToast(message, type = "info", duration = 4000) {
   }, duration);
 }
 
-// Auth Modal & Upgrade Modal Helpers
-let currentAuthTab: "login" | "signup" = "login";
+// ==========================================================================
+// AUTHENTICATION, PASSWORD RESET & GOOGLE RECAPTCHA SYSTEM
+// ==========================================================================
+let currentAuthTab: "login" | "signup" | "forgot" = "login";
+let recaptchaVerified = false;
 
-function openAuthModal(tab: "login" | "signup" | string = "login") {
+function resetRecaptcha() {
+  recaptchaVerified = false;
+  const widget = document.getElementById("google-recaptcha-widget");
+  const spinner = document.getElementById("recaptcha-spinner");
+  const checkMark = document.getElementById("recaptcha-check-mark");
+  if (widget) widget.classList.remove("verified");
+  if (spinner) spinner.classList.add("hidden");
+  if (checkMark) checkMark.classList.add("hidden");
+}
+
+function handleRecaptchaClick() {
+  if (recaptchaVerified) return;
+
+  const widget = document.getElementById("google-recaptcha-widget");
+  const spinner = document.getElementById("recaptcha-spinner");
+  const checkMark = document.getElementById("recaptcha-check-mark");
+
+  if (spinner) spinner.classList.remove("hidden");
+
+  setTimeout(() => {
+    if (spinner) spinner.classList.add("hidden");
+    if (checkMark) checkMark.classList.remove("hidden");
+    if (widget) widget.classList.add("verified");
+    recaptchaVerified = true;
+  }, 500);
+}
+
+function togglePasswordVisibility(inputId: string, btnEl: HTMLElement) {
+  const input = document.getElementById(inputId) as HTMLInputElement | null;
+  if (!input) return;
+  const isPass = input.type === "password";
+  input.type = isPass ? "text" : "password";
+  const icon = btnEl.querySelector("i");
+  if (icon) {
+    icon.className = isPass ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+  }
+}
+
+function calculatePasswordStrength(pass: string): { score: number; label: string; color: string; width: string } {
+  if (!pass) return { score: 0, label: "Muito Fraca", color: "var(--color-danger)", width: "10%" };
+  let score = 0;
+  if (pass.length >= 6) score += 1;
+  if (pass.length >= 9) score += 1;
+  if (/[0-9]/.test(pass)) score += 1;
+  if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+  if (score <= 1) return { score: 1, label: "Fraca", color: "#ef4444", width: "25%" };
+  if (score === 2) return { score: 2, label: "Regular", color: "#f59e0b", width: "50%" };
+  if (score === 3 || score === 4) return { score: 3, label: "Boa", color: "#38bdf8", width: "75%" };
+  return { score: 5, label: "Excelente", color: "#10b981", width: "100%" };
+}
+
+function checkPasswordStrength(val: string) {
+  const labelEl = document.getElementById("password-strength-label");
+  const barEl = document.getElementById("password-strength-bar");
+  const strength = calculatePasswordStrength(val);
+  if (labelEl) {
+    labelEl.textContent = strength.label;
+    labelEl.style.color = strength.color;
+  }
+  if (barEl) {
+    barEl.style.width = strength.width;
+    barEl.style.background = strength.color;
+  }
+}
+
+function checkResetPasswordStrength(val: string) {
+  const labelEl = document.getElementById("reset-strength-label");
+  const barEl = document.getElementById("reset-strength-bar");
+  const strength = calculatePasswordStrength(val);
+  if (labelEl) {
+    labelEl.textContent = strength.label;
+    labelEl.style.color = strength.color;
+  }
+  if (barEl) {
+    barEl.style.width = strength.width;
+    barEl.style.background = strength.color;
+  }
+}
+
+function openAuthModal(tab: "login" | "signup" | "forgot" | string = "login") {
   const modal = document.getElementById("modal-auth") as HTMLDialogElement | null;
   if (modal) {
-    switchAuthTab(tab === "signup" ? "signup" : "login");
+    switchAuthTab(tab === "signup" ? "signup" : (tab === "forgot" ? "forgot" : "login"));
     modal.showModal();
   }
 }
 
-function switchAuthTab(tab: "login" | "signup") {
+function switchAuthTab(tab: "login" | "signup" | "forgot") {
   currentAuthTab = tab;
+  resetRecaptcha();
+
   const tabLogin = document.getElementById("tab-login");
   const tabSignup = document.getElementById("tab-signup");
+  const tabsContainer = document.getElementById("auth-tabs-container");
   const groupName = document.getElementById("group-auth-name");
+  const groupPass = document.getElementById("group-auth-password");
   const groupConfirm = document.getElementById("group-auth-confirm-password");
+  const groupStrength = document.getElementById("group-auth-strength");
   const groupTerms = document.getElementById("group-auth-terms");
+  const groupBackLogin = document.getElementById("group-auth-back-login");
   const btnSubmit = document.getElementById("btn-auth-submit");
   const title = document.getElementById("auth-modal-title");
+  const subtitle = document.getElementById("auth-modal-subtitle");
   const errorBox = document.getElementById("auth-error-box");
+  const successBox = document.getElementById("auth-success-box");
 
   if (errorBox) errorBox.classList.add("hidden");
+  if (successBox) successBox.classList.add("hidden");
 
   if (tab === "login") {
+    if (tabsContainer) tabsContainer.classList.remove("hidden");
     tabLogin?.classList.add("active");
     tabSignup?.classList.remove("active");
     groupName?.classList.add("hidden");
+    groupPass?.classList.remove("hidden");
     groupConfirm?.classList.add("hidden");
+    groupStrength?.classList.add("hidden");
     groupTerms?.classList.add("hidden");
+    groupBackLogin?.classList.add("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
-    if (title) title.innerHTML = `QG do Concurseiro`;
-  } else {
+    if (title) title.innerHTML = `Entrar no QG do Concurseiro`;
+    if (subtitle) subtitle.innerHTML = `Faça login para sincronizar seu progresso na nuvem.`;
+  } else if (tab === "signup") {
+    if (tabsContainer) tabsContainer.classList.remove("hidden");
     tabSignup?.classList.add("active");
     tabLogin?.classList.remove("active");
     groupName?.classList.remove("hidden");
+    groupPass?.classList.remove("hidden");
     groupConfirm?.classList.remove("hidden");
+    groupStrength?.classList.remove("hidden");
     groupTerms?.classList.remove("hidden");
+    groupBackLogin?.classList.add("hidden");
     if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
     if (title) title.innerHTML = `Criar Conta no QG`;
+    if (subtitle) subtitle.innerHTML = `Crie sua conta para salvar editais, metas e simulados.`;
+  } else if (tab === "forgot") {
+    if (tabsContainer) tabsContainer.classList.add("hidden");
+    groupName?.classList.add("hidden");
+    groupPass?.classList.add("hidden");
+    groupConfirm?.classList.add("hidden");
+    groupStrength?.classList.add("hidden");
+    groupTerms?.classList.add("hidden");
+    groupBackLogin?.classList.remove("hidden");
+    if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação`;
+    if (title) title.innerHTML = `Recuperar Senha`;
+    if (subtitle) subtitle.innerHTML = `Digite seu e-mail cadastrado para receber o link de redefinição.`;
   }
 }
 
@@ -903,7 +1029,9 @@ function translateAuthError(errMsg: string): string {
 async function handleAuthSubmit(e: Event) {
   e.preventDefault();
   const errorBox = document.getElementById("auth-error-box");
+  const successBox = document.getElementById("auth-success-box");
   if (errorBox) errorBox.classList.add("hidden");
+  if (successBox) successBox.classList.add("hidden");
 
   const emailInput = document.getElementById("auth-email") as HTMLInputElement | null;
   const passInput = document.getElementById("auth-password") as HTMLInputElement | null;
@@ -916,7 +1044,7 @@ async function handleAuthSubmit(e: Event) {
   const password = passInput?.value || "";
   const name = nameInput?.value.trim() || "";
 
-  // 1. Validação de formato de E-mail
+  // 1. Validação de Formato de E-mail
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) {
     showAuthError("Por favor, informe um endereço de e-mail válido (ex: seu.nome@email.com).");
@@ -924,14 +1052,49 @@ async function handleAuthSubmit(e: Event) {
     return;
   }
 
-  // 2. Validação de Senha
+  // 2. Validação Google reCAPTCHA
+  if (!recaptchaVerified) {
+    showAuthError("Por favor, confirme que você não é um robô clicando no reCAPTCHA abaixo.");
+    return;
+  }
+
+  // 3. FLUXO: ESQUECI MINHA SENHA
+  if (currentAuthTab === "forgot") {
+    try {
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando e-mail...`;
+      }
+      if (typeof db !== "undefined" && db.client) {
+        await db.resetPasswordForEmail(email);
+      }
+      if (successBox) {
+        const successText = document.getElementById("auth-success-text");
+        if (successText) successText.textContent = `Enviamos as instruções de recuperação para ${email}. Verifique sua caixa de entrada e spam.`;
+        successBox.classList.remove("hidden");
+      }
+      showToast(`Link de recuperação enviado para ${email}!`, "success");
+      resetRecaptcha();
+    } catch (err: any) {
+      console.error("Erro ao solicitar recuperação de senha:", err);
+      showAuthError(translateAuthError(err.message || "Não foi possível enviar o e-mail de recuperação."));
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação`;
+      }
+    }
+    return;
+  }
+
+  // 4. Validação de Senha para Login e Cadastro
   if (!password || password.length < 6) {
     showAuthError("A senha precisa ter no mínimo 6 caracteres.");
     passInput?.focus();
     return;
   }
 
-  // 3. Validações Específicas da Aba de Cadastro
+  // 5. Validações Específicas da Aba de Cadastro
   if (currentAuthTab === "signup") {
     if (!name || name.length < 3) {
       showAuthError("Por favor, preencha seu nome completo (mínimo de 3 letras).");
@@ -963,7 +1126,6 @@ async function handleAuthSubmit(e: Event) {
       if (typeof db !== "undefined" && db.client) {
         const result = await db.signUp(name, email, password);
 
-        // Se o Supabase exigiu confirmação por e-mail
         if (result?.user && !result?.session) {
           showToast("📧 Cadastro realizado! Enviamos um link de confirmação para seu e-mail.", "info");
           (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
@@ -971,7 +1133,6 @@ async function handleAuthSubmit(e: Event) {
         }
       }
 
-      // Atualiza o estado local e sincroniza
       store.data.profile.isLoggedIn = true;
       store.data.profile.email = email;
       store.data.profile.name = name;
@@ -1010,9 +1171,77 @@ async function handleAuthSubmit(e: Event) {
       btnSubmit.disabled = false;
       if (currentAuthTab === "login") {
         btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma`;
-      } else {
+      } else if (currentAuthTab === "signup") {
         btnSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Criar Conta Gratuita`;
+      } else {
+        btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Enviar Link de Recuperação`;
       }
+    }
+  }
+}
+
+// ================= MODAL: REDEFINIR NOVA SENHA =================
+function openResetPasswordModal() {
+  const modal = document.getElementById("modal-reset-password") as HTMLDialogElement | null;
+  if (modal) {
+    const errorBox = document.getElementById("reset-error-box");
+    if (errorBox) errorBox.classList.add("hidden");
+    const newPass = document.getElementById("reset-new-password") as HTMLInputElement | null;
+    const confirmPass = document.getElementById("reset-confirm-password") as HTMLInputElement | null;
+    if (newPass) newPass.value = "";
+    if (confirmPass) confirmPass.value = "";
+    modal.showModal();
+  }
+}
+
+async function handleResetPasswordSubmit(e: Event) {
+  e.preventDefault();
+  const errorBox = document.getElementById("reset-error-box");
+  const errorText = document.getElementById("reset-error-text");
+  const btnSubmit = document.getElementById("btn-reset-submit") as HTMLButtonElement | null;
+  if (errorBox) errorBox.classList.add("hidden");
+
+  const newPass = (document.getElementById("reset-new-password") as HTMLInputElement | null)?.value || "";
+  const confirmPass = (document.getElementById("reset-confirm-password") as HTMLInputElement | null)?.value || "";
+
+  if (!newPass || newPass.length < 6) {
+    if (errorBox && errorText) {
+      errorText.textContent = "A nova senha precisa ter no mínimo 6 caracteres.";
+      errorBox.classList.remove("hidden");
+    }
+    return;
+  }
+
+  if (newPass !== confirmPass) {
+    if (errorBox && errorText) {
+      errorText.textContent = "As senhas digitadas não coincidem.";
+      errorBox.classList.remove("hidden");
+    }
+    return;
+  }
+
+  try {
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Atualizando senha...`;
+    }
+
+    if (typeof db !== "undefined" && db.client) {
+      await db.updateUserPassword(newPass);
+    }
+
+    showToast("🔑 Senha atualizada com sucesso! Você já pode entrar com sua nova senha.", "success");
+    (document.getElementById("modal-reset-password") as HTMLDialogElement)?.close();
+  } catch (err: any) {
+    console.error("Erro ao redefinir senha:", err);
+    if (errorBox && errorText) {
+      errorText.textContent = translateAuthError(err.message || "Erro ao atualizar senha.");
+      errorBox.classList.remove("hidden");
+    }
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> Salvar Nova Senha`;
     }
   }
 }
@@ -1059,16 +1288,39 @@ function startCheckout(planType) {
 // Inicialização Global
 const app = new App();
 
-export { App, app, showToast, openAuthModal, switchAuthTab, handleAuthSubmit, openUpgradeModal, startCheckout };
+export {
+  App,
+  app,
+  showToast,
+  openAuthModal,
+  switchAuthTab,
+  handleAuthSubmit,
+  togglePasswordVisibility,
+  checkPasswordStrength,
+  checkResetPasswordStrength,
+  handleRecaptchaClick,
+  resetRecaptcha,
+  openResetPasswordModal,
+  handleResetPasswordSubmit,
+  openUpgradeModal,
+  startCheckout
+};
 
 if (typeof window !== "undefined") {
-  window.App = App;
-  window.app = app;
-  window.showToast = showToast;
-  window.openAuthModal = openAuthModal;
-  window.switchAuthTab = switchAuthTab;
-  window.handleAuthSubmit = handleAuthSubmit;
-  window.openUpgradeModal = openUpgradeModal;
-  window.startCheckout = startCheckout;
+  (window as any).App = App;
+  (window as any).app = app;
+  (window as any).showToast = showToast;
+  (window as any).openAuthModal = openAuthModal;
+  (window as any).switchAuthTab = switchAuthTab;
+  (window as any).handleAuthSubmit = handleAuthSubmit;
+  (window as any).togglePasswordVisibility = togglePasswordVisibility;
+  (window as any).checkPasswordStrength = checkPasswordStrength;
+  (window as any).checkResetPasswordStrength = checkResetPasswordStrength;
+  (window as any).handleRecaptchaClick = handleRecaptchaClick;
+  (window as any).resetRecaptcha = resetRecaptcha;
+  (window as any).openResetPasswordModal = openResetPasswordModal;
+  (window as any).handleResetPasswordSubmit = handleResetPasswordSubmit;
+  (window as any).openUpgradeModal = openUpgradeModal;
+  (window as any).startCheckout = startCheckout;
 }
 
