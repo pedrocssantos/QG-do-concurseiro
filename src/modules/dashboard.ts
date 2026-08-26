@@ -108,6 +108,23 @@ class DashboardManager {
         concursoSelect.appendChild(opt);
       });
     }
+
+    // Atualiza a pílula de meta no Hero do Dashboard
+    const targetPillText = document.getElementById("dash-target-text");
+    if (targetPillText && activeConcurso) {
+      if (activeConcurso.targetDate) {
+        const target = new Date(activeConcurso.targetDate);
+        const today = new Date();
+        const diffDays = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays > 0) {
+          targetPillText.textContent = `${activeConcurso.shortTitle || activeConcurso.title} • Faltam ${diffDays} dias`;
+        } else {
+          targetPillText.textContent = `${activeConcurso.shortTitle || activeConcurso.title} • Prova Hoje / Concluída`;
+        }
+      } else {
+        targetPillText.textContent = `${activeConcurso.shortTitle || activeConcurso.title} • Edital Ativo`;
+      }
+    }
   }
 
   renderTacticalInsights() {

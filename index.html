@@ -123,18 +123,22 @@
       <div class="view-content-wrapper view-section" id="view-dashboard">
         <div class="dashboard-hero">
           <div class="hero-left">
+            <div class="dash-hero-target-pill" id="dash-hero-target-badge" style="display: inline-flex; align-items: center; gap: 6px; background: var(--color-primary-tint); border: 1px solid var(--color-primary); color: var(--color-primary); font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 800; padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em;">
+              <i class="fa-solid fa-bullseye"></i> <span id="dash-target-text">PF - Agente • Faltam 82 dias</span>
+            </div>
             <h1 id="dash-greeting-title">Olá, Concurseiro! 👋</h1>
             <p id="dash-greeting-subtitle">Acompanhe suas metas de hoje, mantenha a frequência e avance no edital.</p>
           </div>
           <div class="hero-quick-actions">
+            <a href="#pomodoro" class="btn btn-primary btn-sm"><i class="fa-solid fa-stopwatch"></i> Iniciar Foco</a>
             <a href="#questoes" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-question"></i> Resolver Questões</a>
             <a href="#flashcards" class="btn btn-secondary btn-sm"><i class="fa-solid fa-layer-group"></i> Revisar Cards</a>
           </div>
         </div>
 
-        <!-- KPI Cards -->
+        <!-- KPI Cards (Atalhos Clicáveis) -->
         <div class="kpi-grid">
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card-clickable" onclick="window.location.hash = '#pomodoro'" title="Abrir Foco Pomodoro" style="cursor: pointer;">
             <div class="kpi-card-header">
               <span class="kpi-title">Horas Líquidas Hoje</span>
               <div class="kpi-icon-box icon-blue"><i class="fa-solid fa-clock"></i></div>
@@ -148,7 +152,7 @@
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card-clickable" onclick="window.location.hash = '#questoes'" title="Abrir Banco de Questões" style="cursor: pointer;">
             <div class="kpi-card-header">
               <span class="kpi-title">Questões Feitas Hoje</span>
               <div class="kpi-icon-box icon-green"><i class="fa-solid fa-bullseye"></i></div>
@@ -162,7 +166,7 @@
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card-clickable" onclick="window.location.hash = '#flashcards'" title="Abrir Fila de Flashcards SRS" style="cursor: pointer;">
             <div class="kpi-card-header">
               <span class="kpi-title">Cards Para Revisar Hoje</span>
               <div class="kpi-icon-box icon-amber"><i class="fa-solid fa-brain"></i></div>
@@ -176,7 +180,7 @@
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card-clickable" onclick="window.location.hash = '#edital'" title="Abrir Edital Verticalizado" style="cursor: pointer;">
             <div class="kpi-card-header">
               <span class="kpi-title">Edital Coberto</span>
               <div class="kpi-icon-box icon-purple"><i class="fa-solid fa-map-location-dot"></i></div>
