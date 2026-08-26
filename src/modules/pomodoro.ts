@@ -163,7 +163,7 @@ class PomodoroController {
       disc.topicos.forEach(t => {
         const opt = document.createElement("option");
         opt.value = t.id;
-        opt.textContent = `${t.title} ${t.teoria ? "✅" : "⏳"}`;
+        opt.textContent = `${t.title} [${t.teoria ? "Concluído" : "Pendente"}]`;
         topicSelect.appendChild(opt);
       });
 
@@ -543,16 +543,16 @@ class PomodoroController {
 
     if (statusText) {
       if (this.state === "break") {
-        statusText.textContent = "☕ INTERVALO";
+        statusText.textContent = "INTERVALO";
         statusText.className = "pomo-badge status-break";
       } else if (this.state === "running") {
-        statusText.textContent = "⚡ EM FOCO";
+        statusText.textContent = "EM FOCO";
         statusText.className = "pomo-badge status-running";
       } else if (this.state === "paused") {
-        statusText.textContent = "⏸️ PAUSADO";
+        statusText.textContent = "PAUSADO";
         statusText.className = "pomo-badge status-paused";
       } else {
-        statusText.textContent = "🎯 PRONTO PARA INICIAR";
+        statusText.textContent = "PRONTO PARA INICIAR";
         statusText.className = "pomo-badge status-idle";
       }
     }

@@ -246,7 +246,7 @@ class TafManager {
 
     if (notesInput) notesInput.value = "";
     this.renderHistory();
-    showToast(isApto ? "Simulado TAF registrado com APTIDÃO! 🏅" : "Simulado TAF registrado. Continue treinando! 💪", isApto ? "success" : "info");
+    showToast(isApto ? "Simulado TAF registrado com Aptidão." : "Simulado TAF registrado. Continue treinando.", isApto ? "success" : "info");
   }
 
   renderHistory() {

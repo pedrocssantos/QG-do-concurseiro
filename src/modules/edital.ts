@@ -79,7 +79,7 @@ class EditalManager {
     if (disciplinas.length === 0) {
       container.innerHTML = `
         <div style="text-align: center; padding: 48px 20px; background: var(--bg-surface); border: 1px dashed var(--border-color-strong); border-radius: var(--radius-lg); margin-top: 10px;">
-          <div style="font-size: 2.4rem; margin-bottom: 12px; opacity: 0.8;">📑</div>
+          <div class="modal-icon-header icon-primary" style="margin: 0 auto 12px;"><i class="fa-solid fa-layer-group"></i></div>
           <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 6px;">Nenhuma disciplina neste Edital ainda</h3>
           <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 20px;">
             Você pode importar um edital oficial pronto do catálogo, colar o texto bruto do PDF ou adicionar disciplinas manualmente.
@@ -403,7 +403,7 @@ class EditalManager {
       if (modal) modal.close();
       this.renderDisciplinasList();
       this.renderHeader();
-      showToast(`Edital "${cloned.title}" importado e ativado com sucesso! 🚀`, "success");
+      showToast(`Edital "${cloned.title}" importado e ativado com sucesso.`, "success");
     }
   }
 
@@ -449,7 +449,7 @@ class EditalManager {
     previewContainer.innerHTML = `
       <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <strong style="color: var(--text-main); font-size: 0.9rem;"><i class="fa-solid fa-circle-check text-accent"></i> Edital Processado com Sucesso!</strong>
+          <strong style="color: var(--text-main); font-size: 0.9rem;"><i class="fa-solid fa-circle-check text-accent"></i> Edital Processado com Sucesso</strong>
           <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Detectadas <strong>${this.bulkParsedDisciplinas.length} disciplinas</strong> e <strong>${totalTopics} tópicos</strong>.</p>
         </div>
       </div>
@@ -493,7 +493,7 @@ class EditalManager {
 
     this.renderDisciplinasList();
     this.renderHeader();
-    showToast("Conteúdo do edital gerado e aplicado com sucesso! 🎉", "success");
+    showToast("Conteúdo do edital gerado e aplicado com sucesso.", "success");
   }
 
   // ================= ADIÇÃO EM LOTE DE TÓPICOS POR DISCIPLINA =================
@@ -531,7 +531,7 @@ class EditalManager {
     if (this.selectedDisciplinaId) {
       this.toggleAccordion(this.selectedDisciplinaId);
     }
-    showToast(`${created.length} tópicos adicionados com sucesso em ${this.selectedDisciplinaName}!`, "success");
+    showToast(`${created.length} tópicos adicionados com sucesso em ${this.selectedDisciplinaName}.`, "success");
   }
 
   // ================= EXPORTAÇÃO & IMPORTAÇÃO JSON =================
@@ -547,7 +547,7 @@ class EditalManager {
       a.download = `edital-${cleanFileName}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Arquivo de edital exportado com sucesso (.json)! 📤", "success");
+      showToast("Arquivo de edital exportado com sucesso (.json).", "success");
     } catch (e: any) {
       showToast(`Erro ao exportar: ${e.message}`, "warning");
     }
@@ -562,7 +562,7 @@ class EditalManager {
         const imported = store.importEditalFromJSON(text);
         this.renderDisciplinasList();
         this.renderHeader();
-        showToast(`Edital "${imported.title}" importado com sucesso (.json)! 📥`, "success");
+        showToast(`Edital "${imported.title}" importado com sucesso (.json).`, "success");
       } catch (err: any) {
         showToast(`Falha na importação: ${err.message}`, "warning");
       }

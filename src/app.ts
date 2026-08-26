@@ -75,17 +75,14 @@ class App {
       }
     });
 
-    console.log("🚀 QG do Concurseiro SPA inicializado com sucesso!");
+    console.log("QG do Concurseiro SPA inicializado.");
   }
 
   registerServiceWorker() {
-    // Service Worker agora é registrado automaticamente pelo vite-plugin-pwa (Workbox)
-    // Não é necessário registrar manualmente './service-worker.js'
-
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       window.deferredPwaPrompt = e;
-      console.log("📲 PWA pronto para instalação!");
+      console.log("PWA pronto para instalacao.");
     });
   }
 
@@ -98,11 +95,9 @@ class App {
                         urlParams.get("session_id");
 
       if (isSuccess) {
-        // Limpa os parâmetros da URL imediatamente para evitar reutilização de links
         const cleanUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, cleanUrl);
 
-        // Se logado no Supabase, atualiza perfil a partir da nuvem
         if (typeof db !== "undefined" && db.client && db.currentUser) {
           try {
             if (db.loadUserProfile) await db.loadUserProfile(db.currentUser.id);
@@ -111,7 +106,6 @@ class App {
           }
         }
 
-        // Ativação local e celebração tática
         store.data.profile.plan_tier = "pro";
         store.save();
 
@@ -119,9 +113,9 @@ class App {
           db.updateAuthUI();
         }
 
-        store.addXP(500, "Ativação do Plano Caveira PRO! 🏆");
+        store.addXP(500, "Ativação do Plano Pro");
         setTimeout(() => {
-          showToast("🎖️ PARABÉNS GUERREIRO(A)! Seu Plano Caveira PRO foi ativado com sucesso! Todas as ferramentas foram desbloqueadas.", "success", 8000);
+          showToast("Plano Pro ativado com sucesso. Todas as ferramentas foram desbloqueadas.", "success", 8000);
         }, 500);
       }
     } catch (e) {
@@ -136,9 +130,8 @@ class App {
       const urlParams = new URLSearchParams(search);
       const code = urlParams.get("code");
 
-      // Suporte a PKCE flow do Supabase
       if (code && typeof db !== "undefined" && db.client) {
-        console.log("🔑 Código de autenticação PKCE detectado na URL.");
+        console.log("Código de autenticação PKCE detectado na URL.");
         const { data, error } = await db.client.auth.exchangeCodeForSession(code);
         if (data?.session?.user) {
           store.data.profile.isLoggedIn = true;
@@ -148,7 +141,7 @@ class App {
             store.data.profile.avatar = data.session.user.user_metadata.name.substring(0, 2).toUpperCase();
           }
           store.save();
-          showToast("🎉 E-mail confirmado com sucesso! Sua conta está ativa na nuvem!", "success");
+          showToast("E-mail confirmado com sucesso. Sua conta está ativa na nuvem.", "success");
           db.updateAuthUI();
           dashboardManager.renderHeaderInfo();
           window.history.replaceState({}, document.title, window.location.pathname + "#dashboard");
@@ -157,9 +150,8 @@ class App {
         }
       }
 
-      // Suporte a Implicit flow (access_token no hash)
       if (hash && (hash.includes("access_token=") || hash.includes("type=signup") || hash.includes("type=recovery"))) {
-        console.log("🔑 Retorno de confirmação de e-mail do Supabase detectado.");
+        console.log("Retorno de confirmação de e-mail do Supabase detectado.");
         setTimeout(async () => {
           if (typeof db !== "undefined" && db.client) {
             const { data: { session } } = await db.client.auth.getSession();
@@ -171,7 +163,7 @@ class App {
                 store.data.profile.avatar = session.user.user_metadata.name.substring(0, 2).toUpperCase();
               }
               store.save();
-              showToast("🎉 E-mail confirmado com sucesso! Sua conta está ativa!", "success");
+              showToast("E-mail confirmado com sucesso. Sua conta está ativa.", "success");
               db.updateAuthUI();
               dashboardManager.renderHeaderInfo();
             }
@@ -646,7 +638,7 @@ class App {
     const resetBtn = document.getElementById("btn-reset-data");
     if (resetBtn) {
       resetBtn.addEventListener("click", () => {
-        if (confirm("⚠️ Tem certeza que deseja resetar todos os dados para o padrão inicial? Todas as anotações e histórico serão limpos.")) {
+        if (confirm("Tem certeza que deseja resetar todos os dados para o padrão inicial? Todas as anotações e histórico serão limpos.")) {
           store.resetData();
           showToast("Dados reiniciados para o padrão inicial.", "info");
           location.reload();
@@ -783,7 +775,7 @@ class App {
         this.showLevelUpModal(payload);
       }
       if (event === "badge_unlocked") {
-        showToast(`🎖️ Conquista Desbloqueada: ${payload.title}!`, "success");
+        showToast(`Conquista Desbloqueada: ${payload.title}`, "success");
       }
       if (typeof dashboardManager !== "undefined" && dashboardManager.renderHeaderInfo) {
         dashboardManager.renderHeaderInfo();
@@ -1127,7 +1119,7 @@ async function handleAuthSubmit(e: Event) {
         const result = await db.signUp(name, email, password);
 
         if (result?.user && !result?.session) {
-          showToast("📧 Cadastro realizado! Enviamos um link de confirmação para seu e-mail.", "info");
+          showToast("Cadastro realizado. Enviamos um link de confirmação para seu e-mail.", "info");
           (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
           return;
         }
@@ -1139,7 +1131,7 @@ async function handleAuthSubmit(e: Event) {
       store.data.profile.avatar = name.substring(0, 2).toUpperCase();
       store.save();
 
-      showToast(`🎉 Conta criada com sucesso! Bem-vindo(a), ${name.split(" ")[0]}!`, "success");
+      showToast(`Conta criada com sucesso. Bem-vindo(a), ${name.split(" ")[0]}.`, "success");
       (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
@@ -1156,7 +1148,7 @@ async function handleAuthSubmit(e: Event) {
       }
       store.save();
 
-      showToast("🚀 Login realizado com sucesso! Seus dados foram sincronizados.", "success");
+      showToast("Login realizado com sucesso. Seus dados foram sincronizados.", "success");
       (document.getElementById("modal-auth") as HTMLDialogElement)?.close();
       if (typeof db !== "undefined") db.updateAuthUI();
       if (typeof app !== "undefined") app.handleRoute();
@@ -1230,7 +1222,7 @@ async function handleResetPasswordSubmit(e: Event) {
       await db.updateUserPassword(newPass);
     }
 
-    showToast("🔑 Senha atualizada com sucesso! Você já pode entrar com sua nova senha.", "success");
+    showToast("Senha atualizada com sucesso. Você já pode entrar com sua nova senha.", "success");
     (document.getElementById("modal-reset-password") as HTMLDialogElement)?.close();
   } catch (err: any) {
     console.error("Erro ao redefinir senha:", err);
@@ -1271,16 +1263,14 @@ function startCheckout(planType) {
       url.searchParams.set("client_reference_id", userId);
     }
 
-    showToast(`Redirecionando para o checkout seguro da Stripe (${planType === 'anual' ? 'Plano Anual' : 'Plano Mensal'})... 💳`, "info");
+    showToast(`Redirecionando para o checkout seguro (${planType === 'anual' ? 'Plano Anual' : 'Plano Mensal'})...`, "info");
     
-    // Fecha o modal antes do redirecionamento
     (document.getElementById("modal-upgrade-pro") as HTMLDialogElement)?.close();
 
     setTimeout(() => {
       window.location.href = url.toString();
     }, 600);
   } catch (e) {
-    // Fallback direto se houver problema ao instanciar URL
     window.location.href = baseLink;
   }
 }

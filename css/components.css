@@ -1221,3 +1221,32 @@ dialog.modal-dialog::backdrop {
   color: var(--text-main) !important;
 }
 
+.modal-icon-header {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.modal-icon-header.icon-success {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--color-accent);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.modal-icon-header.icon-primary {
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.modal-icon-header.icon-accent {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+

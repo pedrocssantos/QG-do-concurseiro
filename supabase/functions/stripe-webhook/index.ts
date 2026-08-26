@@ -41,7 +41,7 @@ serve(async (req: Request) => {
       auth: { persistSession: false }
     });
 
-    console.log(`🔔 Evento Stripe recebido: ${event.type}`);
+    console.log(`Evento Stripe recebido: ${event.type}`);
 
     switch (event.type) {
       // 1. Pagamento de Checkout Concluído com Sucesso
@@ -52,7 +52,7 @@ serve(async (req: Request) => {
         const customerId = session.customer as string;
         const subscriptionId = session.subscription as string;
 
-        console.log(`💳 Checkout aprovado para User ID: ${userId} / Email: ${customerEmail}`);
+        console.log(`Checkout aprovado para User ID: ${userId} / Email: ${customerEmail}`);
 
         if (userId) {
           await supabaseAdmin.from("profiles").update({
@@ -82,7 +82,7 @@ serve(async (req: Request) => {
         const isProActive = status === "active" || status === "trialing";
         const tier = isProActive ? "pro" : "free";
 
-        console.log(`🔄 Assinatura ${subscription.id} status: ${status} -> tier: ${tier}`);
+        console.log(`Assinatura ${subscription.id} status: ${status} -> tier: ${tier}`);
 
         await supabaseAdmin.from("profiles").update({
           plan_tier: tier,
@@ -97,7 +97,7 @@ serve(async (req: Request) => {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
 
-        console.log(`❌ Assinatura cancelada: ${subscription.id}. Revertendo para free.`);
+        console.log(`Assinatura cancelada: ${subscription.id}. Revertendo para free.`);
 
         await supabaseAdmin.from("profiles").update({
           plan_tier: "free",
@@ -108,7 +108,7 @@ serve(async (req: Request) => {
       }
 
       default:
-        console.log(`ℹ️ Evento não tratado: ${event.type}`);
+        console.log(`Evento não tratado: ${event.type}`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -116,7 +116,7 @@ serve(async (req: Request) => {
       headers: { "Content-Type": "application/json" }
     });
   } catch (err: any) {
-    console.error(`❌ Erro no processamento do webhook: ${err.message}`);
+    console.error(`Erro no processamento do webhook: ${err.message}`);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 400,
       headers: { "Content-Type": "application/json" }

@@ -38,15 +38,15 @@ class SupabaseService {
       this.checkSession();
       this.listenAuthChanges();
       this.bindNetworkListeners();
-      console.log("☁️ Supabase Client inicializado com sucesso!");
+      console.log("Supabase Client inicializado com sucesso.");
     } catch (e) {
-      console.warn("⚠️ Falha ao inicializar cliente do Supabase. Operando em modo offline/local.", e);
+      console.warn("Falha ao inicializar cliente do Supabase. Operando em modo offline/local.", e);
     }
   }
 
   bindNetworkListeners() {
     window.addEventListener("online", () => {
-      console.log("🌐 Conexão restabelecida. Disparando sincronização em segundo plano...");
+      console.log("Conexao restabelecida. Disparando sincronizacao em segundo plano...");
       this.scheduleSync(1000);
     });
   }
@@ -494,9 +494,9 @@ class SupabaseService {
       // 6. Salva estado unificado no store
       store.save();
 
-      console.log("☁️ Sincronização em nuvem concluída com sucesso!");
+      console.log("Sincronização em nuvem concluída com sucesso.");
     } catch (err) {
-      console.warn("⚠️ Falha durante a sincronização em nuvem:", err);
+      console.warn("Falha durante a sincronização em nuvem:", err);
     } finally {
       this.isSyncing = false;
     }

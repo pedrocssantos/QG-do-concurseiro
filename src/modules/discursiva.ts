@@ -239,7 +239,7 @@ class DiscursivaManager {
     const modalGrade = document.getElementById("modal-discursiva-avaliacao") as HTMLDialogElement | null;
     if (modalGrade) modalGrade.close();
 
-    showToast(`🎉 Redação salva com sucesso! Nota Final Estimada: ${notaFinal} / 12.0 pontos.`, "success");
+    showToast(`Redação salva com sucesso. Nota final estimada: ${notaFinal} / 12.0 pontos.`, "success");
     this.renderHistory();
     this.openEspelhoModal();
   }

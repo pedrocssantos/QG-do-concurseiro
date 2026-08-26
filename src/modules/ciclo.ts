@@ -236,7 +236,7 @@ class CicloManager {
     const modal = document.getElementById("modal-recalibrate-ciclo") as HTMLDialogElement | null;
     if (modal) modal.close();
 
-    showToast(`Ciclo recalculado com sucesso para ${weeklyHours}h semanais! 🔄`, "success");
+    showToast(`Ciclo recalculado para ${weeklyHours}h semanais com sucesso.`, "success");
   }
 
   resetWeeklyPlannerChecks() {
@@ -244,7 +244,7 @@ class CicloManager {
       store.data.cicloWeeklyChecks = {};
       store.save();
       this.renderWeeklyPlanner();
-      showToast("Planejamento semanal reiniciado com sucesso! 📅", "success");
+      showToast("Planejamento semanal reiniciado com sucesso.", "success");
     }
   }
 

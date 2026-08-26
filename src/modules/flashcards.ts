@@ -16,7 +16,7 @@ class FlashcardsManager {
     if (rootEl && !flashcardsVueApp) {
       flashcardsVueApp = createApp(FlashcardsApp);
       flashcardsVueApp.mount(rootEl);
-      console.log("⚡ Vue 3 Flashcards Pilot montado com sucesso!");
+      console.log("Vue 3 Flashcards Pilot montado com sucesso.");
     }
 
     if (!this.eventsBound) {
@@ -95,23 +95,7 @@ class FlashcardsManager {
         }
       }
     });
-
-    if (parsedCards.length === 0) {
-      showToast("Não foi possível reconhecer o formato dos cartões. Use separador ';' ou 'TAB' entre a pergunta e a resposta.", "error");
-      return;
-    }
-
-    if (!isPro && parsedCards.length > 30) {
-      openUpgradeModal();
-      showToast("No Plano Gratuito você pode importar até 30 cards por vez. Torne-se Caveira PRO para importações ilimitadas!", "warning");
-      parsedCards.splice(30);
-    }
-
-    const imported = store.importFlashcardsBatch(parsedCards, disciplinaId, disciplinaName);
-    showToast(`🎉 Sucesso! ${imported} flashcards foram importados para ${disciplinaName}!`, "success");
-
-    textarea.value = "";
-    (document.getElementById("modal-import-flashcards") as HTMLDialogElement)?.close();
+    return parsedCards;
   }
 
   bindNewCardModalEvents() {
@@ -134,7 +118,7 @@ class FlashcardsManager {
     const currentTotal = (store.data.flashcards || []).length;
     if (!isPro && currentTotal >= 20) {
       openUpgradeModal();
-      showToast("Limite de 20 flashcards atingido no Plano Gratuito. Torne-se PRO para cards ilimitados! 🚀", "warning");
+      showToast("Limite de 20 flashcards atingido no Plano Gratuito. Torne-se Pro para cards ilimitados.", "warning");
       return;
     }
 
@@ -155,28 +139,28 @@ class FlashcardsManager {
   }
 
   saveNewFlashcard() {
-    const discSelect = document.getElementById("new-fc-disciplina") as HTMLSelectElement | null;
-    const frenteInput = (document.getElementById("new-fc-frente") || document.getElementById("new-fc-front")) as HTMLTextAreaElement | null;
-    const versoInput = (document.getElementById("new-fc-verso") || document.getElementById("new-fc-back")) as HTMLTextAreaElement | null;
+    const disciplinaSelect = document.getElementById("new-fc-disciplina") as HTMLSelectElement | null;
+    const frenteInput = document.getElementById("new-fc-frente") as HTMLTextAreaElement | null;
+    const versoInput = document.getElementById("new-fc-verso") as HTMLTextAreaElement | null;
 
-    if (!discSelect || !frenteInput || !versoInput) return;
+    if (!disciplinaSelect || !frenteInput || !versoInput) return;
 
-    const disciplinaId = discSelect.value;
     const frente = frenteInput.value.trim();
     const verso = versoInput.value.trim();
 
     if (!frente || !verso) {
-      showToast("Preencha a frente e o verso do flashcard!", "warning");
+      showToast("Preencha a Frente e o Verso do flashcard!", "warning");
       return;
     }
 
     const newCard = {
-      id: `fc-custom-${Date.now()}`,
-      disciplinaId,
+      id: `fc-${Date.now()}`,
+      disciplinaId: disciplinaSelect.value,
+      disciplinaName: disciplinaSelect.options[disciplinaSelect.selectedIndex]?.text || "Geral",
       frente,
       verso,
-      interval: 1,
       repetitions: 0,
+      interval: 1,
       easeFactor: 2.5,
       dueDate: store.getLocalDateString()
     };
@@ -184,9 +168,9 @@ class FlashcardsManager {
     if (!store.data.flashcards) store.data.flashcards = [];
     store.data.flashcards.push(newCard);
     store.save();
-    store.addXP(10, "Novo Flashcard Criado (+10 XP) 🧠");
+    store.addXP(10, "Novo Flashcard Criado (+10 XP)");
 
-    showToast("Flashcard cadastrado com sucesso!", "success");
+    showToast("Flashcard cadastrado com sucesso.", "success");
 
     // Limpa campos e fecha modal
     frenteInput.value = "";

@@ -29,7 +29,7 @@ class QGDatabase extends Dexie {
       custom_questions: null,
       custom_flashcards: null
     }).upgrade(async tx => {
-      console.log("📦 Dexie V2: Consolidando tabelas relacionais em state blob...");
+      console.log("Dexie V2: Consolidando tabelas relacionais em state blob...");
       
       const stateRecord = await tx.table("state").get("app_state");
       const appState = stateRecord ? stateRecord.data : {};
@@ -66,7 +66,7 @@ class QGDatabase extends Dexie {
           data: appState,
           updated_at: Date.now()
         });
-        console.log("✅ Dados das tabelas antigas integrados ao state blob.");
+        console.log("Dados das tabelas antigas integrados ao state blob.");
       }
     });
 
@@ -80,7 +80,7 @@ class QGDatabase extends Dexie {
       const migrationFlag = localStorage.getItem("qg_indexeddb_migrated_v1");
 
       if (!migrationFlag) {
-        console.log("📦 Primeira inicialização com IndexedDB. Iniciando migração segura do LocalStorage...");
+        console.log("Primeira inicialização com IndexedDB. Iniciando migração segura do LocalStorage...");
         const legacyRaw = localStorage.getItem("foco_no_papiro_v1");
 
         if (legacyRaw) {
@@ -90,7 +90,7 @@ class QGDatabase extends Dexie {
             if (legacyData && typeof legacyData === "object" && !Array.isArray(legacyData)) {
               // 1. Salva snapshot completo no store 'state'
               await this.table('state').put({ key: "app_state", data: legacyData, updated_at: Date.now() });
-              console.log("✅ Migração concluída: Dados copiados para IndexedDB.");
+              console.log("Migração concluída: Dados copiados para IndexedDB.");
             } else {
               console.warn("Estrutura do LocalStorage inválida. Migração abortada.");
             }

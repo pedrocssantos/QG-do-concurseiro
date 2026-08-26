@@ -163,7 +163,7 @@ class LeisManager {
       currentLei?.categoria || "Legislação"
     );
 
-    showToast(`⚡ Flashcard criado para o ${art.numero} no baralho de ${currentLei?.categoria}!`, "success");
+    showToast(`Flashcard criado para o ${art.numero} no baralho de ${currentLei?.categoria}.`, "success");
   }
 
   updateStats() {

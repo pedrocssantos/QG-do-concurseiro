@@ -1011,7 +1011,7 @@ class Store {
     }
 
     const xpGained = Math.max(10, Math.round(params.durationMinutes * 2));
-    this.addXP(xpGained, "Registro de Estudo Manual 📝");
+    this.addXP(xpGained, "Registro de Estudo Manual");
     this.updateStreak();
     this.advanceCiclo(session.disciplinaId, session.durationMinutes);
     this.checkBadges();
@@ -1041,7 +1041,7 @@ class Store {
         if (allDone) {
           items.forEach(i => i.minutesDone = 0);
           this.data.ciclo.currentSubjectIndex = 0;
-          this.addXP(100, "Ciclo Completo Fechado! 🔥");
+          this.addXP(100, "Ciclo Completo Fechado");
         }
       }
       this.save();
@@ -1139,7 +1139,7 @@ class Store {
         if (erroExistente) {
           erroExistente.resolved = true;
           erroExistente.resolvedDate = this.getLocalDateString();
-          this.addXP(25, "Erro Superado no Caderno de Erros! 🎯");
+          this.addXP(25, "Erro Superado no Caderno de Erros");
           this.notify("caderno_erros_resolved", erroExistente);
         }
       }
@@ -1182,7 +1182,7 @@ class Store {
     if (item) {
       Object.assign(item, updates);
       if (updates.resolved && !item.xpResolvedAwarded) {
-        this.addXP(25, "Erro Superado no Caderno de Erros! 🎯");
+        this.addXP(25, "Erro Superado no Caderno de Erros");
         item.xpResolvedAwarded = true;
       }
       this.notify("caderno_updated", item);
@@ -1353,7 +1353,7 @@ class Store {
     if (m) {
       m.completed = !m.completed;
       if (m.completed && !m.xpAwarded) {
-        this.addXP(m.xpReward, `Meta Concluída: ${m.title}! 🏆`);
+        this.addXP(m.xpReward, `Meta Concluída: ${m.title}`);
         m.xpAwarded = true;
       }
       this.notify("mission_updated", m);
@@ -1371,7 +1371,7 @@ class Store {
         if (discMatch && action.durationMinutes >= (m.targetMinutes || 25)) {
           m.completed = true;
           if (!m.xpAwarded) {
-            this.addXP(m.xpReward, `Meta Concluída Automaticamente: ${m.title} 🎯`);
+            this.addXP(m.xpReward, `Meta Concluída Automaticamente: ${m.title}`);
             m.xpAwarded = true;
           }
         }
@@ -1385,7 +1385,7 @@ class Store {
           if (m.progressCount >= (m.targetQuestions || 20)) {
             m.completed = true;
             if (!m.xpAwarded) {
-              this.addXP(m.xpReward, `Meta Concluída: ${m.title} 🎯`);
+              this.addXP(m.xpReward, `Meta Concluída: ${m.title}`);
               m.xpAwarded = true;
             }
           }
@@ -1398,7 +1398,7 @@ class Store {
         if (m.progressCount >= (m.targetCards || 10)) {
           m.completed = true;
           if (!m.xpAwarded) {
-            this.addXP(m.xpReward, `Meta Concluída: ${m.title} 🎯`);
+            this.addXP(m.xpReward, `Meta Concluída: ${m.title}`);
             m.xpAwarded = true;
           }
         }
@@ -1479,7 +1479,7 @@ class Store {
         if (shouldUnlock) {
           b.unlocked = true;
           b.date = this.getLocalDateString();
-          this.addXP(200, `Conquista Desbloqueada: ${b.title}! 🎖️`);
+          this.addXP(200, `Conquista Desbloqueada: ${b.title}`);
           this.notify("badge_unlocked", b);
         }
       }
@@ -1690,7 +1690,7 @@ class Store {
     this.notify("data_imported");
   }
 
-  // ================= MÉTODOS TAF (TESTE DE APTIDÃO FÍSICA) =================
+  // ================= MÉTODOS TAF =================
   addTafRecord(record) {
     if (!this.data.tafRecords) this.data.tafRecords = [];
     const newRecord = {
@@ -1699,7 +1699,7 @@ class Store {
       ...record
     };
     this.data.tafRecords.unshift(newRecord);
-    this.addXP(40, "Treino TAF Registrado! 🏃");
+    this.addXP(40, "Treino TAF Registrado");
     this.save();
     this.notify("taf_updated", newRecord);
     return newRecord;
@@ -1721,7 +1721,7 @@ class Store {
       ...attempt
     };
     this.data.discursivaAttempts.unshift(newAttempt);
-    this.addXP(60, "Redação Discursiva Concluída! ✍️");
+    this.addXP(60, "Redação Discursiva Concluída");
     this.save();
     this.notify("discursiva_updated", newAttempt);
     return newAttempt;
@@ -1733,7 +1733,7 @@ class Store {
     const current = !!this.data.leisReadState[artigoId];
     this.data.leisReadState[artigoId] = !current;
     if (!current) {
-      this.addXP(10, "Artigo de Lei Lido! 📖");
+      this.addXP(10, "Artigo de Lei Lido");
     }
     this.save();
     this.notify("leis_updated", { artigoId, lido: !current });

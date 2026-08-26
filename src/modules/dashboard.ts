@@ -66,14 +66,14 @@ class DashboardManager {
     const greetingTitle = document.getElementById("dash-greeting-title");
     const greetingSubtitle = document.getElementById("dash-greeting-subtitle");
     if (greetingTitle) {
-      greetingTitle.textContent = `Olá, ${profile.name ? profile.name.split(' ')[0] : 'Concurseiro'}! 👋`;
+      greetingTitle.textContent = `Painel de ${profile.name ? profile.name.split(' ')[0] : 'Estudos'}`;
     }
     const todayStats = store.getTodayStats();
     if (greetingSubtitle) {
       if (todayStats.minutesToday === 0) {
-        greetingSubtitle.textContent = "Você ainda não registrou estudos hoje. Que tal iniciar um bloco de foco agora?";
+        greetingSubtitle.textContent = "Nenhum estudo registrado hoje. Inicie um bloco de foco para avançar.";
       } else {
-        greetingSubtitle.textContent = `Você já acumulou ${todayStats.hoursToday}h de estudos hoje. Mantenha o ritmo!`;
+        greetingSubtitle.textContent = `Total acumulado hoje: ${todayStats.hoursToday}h de estudos líquidos.`;
       }
     }
 
@@ -146,7 +146,7 @@ class DashboardManager {
         statusBadge.textContent = "100% Concluído";
         statusBadge.className = "badge badge-success";
       }
-      forecastText.innerHTML = `🎉 <strong>Parabéns!</strong> Você já fechou todos os tópicos deste edital. Mantenha o foco em baterias de questões e revisões SRS!`;
+      forecastText.innerHTML = `<strong>Edital concluído.</strong> Todos os tópicos foram cobertos. Mantenha o foco em baterias de questões e revisões programadas.`;
       return;
     }
 
@@ -156,15 +156,15 @@ class DashboardManager {
         statusBadge.className = "badge badge-success";
       }
       const beforeText = forecast.daysBeforeExam 
-        ? `<strong>${forecast.daysBeforeExam} dias de folga antes da prova</strong> para revisões finais!` 
+        ? `<strong>${forecast.daysBeforeExam} dias de margem antes da prova</strong> para revisões finais.` 
         : "com antecedência.";
-      forecastText.innerHTML = `No seu ritmo atual (~${forecast.avgDailyHours}h/dia), você concluirá a 1ª passagem em <strong>${forecast.projectedDateStr}</strong> (${beforeText})`;
+      forecastText.innerHTML = `No ritmo atual (~${forecast.avgDailyHours}h/dia), previsão de conclusão em <strong>${forecast.projectedDateStr}</strong> (${beforeText})`;
     } else {
       if (statusBadge) {
         statusBadge.textContent = "Aumentar Ritmo";
         statusBadge.className = "badge badge-danger";
       }
-      forecastText.innerHTML = `⚠️ No ritmo atual (~${forecast.avgDailyHours}h/dia), o edital termina em <strong>${forecast.projectedDateStr}</strong> (após a prova). Recomendamos elevar a meta para fechar a tempo!`;
+      forecastText.innerHTML = `No ritmo atual (~${forecast.avgDailyHours}h/dia), previsão de término em <strong>${forecast.projectedDateStr}</strong> (após a data da prova). Recomendamos ajustar a meta diária.`;
     }
   }
 
@@ -364,7 +364,7 @@ class DashboardManager {
     if (modal) modal.close();
 
     this.init();
-    showToast(`Estudo manual de ${hours > 0 ? `${hours}h ` : ""}${mins}m registrado com sucesso! 📝`, "success");
+    showToast(`Estudo manual de ${hours > 0 ? `${hours}h ` : ""}${mins}m registrado com sucesso.`, "success");
   }
 
   renderPendingReviews() {
@@ -532,8 +532,8 @@ class DashboardManager {
     if (mission) {
       mission.completed = !mission.completed;
       if (mission.completed) {
-        store.addXP(mission.xpReward, `Missão Diária Concluída: ${mission.title}! 🎯`);
-        showToast(`Missão cumprida! +${mission.xpReward} XP`, "success");
+        store.addXP(mission.xpReward, `Missão Diária Concluída: ${mission.title}`);
+        showToast(`Missão cumprida: +${mission.xpReward} XP`, "success");
       }
       store.save();
       this.renderDailyMissions();

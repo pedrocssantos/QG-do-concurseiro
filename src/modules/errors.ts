@@ -77,10 +77,10 @@ class CadernoErrosManager {
             <span class="badge-disc">${q.disciplinaName || "Geral"}</span>
             <span class="badge-assunto">${q.assunto || "Assunto"}</span>
             <select class="form-select" style="padding: 2px 6px; font-size: 0.75rem; width: auto; border-radius: var(--radius-xs); height: 26px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);" onchange="cadernoManager.changeReason('${err.id}', this.value)">
-              <option value="conteudo" ${err.reason === "conteudo" ? "selected" : ""}>📖 Desconhecimento Teórico</option>
-              <option value="pegadinha" ${err.reason === "pegadinha" ? "selected" : ""}>⚠️ Pegadinha da Banca</option>
-              <option value="atencao" ${err.reason === "atencao" ? "selected" : ""}>👀 Falta de Atenção</option>
-              <option value="desconhecimento" ${err.reason === "desconhecimento" ? "selected" : ""}>❓ Não Lembrava a Regra</option>
+              <option value="conteudo" ${err.reason === "conteudo" ? "selected" : ""}>Desconhecimento Teórico</option>
+              <option value="pegadinha" ${err.reason === "pegadinha" ? "selected" : ""}>Pegadinha da Banca</option>
+              <option value="atencao" ${err.reason === "atencao" ? "selected" : ""}>Falta de Atenção</option>
+              <option value="desconhecimento" ${err.reason === "desconhecimento" ? "selected" : ""}>Não Lembrava a Regra</option>
             </select>
             <span class="caderno-date"><i class="fa-regular fa-calendar"></i> ${err.date || ""}</span>
           </div>
@@ -120,7 +120,7 @@ class CadernoErrosManager {
 
   changeReason(errorId, newReason) {
     store.updateCadernoErro(errorId, { reason: newReason });
-    showToast("Motivo do erro atualizado!", "info");
+    showToast("Motivo do erro atualizado.", "info");
   }
 
   toggleResolved(errorId) {
@@ -128,7 +128,7 @@ class CadernoErrosManager {
     if (item) {
       store.updateCadernoErro(errorId, { resolved: !item.resolved });
       this.renderErrorsList();
-      showToast(item.resolved ? "Erro marcado como Dominado! (+25 XP) 🎯" : "Status alterado para pendente.", "success");
+      showToast(item.resolved ? "Erro marcado como Dominado (+25 XP)." : "Status alterado para pendente.", "success");
     }
   }
 
@@ -137,7 +137,7 @@ class CadernoErrosManager {
     if (textarea) {
       const note = textarea.value.trim();
       store.updateCadernoErro(errorId, { note });
-      showToast("Anotação de blindagem salva com sucesso!", "success");
+      showToast("Anotação salva com sucesso.", "success");
     }
   }
 

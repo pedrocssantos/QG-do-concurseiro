@@ -143,7 +143,7 @@ class QuestionsManager {
     this.selectedOption = null;
     this.simuladoMode = false;
     this.renderCurrentQuestion();
-    showToast(`🎯 Modo Treino de Erros ativado: ${this.filteredQuestions.length} questões para superar!`, "info");
+    showToast(`Modo Treino de Erros ativado: ${this.filteredQuestions.length} questões para resolver.`, "info");
   }
 
   bindEvents() {
@@ -695,7 +695,7 @@ class QuestionsManager {
     }
 
     const xpBonus = 100;
-    store.addXP(xpBonus, "Bônus de Simulado Concluído! 🎓");
+    store.addXP(xpBonus, "Bônus de Simulado Concluído");
 
     if (modal) (modal as HTMLDialogElement).showModal();
   }

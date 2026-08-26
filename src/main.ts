@@ -40,4 +40,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   app.init();
 });
 
-console.log("🛡️ QG do Concurseiro - Módulos ESM carregados com sucesso via Vite!");
+console.log("QG do Concurseiro - Módulos ESM carregados via Vite.");
